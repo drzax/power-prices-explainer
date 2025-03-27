@@ -1,24 +1,28 @@
 <svelte:options namespace="svg" />
 
 <script>
-  import { calculateRoundedCorners, regularPolygonVertices } from '../lib/trig';
-
-  let { radius = 100, fillet = 0, sides = 3, rotation = 0, cx = 0, cy = 0 } = $props();
-
-  let verticies = $derived.by(() => regularPolygonVertices(sides, radius));
-
-  let coords = $derived(calculateRoundedCorners(verticies, fillet));
+  import { calculateRoundedCorners, regularPolygonVertices, rotate, translate } from '../lib/trig';
+  let { radius = 100, fillet = 0, sides = 3, rotation = 0, cx = 0, cy = 0, id = null } = $props();
+  let coords = $derived(
+    calculateRoundedCorners(regularPolygonVertices(sides, radius), fillet).map(coords => {
+      return {
+        ...coords,
+        arcStart: translate(rotate(coords.arcStart, rotation), { x: cx, y: cy }),
+        arcEnd: translate(rotate(coords.arcEnd, rotation), { x: cx, y: cy }),
+        center: translate(rotate(coords.center, rotation), { x: cx, y: cy })
+      };
+    })
+  );
 </script>
 
-<g transform={`translate(${cx} ${cy}) rotate(${rotation})`} transform-origin="{cx},{cy}">
-  <path
-    d="M{coords
-      .map(
-        ({ arcStart, arcEnd }) => `${arcStart.x} ${arcStart.y}A${fillet} ${fillet} 0 0 1 ${arcEnd.x}
+<path
+  {id}
+  d="M{coords
+    .map(
+      ({ arcStart, arcEnd }) => `${arcStart.x} ${arcStart.y}A${fillet} ${fillet} 0 0 1 ${arcEnd.x}
   ${arcEnd.y}`
-      )
-      .join('L')}Z"
-    stroke="black"
-    fill="none"
-  />
-</g>
+    )
+    .join('L')}Z"
+  stroke="black"
+  fill="none"
+/>
