@@ -1,19 +1,8 @@
 import { array, number, object, parse, string, type InferOutput } from 'valibot';
 import results from '../data/electorates.csv';
+import { ResultSchema } from './schemas';
 
-// validate the data
-const ResultSchema = object({
-  DivisionNm: string(),
-  OTH: number(),
-  ALP: number(),
-  LNP: number(),
-  PartyAb: string(),
-  Year: number()
-});
-
-export type ResultType = InferOutput<typeof ResultSchema>;
-
-export const data = parse(array(ResultSchema), results);
+export const data = parse(array(ResultSchema), results).map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
 
 export const electorates = data.map(d => d.DivisionNm).filter((d, i, arr) => arr.indexOf(d) === i);
 

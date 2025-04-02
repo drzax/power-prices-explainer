@@ -11,22 +11,29 @@
     ToolbarSearch,
     ToolbarMenu,
     ToolbarMenuItem,
-    Button
+    Button,
+    Toggle,
+    Dropdown,
+    TextInputSkeleton
   } from 'carbon-components-svelte';
   import { visualisationConfiguration } from '../../lib/state.svelte';
-  import { electorates, heldBy, years } from '../../lib/data';
+  import { data, electorates, heldBy, years } from '../../lib/data';
 
   const addElectorateLabel = () => {
     visualisationConfiguration.labels.push({
-      id: 'custom',
-      template: '{electorate}',
-      orientation: 'middle',
+      id: visualisationConfiguration.labels.length,
       type: 'custom',
+      text: 'New Custom Label',
+      orientation: 'middle',
       markLocation: [33, 33, 33]
     });
+    labelIndex = visualisationConfiguration.labels.length - 1;
+    labelModal.showModal();
   };
 
-  // let labelModal: HTMLDialogElement;
+  let labelIndex = $state(-1);
+
+  let labelModal: HTMLDialogElement;
 </script>
 
 <div>
@@ -61,7 +68,11 @@
         size="short"
         title="Electorate labels"
         rows={visualisationConfiguration.labels}
-        headers={[{ key: 'id', value: 'ID' }]}
+        headers={[
+          { key: 'text', value: 'Text' },
+          { key: 'type', value: 'Type' }
+        ]}
+        expandable
       >
         <Toolbar size="sm">
           <ToolbarContent>
@@ -72,10 +83,50 @@
             <Button onclick={addElectorateLabel}>Add</Button>
           </ToolbarContent>
         </Toolbar>
+        <svelte:fragment slot="expanded-row" let:row>
+          <Dropdown
+            size="sm"
+            titleText="Type"
+            selectedId={row.type}
+            on:select={({ detail }) => (row.type = detail.selectedId)}
+            items={[
+              { id: 'custom', text: 'custom' },
+              { id: 'result', text: 'result' }
+            ]}
+          />
+          {#if row.type === 'custom'}
+            <p>Position</p>
+          {/if}
+          {#if row.type === 'result'}
+            <Dropdown
+              size="sm"
+              titleText="Result"
+              selectedId={row.result}
+              on:select={({ detail }) => (row.result = detail.selectedId)}
+              items={data.map(d => ({ id: d.id, text: d.id }))}
+            />
+          {/if}
+          <TextInput size="sm" labelText="Label text" bind:value={row.text} />
+          <Dropdown
+            size="sm"
+            titleText="Orientation"
+            selectedId={row.orientation}
+            on:select={({ detail }) => (row.orientation = detail.selectedId)}
+            items={[
+              { id: 'left', text: 'left' },
+              { id: 'right', text: 'right' },
+              { id: 'middle', text: 'middle' }
+            ]}
+          />
+        </svelte:fragment>
       </DataTable>
     </AccordionItem>
   </Accordion>
 </div>
+<dialog bind:this={labelModal}>
+  <h1>Edit label</h1>
+  <Toggle labelText="Link to result?" labelA="Custom position" labelB="Linked to result" />
+</dialog>
 
 <style>
   :global(.bx--accordion__title) {
@@ -109,5 +160,16 @@
 
   :global(.bx--number) {
     margin-bottom: 1rem;
+  }
+
+  dialog {
+    width: 80vw;
+    height: 80vh;
+    border: none;
+    border-radius: 5px;
+  }
+  ::backdrop {
+    background-color: black;
+    opacity: 0.75;
   }
 </style>

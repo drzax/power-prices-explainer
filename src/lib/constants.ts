@@ -1,3 +1,5 @@
+import type { VisConfigType } from './types';
+
 export const parties = [
   {
     id: 'lab',
@@ -27,3 +29,16 @@ export const parties = [
     ]
   }
 ];
+
+export const defaultVisConfig: VisConfigType = {
+  title: '',
+  axisLabels: [],
+  displayTernaryOutline: true,
+  displayCentralZone: false,
+  deemphasiseSectors: [false, false, false],
+  arrows: [],
+  electorateFilters: [],
+  yearFilters: [],
+  partyFilters: [],
+  labels: []
+};

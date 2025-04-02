@@ -1,18 +1,20 @@
 <script lang="ts">
   import { Tabs, Tab, TabContent } from 'carbon-components-svelte';
+  import { encode } from '@abcnews/base-36-props';
 
   import MarkersTab from './Builder/MarkersTab.svelte';
   import PropertiesTab from './Builder/PropertiesTab.svelte';
   import Visualisation from './Visualisation.svelte';
   import 'carbon-components-svelte/css/white.css';
+  import { visualisationConfiguration } from '../lib/state.svelte';
 
   // import { graphToUrlQuery, urlQueryToPartialGraph } from '../../lib/encode';
 
-  // $: history.replaceState(
-  //   { graph: $graph },
-  //   document.title,
-  //   graphToUrlQuery($graph) || String(document.location.href).split('?')[0]
-  // );
+  $effect(() => {
+    const url = new URL(document.location.href);
+    url.searchParams.set('config', encode(visualisationConfiguration));
+    history.replaceState(undefined, document.title, url.toString());
+  });
 </script>
 
 <main>
