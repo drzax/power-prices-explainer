@@ -1,37 +1,103 @@
 <script lang="ts">
-  import Plot from './Plot.svelte';
+  import { Tabs, Tab, TabContent } from 'carbon-components-svelte';
 
-  import { barycentric } from 'd3-ternary';
-  import Svg from './Svg.svelte';
-  import Mark from './Mark.svg.svelte';
+  import MarkersTab from './Builder/MarkersTab.svelte';
+  import PropertiesTab from './Builder/PropertiesTab.svelte';
+  import Visualisation from './Visualisation.svelte';
+  import 'carbon-components-svelte/css/white.css';
 
-  import { translate } from '../lib/trig';
-  import { plot, scale } from '../lib/state.svelte';
-  import Result from './Result.svg.svelte';
-  const middle = $derived({ x: plot.width / 2, y: plot.height / 2 });
-  const markerPosition = $derived.by(
-    () => (point: [number, number]) => translate({ x: point[0], y: point[1] }, middle)
-  );
+  // import { graphToUrlQuery, urlQueryToPartialGraph } from '../../lib/encode';
 
-  // TODO: filter data appropriately here based on selections
-
-  // TODO: setup plot configuration here
+  // $: history.replaceState(
+  //   { graph: $graph },
+  //   document.title,
+  //   graphToUrlQuery($graph) || String(document.location.href).split('?')[0]
+  // );
 </script>
 
-<div>
-  <Plot>
-    <Svg>
-      <Result data={{ ALP: 0, LNP: 0, OTH: 100, DivisionNm: '', PartyAb: 'OTH', Year: 0 }} />
-      <Result data={{ ALP: 100, LNP: 0, OTH: 0, DivisionNm: '', PartyAb: 'ALP', Year: 0 }} />
-      <Result data={{ ALP: 0, LNP: 100, OTH: 0, DivisionNm: '', PartyAb: 'LNP', Year: 0 }} />
-    </Svg>
-  </Plot>
-</div>
+<main>
+  <article>
+    <figure>
+      <Visualisation />
+    </figure>
+  </article>
+  <aside>
+    <Tabs autoWidth>
+      <Tab label="Properties" />
+      <Tab label="Markers" />
+      <svelte:fragment slot="content">
+        <TabContent><PropertiesTab /></TabContent>
+        <TabContent><MarkersTab /></TabContent>
+      </svelte:fragment>
+    </Tabs>
+  </aside>
+</main>
 
-<style lang="scss">
-  div {
-    --pty-color-alp: #e11f30;
-    --pty-color-lnp: #0a52bf;
-    --pty-color-oth: #757575;
+<style>
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    min-height: 100vh;
+  }
+
+  article {
+    flex: 0 0 auto;
+    margin: auto;
+    width: 100%;
+    max-width: 52rem;
+    padding: 3rem;
+  }
+
+  figure {
+    margin: auto;
+  }
+
+  aside {
+    flex: 1 1 100%;
+    border-top: 2px solid #e0e0e0;
+    width: 100%;
+  }
+
+  @media (min-width: 72rem) {
+    aside {
+      align-self: stretch;
+      margin: 0;
+      border-top: 0;
+      border-left: 2px solid #e0e0e0;
+      max-width: 32rem;
+      max-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+  }
+
+  aside :global(.bx--tabs) {
+    position: relative;
+  }
+
+  aside :global(.bx--tabs)::before {
+    content: '';
+    z-index: 0;
+    position: absolute;
+    top: calc(2.5rem - 2px);
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #e0e0e0;
+  }
+
+  aside :global(.bx--accordion) {
+    margin: -1rem;
+    width: calc(100% + 2rem);
+  }
+
+  aside :global(.bx--accordion__item):first-child {
+    border-top: 0;
+  }
+
+  aside :global(.bx--accordion__content) {
+    padding-right: 1rem !important;
   }
 </style>

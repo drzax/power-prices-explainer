@@ -1,4 +1,10 @@
 // @ts-check
+
+/**
+ * Calculate a collection of arcs that round the corners of a polygon
+ * @param {{x: number; y:number}[]} vertices
+ * @param {number} radius
+ */
 export function calculateRoundedCorners(vertices, radius) {
   const arcs = [];
   const numVertices = vertices.length;
@@ -45,6 +51,10 @@ export function calculateRoundedCorners(vertices, radius) {
   return arcs;
 }
 
+/**
+ * Get polygons for each of the segments of a regular polygon divided midway between each vertex
+ * @param {{x:number; y:number}[]} vertices
+ */
 export function getSegmentPolygons(vertices) {
   const numVertices = vertices.length;
   const center = vertices.reduce((acc, v) => ({ x: acc.x + v.x, y: acc.y + v.y }), { x: 0, y: 0 });
@@ -72,6 +82,11 @@ export function getSegmentPolygons(vertices) {
   return segments;
 }
 
+/**
+ * Calculate a set of vertices that describe a regular polygon with a given number of sides and radius
+ * @param {number} sides
+ * @param {number} radius
+ */
 export function regularPolygonVertices(sides, radius) {
   return Array.from({ length: sides }, (_, i) => {
     return {
@@ -81,8 +96,22 @@ export function regularPolygonVertices(sides, radius) {
   });
 }
 
+/**
+ * Convert an angle in degrees to radians
+ * @param {number} deg an angle in degrees
+ */
 const deg2rad = deg => (deg * Math.PI) / 180;
 
+/**
+ * Return a path string to draw an arrow described by the parameters passed.
+ * @param {number} length
+ * @param {number} lineWidth The width of the arrow's lines
+ * @param {number} headAngle An angle (in degress)  that determines the width of the arrow's head
+ * @param {number} headLength The length of each stroke of the arrow's head
+ * @param {number} rounding The amount of rounding to apply to the ends of the lines of the arrow [0-1]
+ * @param {number} px The x-coordinate of the arrow's point
+ * @param {number} py  The y-coordinate of the arrow's point
+ */
 export function generateArrowPath(length, lineWidth, headAngle, headLength, rounding = 0, px = 0, py = 0) {
   console.log('length, lineWidth, headAngle, headLength :>> ', length, lineWidth, headAngle, headLength);
 
@@ -160,7 +189,12 @@ export function generateArrowPath(length, lineWidth, headAngle, headLength, roun
   return `${vertices.map(({ prefix, x, y }) => `${prefix} ${x + px} ${y + py}`).join('')} Z`;
 }
 
-const distance = (a, b) => Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+/**
+ * The cartesian distance between two points
+ * @param {{x:number; y:number}} a Point a
+ * @param {{x:number; y:number}} b Point b
+ */
+export const distance = (a, b) => Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 
 /**
  *

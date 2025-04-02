@@ -36,5 +36,7 @@
   .mark circle,
   .mark rect {
     fill: var(--marker-color, currentColor);
+    stroke: var(--marker-outline-color, transparent);
+    stroke-width: 1;
   }
 </style>

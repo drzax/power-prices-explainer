@@ -1,6 +1,7 @@
 <svelte:options namespace="svg" />
 
 <script>
+  import { fade } from 'svelte/transition';
   import { calculateRoundedCorners, regularPolygonVertices, rotate, translate } from '../lib/trig';
   let { radius = 100, fillet = 0, sides = 3, rotation = 0, cx = 0, cy = 0, id = null } = $props();
   let coords = $derived(
@@ -16,6 +17,7 @@
 </script>
 
 <path
+  transition:fade
   {id}
   d="M{coords
     .map(
@@ -23,6 +25,12 @@
   ${arcEnd.y}`
     )
     .join('L')}Z"
-  stroke="black"
-  fill="none"
 />
+
+<style>
+  path {
+    fill: var(--polygon-color, transparent);
+    stroke: var(--polygon-outline-color, transparent);
+    stroke-width: 1;
+  }
+</style>

@@ -7,20 +7,6 @@
   "contributors": [
     "Simon Elvery <simon@elvery.net>"
   ],
-  "aunty": {
-    "type": "svelte",
-    "webpack": {
-      "devtool": "source-map"
-    },
-    "build": {
-      "includedDependencies": [
-        "layercake"
-      ],
-      "entry": [
-        "index"
-      ]
-    }
-  },
   "scripts": {
     "start": "aunty serve",
     "dev": "aunty serve",
@@ -38,8 +24,9 @@
     "@abcnews/alternating-case-to-object": "^3.1.1",
     "@abcnews/env-utils": "^4.0.0",
     "@abcnews/mount-utils": "^3.0.0",
+    "@abcnews/svelte-scrollyteller": "github:abcnews/svelte-scrollyteller#feature/future-news",
+    "carbon-components-svelte": "^0.88.4",
     "d3-ternary": "^3.0.7",
-    "layercake": "^8.4.3",
     "svelte": "^5.20.2",
     "valibot": "^1.0.0"
   }
