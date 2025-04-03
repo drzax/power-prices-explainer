@@ -1,14 +1,10 @@
 <script lang="ts">
   import Polygon from './Polygon.svg.svelte';
   import { distance, getSegmentPolygons, regularPolygonVertices, rotate, translate } from '../lib/trig';
-
-  import { plot } from '../lib/state.svelte';
-  import Arrow from './Arrow.svg.svelte';
-  import Mark from './Mark.svg.svelte';
+  import { visState } from '../lib/state.svelte';
   import Svg from './Svg.svelte';
-  import Html from './Html.svelte';
-  import Label from './Label.svelte';
-  import LabelConnector from './LabelConnector.svelte';
+
+  const plot = visState.dimensions;
 
   interface Props {
     displayCentralZone?: boolean;

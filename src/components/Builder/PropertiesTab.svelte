@@ -5,127 +5,259 @@
     MultiSelect,
     Checkbox,
     TextInput,
-    DataTable,
-    Toolbar,
-    ToolbarContent,
-    ToolbarSearch,
-    ToolbarMenu,
-    ToolbarMenuItem,
     Button,
-    Toggle,
     Dropdown,
-    TextInputSkeleton
+    NumberInput
   } from 'carbon-components-svelte';
-  import { visualisationConfiguration } from '../../lib/state.svelte';
+  import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
+  import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
+  import { visState } from '../../lib/state.svelte';
   import { data, electorates, heldBy, years } from '../../lib/data';
+  import type { AnnotationType, CustomMarkType, HighlightType } from '../../lib/types';
+  import { orientations, parties } from '../../lib/schemas';
+  import Position from '../Position.svelte';
 
-  const addElectorateLabel = () => {
-    visualisationConfiguration.labels.push({
-      id: visualisationConfiguration.labels.length,
-      type: 'custom',
-      text: 'New Custom Label',
+  let currentAnnotation: AnnotationType | null = $state(null);
+  let currentCustomMark: CustomMarkType | null = $state(null);
+  let currentHighlight: HighlightType | null = $state(null);
+
+  const addAnnotation = () => {
+    currentAnnotation = {
+      text: 'New Annotation',
       orientation: 'middle',
-      markLocation: [33, 33, 33]
-    });
-    labelIndex = visualisationConfiguration.labels.length - 1;
-    labelModal.showModal();
+      markLocation: [33, 33, 33],
+      textLocation: [33, 33, 33],
+      radius: 10
+    };
+    visState.config.annotations.push(currentAnnotation);
+  };
+  const addCustomMark = () => {
+    currentCustomMark = {
+      location: [33, 33, 33],
+      party: 'OTH',
+      orientation: 'middle'
+    };
+    visState.config.marks.push(currentCustomMark);
+  };
+  const addHighlight = () => {
+    currentHighlight = {
+      year: years[0],
+      electorate: electorates[0],
+      label: {
+        orientation: 'middle',
+        name: true,
+        year: true
+      }
+    };
+    visState.config.highlights.push(currentHighlight);
   };
 
-  let labelIndex = $state(-1);
+  $effect(() => {
+    if (currentAnnotation || currentCustomMark || currentHighlight) {
+      formModal.showModal();
+    } else {
+      formModal.close();
+    }
+  });
 
-  let labelModal: HTMLDialogElement;
+  let formModal: HTMLDialogElement;
+  const closeFormModal = () => {
+    currentAnnotation = null;
+    currentCustomMark = null;
+    currentHighlight = null;
+  };
 </script>
 
 <div>
   <Accordion>
     <AccordionItem title="General" open>
-      <TextInput bind:value={visualisationConfiguration.title} labelText="Chart Title" />
-      <Checkbox bind:checked={visualisationConfiguration.displayCentralZone} labelText="Display central zone" />
+      <TextInput bind:value={visState.config.title} labelText="Chart Title" />
+      <Checkbox bind:checked={visState.config.displayCentralZone} labelText="Display central zone" />
     </AccordionItem>
 
     <AccordionItem title="Filters">
       <MultiSelect
         titleText="Election year"
-        bind:selectedIds={visualisationConfiguration.yearFilters}
+        bind:selectedIds={visState.config.filters.year}
         items={years.map(d => ({ id: d, text: d.toString() }))}
         sortItem={() => {}}
       />
       <MultiSelect
         titleText="Party"
-        bind:selectedIds={visualisationConfiguration.partyFilters}
+        bind:selectedIds={visState.config.filters.party}
         items={heldBy.map(d => ({ id: d, text: d }))}
         sortItem={() => {}}
       />
       <MultiSelect
         titleText="Electorate"
-        bind:selectedIds={visualisationConfiguration.electorateFilters}
+        bind:selectedIds={visState.config.filters.electorate}
         items={electorates.map(d => ({ id: d, text: d }))}
         sortItem={() => {}}
       />
     </AccordionItem>
-    <AccordionItem title="Labels">
-      <DataTable
-        size="short"
-        title="Electorate labels"
-        rows={visualisationConfiguration.labels}
-        headers={[
-          { key: 'text', value: 'Text' },
-          { key: 'type', value: 'Type' }
-        ]}
-        expandable
-      >
-        <Toolbar size="sm">
-          <ToolbarContent>
-            <ToolbarSearch />
-            <ToolbarMenu>
-              <ToolbarMenuItem hasDivider danger>Stop all</ToolbarMenuItem>
-            </ToolbarMenu>
-            <Button onclick={addElectorateLabel}>Add</Button>
-          </ToolbarContent>
-        </Toolbar>
-        <svelte:fragment slot="expanded-row" let:row>
-          <Dropdown
-            size="sm"
-            titleText="Type"
-            selectedId={row.type}
-            on:select={({ detail }) => (row.type = detail.selectedId)}
-            items={[
-              { id: 'custom', text: 'custom' },
-              { id: 'result', text: 'result' }
-            ]}
-          />
-          {#if row.type === 'custom'}
-            <p>Position</p>
-          {/if}
-          {#if row.type === 'result'}
-            <Dropdown
-              size="sm"
-              titleText="Result"
-              selectedId={row.result}
-              on:select={({ detail }) => (row.result = detail.selectedId)}
-              items={data.map(d => ({ id: d.id, text: d.id }))}
-            />
-          {/if}
-          <TextInput size="sm" labelText="Label text" bind:value={row.text} />
-          <Dropdown
-            size="sm"
-            titleText="Orientation"
-            selectedId={row.orientation}
-            on:select={({ detail }) => (row.orientation = detail.selectedId)}
-            items={[
-              { id: 'left', text: 'left' },
-              { id: 'right', text: 'right' },
-              { id: 'middle', text: 'middle' }
-            ]}
-          />
-        </svelte:fragment>
-      </DataTable>
+    <AccordionItem title="Highlights" open>
+      {#each visState.config.highlights as highlight, i (highlight)}
+        <div class="row">
+          <span>{highlight.electorate} {highlight.year}</span><span>
+            <Button
+              kind="danger-ghost"
+              size="small"
+              iconDescription="Delete"
+              icon={TrashCan}
+              onclick={() => visState.config.highlights.splice(i, 1)}
+            ></Button>
+            <Button
+              kind="ghost"
+              size="small"
+              iconDescription="Edit"
+              icon={Settings}
+              onclick={() => {
+                currentHighlight = highlight;
+              }}
+            ></Button>
+          </span>
+        </div>
+      {/each}
+      <Button size="small" onclick={addHighlight}>Add highlight</Button>
+    </AccordionItem>
+    <AccordionItem title="Annotations" open>
+      {#each visState.config.annotations as annotation, i (annotation)}
+        <div class="row">
+          <span>{annotation.text}</span><span>
+            <Button
+              kind="danger-ghost"
+              size="small"
+              iconDescription="Delete"
+              icon={TrashCan}
+              onclick={() => visState.config.annotations.splice(i, 1)}
+            ></Button>
+            <Button
+              kind="ghost"
+              size="small"
+              iconDescription="Edit"
+              icon={Settings}
+              onclick={() => {
+                currentAnnotation = annotation;
+              }}
+            ></Button>
+          </span>
+        </div>
+      {/each}
+      <Button size="small" onclick={addAnnotation}>Add annotation</Button>
+    </AccordionItem>
+    <AccordionItem title="Custom marks" open>
+      {#each visState.config.marks as mark, i (mark)}
+        <div class="row">
+          <span>{mark.label} ({mark.location.join(', ')})</span><span>
+            <Button
+              kind="danger-ghost"
+              size="small"
+              iconDescription="Delete"
+              icon={TrashCan}
+              onclick={() => visState.config.marks.splice(i, 1)}
+            ></Button>
+            <Button
+              kind="ghost"
+              size="small"
+              iconDescription="Edit"
+              icon={Settings}
+              onclick={() => {
+                currentCustomMark = mark;
+              }}
+            ></Button>
+          </span>
+        </div>
+      {/each}
+      <Button size="small" onclick={addCustomMark}>Add mark</Button>
     </AccordionItem>
   </Accordion>
 </div>
-<dialog bind:this={labelModal}>
-  <h1>Edit label</h1>
-  <Toggle labelText="Link to result?" labelA="Custom position" labelB="Linked to result" />
+
+<dialog bind:this={formModal} onclose={closeFormModal}>
+  {#if currentHighlight}
+    <h2>Edit Highlight</h2>
+    <Dropdown
+      titleText="Electorate"
+      selectedId={currentHighlight.electorate}
+      on:select={({ detail }) => {
+        if (currentHighlight) currentHighlight.electorate = detail.selectedId;
+      }}
+      items={electorates.map(d => ({ id: d, text: d }))}
+    />
+    <Dropdown
+      titleText="Year"
+      selectedId={currentHighlight.year}
+      on:select={({ detail }) => {
+        if (currentHighlight) currentHighlight.year = detail.selectedId;
+      }}
+      items={years.map(d => ({ id: d, text: d.toString() }))}
+    />
+    <Dropdown
+      size="sm"
+      titleText="Label orientation"
+      selectedId={currentHighlight.label.orientation}
+      on:select={({ detail }) => {
+        if (currentHighlight) {
+          currentHighlight.label.orientation = detail.selectedId;
+        }
+      }}
+      items={orientations.map(d => ({ id: d, text: d }))}
+    />
+    <Checkbox bind:checked={currentHighlight.label.name} labelText="Show electorate name" />
+    <Checkbox bind:checked={currentHighlight.label.year} labelText="Show year" />
+  {/if}
+  {#if currentCustomMark}
+    <h2>Edit custom mark</h2>
+    <Position bind:position={currentCustomMark.location} />
+    <Dropdown
+      titleText="Party"
+      selectedId={currentCustomMark.party}
+      on:select={({ detail }) => {
+        if (currentCustomMark) currentCustomMark.party = detail.selectedId;
+      }}
+      items={parties.map(d => ({ id: d, text: d }))}
+    />
+    <Dropdown
+      size="sm"
+      titleText="Label orientation"
+      selectedId={currentCustomMark.orientation}
+      on:select={({ detail }) => {
+        if (currentCustomMark) {
+          currentCustomMark.orientation = detail.selectedId;
+        }
+      }}
+      items={orientations.map(d => ({ id: d, text: d }))}
+    />
+    <TextInput labelText="Label" bind:value={currentCustomMark.label} />
+  {/if}
+
+  {#if currentAnnotation}
+    <h2>Edit Annotation</h2>
+    <h3>Mark</h3>
+    <NumberInput min={1} bind:value={currentAnnotation.radius} label="Radius" />
+    <Position bind:position={currentAnnotation.markLocation} />
+
+    <h3>Label</h3>
+    <TextInput size="sm" labelText="Label text" bind:value={currentAnnotation.text} />
+    <Position bind:position={currentAnnotation.textLocation} />
+
+    <Dropdown
+      size="sm"
+      titleText="Orientation"
+      selectedId={currentAnnotation.orientation}
+      on:select={({ detail }) => {
+        if (currentAnnotation) {
+          currentAnnotation.orientation = detail.selectedId;
+        }
+      }}
+      items={[
+        { id: 'left', text: 'left' },
+        { id: 'right', text: 'right' },
+        { id: 'middle', text: 'middle' }
+      ]}
+    />
+  {/if}
+  <Button onclick={closeFormModal}>Close</Button>
 </dialog>
 
 <style>
@@ -171,5 +303,16 @@
   ::backdrop {
     background-color: black;
     opacity: 0.75;
+  }
+
+  :global(tr.bx--parent-row.bx--expandable-row + tr[data-child-row] td) {
+    padding-left: 1em;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 </style>

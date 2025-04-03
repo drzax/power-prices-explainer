@@ -1,18 +1,32 @@
 <script lang="ts">
   import { Tabs, Tab, TabContent } from 'carbon-components-svelte';
-  import { encode } from '@abcnews/base-36-props';
+  import { decode, encode } from '@abcnews/base-36-props';
 
   import MarkersTab from './Builder/MarkersTab.svelte';
   import PropertiesTab from './Builder/PropertiesTab.svelte';
   import Visualisation from './Visualisation.svelte';
   import 'carbon-components-svelte/css/white.css';
-  import { visualisationConfiguration } from '../lib/state.svelte';
+  import { visState } from '../lib/state.svelte';
+  import { onMount } from 'svelte';
+  import { parse } from 'valibot';
+  import { VisConfigSchema } from '../lib/schemas';
+
+  onMount(() => {
+    try {
+      visState.config = parse(
+        VisConfigSchema,
+        decode(new URL(document.location.href).searchParams.get('config') || '')
+      );
+    } catch (e) {
+      console.error(e, decode(new URL(document.location.href).searchParams.get('config') || ''));
+    }
+  });
 
   // import { graphToUrlQuery, urlQueryToPartialGraph } from '../../lib/encode';
 
   $effect(() => {
     const url = new URL(document.location.href);
-    url.searchParams.set('config', encode(visualisationConfiguration));
+    url.searchParams.set('config', encode(visState.config));
     history.replaceState(undefined, document.title, url.toString());
   });
 </script>
@@ -101,5 +115,12 @@
 
   aside :global(.bx--accordion__content) {
     padding-right: 1rem !important;
+  }
+
+  :global(h1:not(:first-child), h2, h3:not(:first-child), h4:not(:first-child), p:not(:first-child)) {
+    margin-top: 0.5em;
+  }
+  :global(h1:not(:last-child), h2, h3:not(:last-child), h4:not(:last-child), p:not(:last-child)) {
+    margin-bottom: 0.5em;
   }
 </style>

@@ -2,33 +2,81 @@
   import Plot from './Plot.svelte';
   import Svg from './Svg.svelte';
   import Result from './Result.svg.svelte';
-  import { visualisationConfiguration } from '../lib/state.svelte';
+  import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
   import { data } from '../lib/data';
+  import Mark from './Mark.svg.svelte';
+  import Html from './Html.svelte';
+  import Label from './Label.svelte';
+  import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
 
   // Filter data based on vis configuration
   let filteredData = $derived.by(() => {
     return data.filter(d => {
-      const { yearFilters, electorateFilters, partyFilters } = visualisationConfiguration;
+      const {
+        filters: { year, electorate, party }
+      } = visState.config;
       return (
-        (yearFilters.length === 0 || yearFilters.includes(d.Year)) &&
-        (electorateFilters.length === 0 || electorateFilters.includes(d.DivisionNm)) &&
-        (partyFilters.length === 0 || partyFilters.includes(d.PartyAb))
+        (year.length === 0 || year.includes(d.Year)) &&
+        (electorate.length === 0 || electorate.includes(d.DivisionNm)) &&
+        (party.length === 0 || party.includes(d.PartyAb))
       );
     });
   });
 </script>
 
 <div>
-  <Plot displayCentralZone={visualisationConfiguration.displayCentralZone} segments={parties}>
+  <Plot displayCentralZone={visState.config.displayCentralZone} segments={getSegmentsFromParties()}>
     <Svg>
-      {#each filteredData as data}<Result {data} />{/each}
+      {#each filteredData as data}<Result size={'sm'} {data} />{/each}
     </Svg>
+
     <Svg --marker-outline-color="white">
-      <Result data={{ ALP: 0, LNP: 0, OTH: 100, DivisionNm: '', PartyAb: 'OTH', Year: 0 }} />
-      <Result data={{ ALP: 100, LNP: 0, OTH: 0, DivisionNm: '', PartyAb: 'ALP', Year: 0 }} />
-      <Result data={{ ALP: 0, LNP: 100, OTH: 0, DivisionNm: '', PartyAb: 'LNP', Year: 0 }} />
+      {#each visState.config.marks as mark}
+        <Mark
+          size="md"
+          --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
+          {...ternaryToCartesian(mark.location)}
+          variant={parties.get(mark.party.toUpperCase())?.shape}
+        />
+      {/each}
+      {#each visState.config.highlights as highlight}
+        {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
+        {#if result}
+          <Mark
+            size="md"
+            --marker-color="var(--pty-color-{result.PartyAb.toLowerCase()})"
+            --marker-outline-color="#fff"
+            {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
+            variant={parties.get(result.PartyAb.toUpperCase())?.shape}
+          />
+        {/if}
+      {/each}
     </Svg>
+    <Html>
+      {#each visState.config.highlights as highlight}
+        {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
+        {@debug result}
+        {#if result && (highlight.label.name || highlight.label.year)}
+          <Label
+            --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
+            {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
+            text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
+            orientation={highlight.label.orientation}
+          />
+        {/if}
+      {/each}
+      {#each visState.config.marks as mark}
+        {#if mark.label && mark.label.length}
+          <Label
+            --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
+            {...ternaryToCartesian(mark.location)}
+            text={mark.label}
+            orientation={mark.orientation}
+          />
+        {/if}
+      {/each}
+    </Html>
   </Plot>
 </div>
 

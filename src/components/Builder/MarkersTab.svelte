@@ -6,50 +6,52 @@
   };
 
   const MARKERS: Marker[] = [
-    { label: 'Standalone graphic marker', note: '', prefix: 'scatter' },
+    // { label: 'Standalone graphic marker', note: '', prefix: 'ternary' },
     {
       label: 'Scrollyteller opener',
       note: `If you're placing multiple scrollytellers in a single story, each must have a unique NAME.`,
-      prefix: 'scrollytellerNAMEscrollyscatter'
+      prefix: 'scrollytellerNAMEscrollyternary'
     },
     { label: 'Scrollyteller mark', prefix: 'mark', note: '' }
   ];
 </script>
 
 <script lang="ts">
+  import { decode, encode } from '@abcnews/base-36-props';
+
   import { Button, CodeSnippet, InlineNotification } from 'carbon-components-svelte';
+  import { visState } from '../../lib/state.svelte';
 
   // import { alternatingCaseToPartialGraph, graphToAlternatingCase } from '../../lib/encode';
   // import { generateFallback } from '../../lib/fallbacks';
 
-  const importMarker = (marker: string) => {
-    // graph.updateMany(alternatingCaseToPartialGraph(marker));
+  const importMarker = () => {
+    const input = prompt('Paste a marker here to import its configuration');
+
+    if (!input || !input.length) {
+      return alert('No marker was provided');
+    }
+
+    const marker = input.slice(input.indexOf('CONFIG') + 6);
+
+    try {
+      visState.config = decode(marker);
+    } catch (e) {
+      alert('Could not decode input');
+      console.error(e, input);
+    }
   };
 
   // $: alternatingCase = graphToAlternatingCase($graph);
   $: markersData = MARKERS.map(({ label, note, prefix }) => ({
     label,
     note,
-    text: `#${prefix}`
+    text: `#${prefix}CONFIG${encode(visState.config)}`
   }));
 </script>
 
 <div>
-  <Button
-    size="field"
-    tooltipAlignment="end"
-    on:click={() => {
-      const marker = prompt('Paste a marker here to import its configuration');
-
-      if (!marker || !marker.length) {
-        return alert('No marker was provided');
-      }
-
-      importMarker(marker);
-    }}
-  >
-    Import marker
-  </Button>
+  <Button size="field" tooltipAlignment="end" on:click={importMarker}>Import marker</Button>
 
   <Button
     size="field"

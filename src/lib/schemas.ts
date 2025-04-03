@@ -1,18 +1,10 @@
-import {
-  array,
-  boolean,
-  intersect,
-  literal,
-  number,
-  object,
-  optional,
-  parse,
-  picklist,
-  string,
-  tuple,
-  variant,
-  type InferOutput
-} from 'valibot';
+import { array, boolean, number, object, optional, picklist, string, tuple } from 'valibot';
+
+export const orientations = ['left', 'right', 'middle'] as const;
+export const parties = ['OTH', 'LNP', 'ALP'] as const;
+export const shapes = ['circle', 'diamond', 'square'] as const;
+
+export const ShapesSchema = picklist(shapes);
 
 // validate the data
 export const ResultSchema = object({
@@ -20,31 +12,34 @@ export const ResultSchema = object({
   OTH: number(),
   ALP: number(),
   LNP: number(),
-  PartyAb: string(),
+  PartyAb: picklist(parties),
   Year: number()
 });
 
-const orientations = ['left', 'right', 'middle'] as const;
-
-const CustomLabelSchema = object({
-  id: number(),
-  type: literal('custom'),
+export const AnnotationSchema = object({
   text: string(),
   orientation: picklist(orientations),
   markLocation: tuple([number(), number(), number()]),
-  textLocation: optional(tuple([number(), number(), number()]))
+  textLocation: tuple([number(), number(), number()]),
+  radius: number()
 });
 
-const ResultLabelSchema = object({
-  id: number(),
-  type: literal('result'),
-  text: string(),
-  orientation: picklist(orientations),
-  result: ResultSchema,
-  textLocation: optional(tuple([number(), number(), number()]))
+export const CustomMarkSchema = object({
+  location: tuple([number(), number(), number()]),
+  party: picklist(parties),
+  label: optional(string()),
+  orientation: picklist(orientations)
 });
 
-const LabelSchema = variant('type', [CustomLabelSchema, ResultLabelSchema]);
+export const HighlightSchema = object({
+  year: number(),
+  electorate: string(),
+  label: object({
+    name: boolean(),
+    year: boolean(),
+    orientation: picklist(orientations)
+  })
+});
 
 export const VisConfigSchema = object({
   title: string(),
@@ -53,8 +48,12 @@ export const VisConfigSchema = object({
   displayCentralZone: boolean(),
   deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
   arrows: array(object({})),
-  yearFilters: array(number()),
-  electorateFilters: array(string()),
-  partyFilters: array(string()),
-  labels: array(LabelSchema)
+  filters: object({
+    year: array(number()),
+    electorate: array(string()),
+    party: array(string())
+  }),
+  highlights: array(HighlightSchema),
+  marks: array(CustomMarkSchema),
+  annotations: array(AnnotationSchema)
 });

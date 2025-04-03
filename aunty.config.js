@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const includedDependencies = ['carbon-components-svelte', /@abcnews\/svelte-scrollyteller/];
+const includedDependencies = ['carbon-components-svelte', 'carbon-icons-svelte', /@abcnews\/svelte-scrollyteller/];
 const getLoaderDefinition = (config, testSourceMatch, loaderMatch) =>
   config.module.rules
     .find(({ test }) => test?.source.indexOf(testSourceMatch) > -1)

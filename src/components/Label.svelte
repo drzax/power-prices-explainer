@@ -42,6 +42,16 @@
     display: block;
     transform: translate(-50%, -50%);
     white-space: nowrap;
+    font-family: 'ABC Sans Nova';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 14px */
+    text-shadow:
+      -1px -1px 0 white,
+      1px -1px 0 white,
+      -1px 1px 0 white,
+      1px 1px 0 white;
   }
 
   .left {
