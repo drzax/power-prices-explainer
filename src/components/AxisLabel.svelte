@@ -1,4 +1,6 @@
 <script>
+  import { fade } from 'svelte/transition';
+
   let { text, x, y, vector } = $props();
 
   let width = $state(0);
@@ -12,7 +14,7 @@
   let offsetY = $derived((vector.y * (height + 12)) / 2);
 </script>
 
-<div style:top="{y}px" style:left="{x}px" class="label-segment">
+<div style:top="{y}px" style:left="{x}px" class="label-segment" transition:fade>
   <div bind:clientWidth={width} bind:clientHeight={height} style:transform="translate({-offsetX}px, {-offsetY}px)">
     {text}
   </div>

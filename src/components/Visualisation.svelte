@@ -87,7 +87,6 @@
     <Html>
       {#each visState.config.highlights as highlight}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-        {@debug result}
         {#if result && (highlight.label.name || highlight.label.year)}
           <Label
             --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"

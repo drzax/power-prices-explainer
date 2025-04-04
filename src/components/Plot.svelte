@@ -14,6 +14,7 @@
   import Svg from './Svg.svelte';
   import Html from './Html.svelte';
   import AxisLabel from './AxisLabel.svelte';
+  import { fade } from 'svelte/transition';
 
   const plot = visState.dimensions;
 
@@ -89,14 +90,16 @@
       </clipPath>
     </defs>
     {#if displaySegments}
-      {#each segmentPolygons as segment, i}
-        <path
-          clip-path="url(#ternary-mask)"
-          d={`M${segment.map(({ x, y }) => `${x} ${y}`).join('L')}Z`}
-          fill="url(#gradient-{segments[i].id})"
-          class="segment {segments[i].id}"
-        />
-      {/each}
+      <g transition:fade>
+        {#each segmentPolygons as segment, i (segment)}
+          <path
+            clip-path="url(#ternary-mask)"
+            d={`M${segment.map(({ x, y }) => `${x} ${y}`).join('L')}Z`}
+            fill="url(#gradient-{segments[i].id})"
+            class="segment {segments[i].id}"
+          />
+        {/each}
+      </g>
     {/if}
 
     {#if displayCentralZone}
@@ -111,9 +114,11 @@
     {/if}
 
     {#if displayAxes}
-      ${#each axies as [start, end]}
-        <line class="axis" x1={start.x} y1={start.y} x2={end.x} y2={end.y} />
-      {/each}
+      <g transition:fade>
+        ${#each axies as [start, end]}
+          <line class="axis" x1={start.x} y1={start.y} x2={end.x} y2={end.y} />
+        {/each}
+      </g>
     {/if}
 
     {#if displayOutline}
@@ -129,7 +134,7 @@
     {/if}
   </Svg>
   <Html>
-    {#each vertices as { x, y }, i}
+    {#each vertices as { x, y }, i (i)}
       <AxisLabel
         --label-color="var(--pty-color-text-{segments[(i + 2) % sides].id})"
         text={visState.config.axisLabels[(i + 1) % sides] || segments[(i + 2) % sides].label}

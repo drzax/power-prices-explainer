@@ -1,6 +1,7 @@
 <svelte:options namespace="svg" />
 
 <script lang="ts">
+  import { fade } from 'svelte/transition';
   import { arcPathBetweenCircles } from '../lib/trig';
 
   let {
@@ -12,7 +13,7 @@
   let arcPath = $derived(arcPathBetweenCircles(markerPosition, labelPosition));
 </script>
 
-<g>
+<g transition:fade>
   <circle cx={markerPosition.x} cy={markerPosition.y} r={markerPosition.r} fill="none" stroke="black" />
   <path d={arcPath} fill="none" stroke="black" />
 </g>

@@ -1,6 +1,8 @@
 <svelte:options namespace="svg" />
 
 <script lang="ts">
+  import { fade } from 'svelte/transition';
+
   let {
     x,
     y,
@@ -28,7 +30,7 @@
   let radius = $derived(side / 2);
 </script>
 
-<g class="mark">
+<g class="mark" transition:fade>
   {#if variant === 'square'}
     <rect x={x - radius} y={y - radius} width={side} height={side} />
   {:else if variant === 'diamond'}
