@@ -1,5 +1,5 @@
 import { barycentric } from 'd3-ternary';
-import { defaultVisConfig } from './constants';
+import { defaultVisConfig, plotMargins } from './constants';
 import { getPolygonPositionAndSize } from './trig';
 
 export const visState = $state({
@@ -10,9 +10,12 @@ export const visState = $state({
 
 export const ternaryToCartesian = (values: [number, number, number]) => {
   const [x, y] = visState.scale(values);
-  const { radius, center } = getPolygonPositionAndSize(visState.dimensions.width, visState.dimensions.height, 30, 3);
+  let width = visState.dimensions.width - plotMargins.left - plotMargins.right;
+  let height = visState.dimensions.height - plotMargins.top - plotMargins.bottom;
+
+  const { radius, center } = getPolygonPositionAndSize(width, height, 30, 3);
   return {
-    x: x * (radius - 5) + center.x,
-    y: y * (radius - 5) + center.y
+    x: x * (radius - 5) + center.x + plotMargins.left,
+    y: y * (radius - 5) + center.y + plotMargins.top
   };
 };

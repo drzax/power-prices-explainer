@@ -8,6 +8,7 @@
     rotate,
     translate
   } from '../lib/trig';
+  import { plotMargins } from '../lib/constants';
   import { visState } from '../lib/state.svelte';
   import Svg from './Svg.svelte';
 
@@ -25,11 +26,18 @@
   const fillet = 5;
   const rotation = 30;
 
-  let { radius, center } = $derived(getPolygonPositionAndSize(plot.width, plot.height, rotation, sides));
+  let { width, height } = $derived({
+    width: plot.width - plotMargins.left - plotMargins.right,
+    height: plot.height - plotMargins.top - plotMargins.bottom
+  });
+
+  let { radius, center } = $derived(getPolygonPositionAndSize(width, height, rotation, sides));
 
   let segmentPolygons = $derived(
     getSegmentPolygons(
-      regularPolygonVertices(sides, radius).map(v => translate(rotate(v, rotation), { x: center.x, y: center.y }))
+      regularPolygonVertices(sides, radius).map(v =>
+        translate(rotate(v, rotation), { x: center.x + plotMargins.left, y: center.y + plotMargins.top })
+      )
     )
   );
   let axies = $derived(segmentPolygons.map(([start, end]) => [start, end]));
@@ -56,7 +64,14 @@
         </linearGradient>
       {/each}
       <clipPath id="ternary-mask">
-        <Polygon {radius} {fillet} {sides} {rotation} cx={center.x} cy={center.y} />
+        <Polygon
+          {radius}
+          {fillet}
+          {sides}
+          {rotation}
+          cx={center.x + plotMargins.left}
+          cy={center.y + plotMargins.top}
+        />
       </clipPath>
     </defs>
 

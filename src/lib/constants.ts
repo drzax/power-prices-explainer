@@ -1,5 +1,12 @@
 import { type PartyConstantsType, type VisConfigType } from './types';
 
+export const plotMargins = {
+  top: 40,
+  right: 20,
+  bottom: 20,
+  left: 20
+};
+
 export const parties = new Map<string, PartyConstantsType>([
   [
     'alp',
