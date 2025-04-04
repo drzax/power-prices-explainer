@@ -1,4 +1,4 @@
-import { array, number, object, parse, string, type InferOutput } from 'valibot';
+import { array, parse } from 'valibot';
 import results from '../data/electorates.csv';
 import { ResultSchema } from './schemas';
 
