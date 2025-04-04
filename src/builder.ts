@@ -3,10 +3,11 @@ import { selectMounts } from '@abcnews/mount-utils';
 import type { Mount } from '@abcnews/mount-utils';
 import App from './components/App.svelte';
 import { mount } from 'svelte';
+import { proxy } from '@abcnews/dev-proxy';
 
 let appMountEl: Mount;
 
-whenDOMReady.then(() => {
+Promise.all([whenDOMReady, proxy('election-ternary-plots')]).then(() => {
   [appMountEl] = selectMounts('electionternaryplots');
   if (appMountEl) {
     mount(App, {

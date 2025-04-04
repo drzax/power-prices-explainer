@@ -41,6 +41,11 @@ export const HighlightSchema = object({
   })
 });
 
+export const ArrowSchema = object({
+  from: tuple([number(), number(), number()]),
+  to: tuple([number(), number(), number()])
+});
+
 export const VisConfigSchema = object({
   title: string(),
   axisLabels: array(string()),
@@ -49,7 +54,7 @@ export const VisConfigSchema = object({
   displayAxes: boolean(),
   displayCentralZone: boolean(),
   deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
-  arrows: array(object({})),
+  arrows: array(ArrowSchema),
   filters: object({
     year: array(number()),
     electorate: array(string()),

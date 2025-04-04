@@ -9,6 +9,7 @@
   import Html from './Html.svelte';
   import Label from './Label.svelte';
   import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
+  import Arrow from './Arrow.svg.svelte';
 
   // Filter data based on vis configuration
   let filteredData = $derived.by(() => {
@@ -48,6 +49,19 @@
           --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
           {...ternaryToCartesian(mark.location)}
           variant={parties.get(mark.party.toUpperCase())?.shape}
+        />
+      {/each}
+      <defs>
+        <linearGradient id="arrow-gradient" gradientUnits="userSpaceOnUse">
+          <stop offset="5%" stop-color="white" />
+          <stop offset="50%" stop-color="white" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+      {#each visState.config.arrows as arrow}
+        <Arrow
+          --arrow-fill-color="url(#arrow-gradient)"
+          from={ternaryToCartesian(arrow.from)}
+          to={ternaryToCartesian(arrow.to)}
         />
       {/each}
       {#each visState.config.highlights as highlight}

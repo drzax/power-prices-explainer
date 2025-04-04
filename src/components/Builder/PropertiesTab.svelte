@@ -13,13 +13,14 @@
   import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
   import { visState } from '../../lib/state.svelte';
   import { data, electorates, heldBy, years } from '../../lib/data';
-  import type { AnnotationType, CustomMarkType, HighlightType } from '../../lib/types';
+  import type { AnnotationType, ArrowType, CustomMarkType, HighlightType } from '../../lib/types';
   import { orientations, parties } from '../../lib/schemas';
   import Position from '../Position.svelte';
 
   let currentAnnotation: AnnotationType | null = $state(null);
   let currentCustomMark: CustomMarkType | null = $state(null);
   let currentHighlight: HighlightType | null = $state(null);
+  let currentArrow: ArrowType | null = $state(null);
 
   const addAnnotation = () => {
     currentAnnotation = {
@@ -52,8 +53,16 @@
     visState.config.highlights.push(currentHighlight);
   };
 
+  const addArrow = () => {
+    currentArrow = {
+      from: [33, 33, 33],
+      to: [0, 33, 33]
+    };
+    visState.config.arrows.push(currentArrow);
+  };
+
   $effect(() => {
-    if (currentAnnotation || currentCustomMark || currentHighlight) {
+    if (currentAnnotation || currentCustomMark || currentHighlight || currentArrow) {
       formModal.showModal();
     } else {
       formModal.close();
@@ -65,6 +74,7 @@
     currentAnnotation = null;
     currentCustomMark = null;
     currentHighlight = null;
+    currentArrow = null;
   };
 </script>
 
@@ -179,6 +189,31 @@
       {/each}
       <Button size="small" onclick={addCustomMark}>Add mark</Button>
     </AccordionItem>
+    <AccordionItem title="Arrows">
+      {#each visState.config.arrows as arrow, i (arrow)}
+        <div class="row">
+          <span>({arrow.from.join(', ')})→({arrow.to.join(', ')})</span><span>
+            <Button
+              kind="danger-ghost"
+              size="small"
+              iconDescription="Delete"
+              icon={TrashCan}
+              onclick={() => visState.config.arrows.splice(i, 1)}
+            ></Button>
+            <Button
+              kind="ghost"
+              size="small"
+              iconDescription="Edit"
+              icon={Settings}
+              onclick={() => {
+                currentArrow = arrow;
+              }}
+            ></Button>
+          </span>
+        </div>
+      {/each}
+      <Button size="small" onclick={addArrow}>Add arrow</Button>
+    </AccordionItem>
   </Accordion>
 </div>
 
@@ -238,6 +273,14 @@
       items={orientations.map(d => ({ id: d, text: d }))}
     />
     <TextInput labelText="Label" bind:value={currentCustomMark.label} />
+  {/if}
+
+  {#if currentArrow}
+    <h2>Edit arrow</h2>
+    <h3>From</h3>
+    <Position bind:position={currentArrow.from} />
+    <h3>To</h3>
+    <Position bind:position={currentArrow.to} />
   {/if}
 
   {#if currentAnnotation}

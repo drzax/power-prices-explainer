@@ -109,12 +109,8 @@ const deg2rad = deg => (deg * Math.PI) / 180;
  * @param {number} headAngle An angle (in degress)  that determines the width of the arrow's head
  * @param {number} headLength The length of each stroke of the arrow's head
  * @param {number} rounding The amount of rounding to apply to the ends of the lines of the arrow [0-1]
- * @param {number} px The x-coordinate of the arrow's point
- * @param {number} py  The y-coordinate of the arrow's point
  */
-export function generateArrowPath(length, lineWidth, headAngle, headLength, rounding = 0, px = 0, py = 0) {
-  console.log('length, lineWidth, headAngle, headLength :>> ', length, lineWidth, headAngle, headLength);
-
+export function generateArrowPath(length, lineWidth, headAngle, headLength, rounding = 0) {
   const halfLineWidth = lineWidth / 2;
 
   let current = { x: 0, y: 0, prefix: 'M' };
@@ -186,7 +182,7 @@ export function generateArrowPath(length, lineWidth, headAngle, headLength, roun
     })
   );
 
-  return `${vertices.map(({ prefix, x, y }) => `${prefix} ${x + px} ${y + py}`).join('')} Z`;
+  return vertices;
 }
 
 /**
@@ -224,7 +220,6 @@ export function arcPathBetweenCircles(c1, c2) {
   // Perpendicular unit vector
   const v2 = { x: v1.y, y: -v1.x };
 
-  // TODO: modify direction of perpendicular vector depending on position of c1 and c2
   if ((c1.x > c2.x && c1.y < c2.y) || (c1.x < c2.x && c1.y > c2.y)) {
     v2.x = -v2.x;
     v2.y = -v2.y;
