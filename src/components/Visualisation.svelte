@@ -10,6 +10,7 @@
   import Label from './Label.svelte';
   import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
   import Arrow from './Arrow.svg.svelte';
+  import LabelConnector from './LabelConnector.svelte';
 
   // Filter data based on vis configuration
   let filteredData = $derived.by(() => {
@@ -76,6 +77,12 @@
           />
         {/if}
       {/each}
+      {#each visState.config.annotations as annotation, i (annotation)}
+        <LabelConnector
+          markerPosition={{ ...ternaryToCartesian(annotation.markLocation), r: annotation.radius }}
+          labelPosition={{ ...ternaryToCartesian(annotation.textLocation), r: 20 }}
+        />
+      {/each}
     </Svg>
     <Html>
       {#each visState.config.highlights as highlight}
@@ -97,6 +104,15 @@
             {...ternaryToCartesian(mark.location)}
             text={mark.label}
             orientation={mark.orientation}
+          />
+        {/if}
+      {/each}
+      {#each visState.config.annotations as annotation, i (annotation)}
+        {#if annotation.text && annotation.text.length}
+          <Label
+            {...ternaryToCartesian(annotation.textLocation)}
+            text={annotation.text}
+            orientation={annotation.orientation}
           />
         {/if}
       {/each}
