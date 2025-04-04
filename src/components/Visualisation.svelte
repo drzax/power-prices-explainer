@@ -102,6 +102,8 @@
     left: 15%;
   }
   div {
+    width: 100%;
+    height: 100%;
     --pty-color-alp: #e11f30;
     --pty-color-lnp: #0a52bf;
     --pty-color-oth: #757575;

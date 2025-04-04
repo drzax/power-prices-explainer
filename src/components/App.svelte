@@ -62,12 +62,15 @@
     flex: 0 0 auto;
     margin: auto;
     width: 100%;
+    height: 100vh;
     max-width: 52rem;
     padding: 3rem;
   }
 
   figure {
     margin: auto;
+    width: 100%;
+    height: 100%;
   }
 
   aside {

@@ -1,26 +1,9 @@
-<script lang="ts" context="module">
-  type Marker = {
-    label: string;
-    note: string;
-    prefix: string;
-  };
-
-  const MARKERS: Marker[] = [
-    // { label: 'Standalone graphic marker', note: '', prefix: 'ternary' },
-    {
-      label: 'Scrollyteller opener',
-      note: `If you're placing multiple scrollytellers in a single story, each must have a unique NAME.`,
-      prefix: 'scrollytellerNAMEscrollyternary'
-    },
-    { label: 'Scrollyteller mark', prefix: 'mark', note: '' }
-  ];
-</script>
-
 <script lang="ts">
   import { decode, encode } from '@abcnews/base-36-props';
 
   import { Button, CodeSnippet, InlineNotification } from 'carbon-components-svelte';
   import { visState } from '../../lib/state.svelte';
+  import { MARKER_NAME, MARKERS } from '../../lib/constants';
 
   // import { alternatingCaseToPartialGraph, graphToAlternatingCase } from '../../lib/encode';
   // import { generateFallback } from '../../lib/fallbacks';
@@ -42,12 +25,13 @@
     }
   };
 
-  // $: alternatingCase = graphToAlternatingCase($graph);
-  $: markersData = MARKERS.map(({ label, note, prefix }) => ({
-    label,
-    note,
-    text: `#${prefix}CONFIG${encode(visState.config)}`
-  }));
+  let markersData = $derived(
+    MARKERS.map(({ label, note, prefix }) => ({
+      label,
+      note,
+      text: `#${prefix}CONFIG${encode(visState.config)}`
+    }))
+  );
 </script>
 
 <div>

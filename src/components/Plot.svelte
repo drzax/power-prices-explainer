@@ -146,9 +146,8 @@
 <style>
   .plot {
     position: relative;
-    width: 50vw;
-    height: 50vh;
-    margin: 2rem auto;
+    width: 100%;
+    height: 100%;
   }
   .axis {
     stroke: #000;

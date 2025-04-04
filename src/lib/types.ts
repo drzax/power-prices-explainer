@@ -20,3 +20,9 @@ export type PartyConstantsType = {
   shape: ShapesType;
   gradientStops: { offset: string; color: string }[];
 };
+
+export type Marker = {
+  label: string;
+  note: string;
+  prefix: string;
+};

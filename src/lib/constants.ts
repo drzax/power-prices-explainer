@@ -1,4 +1,6 @@
-import { type PartyConstantsType, type VisConfigType } from './types';
+import { type Marker, type PartyConstantsType, type VisConfigType } from './types';
+
+export const MARKER_NAME = 'electionternaryplots';
 
 export const plotMargins = {
   top: 40,
@@ -60,3 +62,13 @@ export const defaultVisConfig: VisConfigType = {
   marks: [],
   annotations: []
 };
+
+export const MARKERS: Marker[] = [
+  // { label: 'Standalone graphic marker', note: '', prefix: 'ternary' },
+  {
+    label: 'Scrollyteller opener',
+    note: `If you're placing multiple scrollytellers in a single story, each must have a unique NAME.`,
+    prefix: `scrollytellerNAME${MARKER_NAME}`
+  },
+  { label: 'Scrollyteller mark', prefix: 'mark', note: '' }
+];
