@@ -276,3 +276,47 @@ export function translate(point, translation) {
     y: point.y + translation.y
   };
 }
+
+/**
+ *
+ * @param {number} w The width of the containing box
+ * @param {number} h The height of the containing box
+ * @param {number} rotation The rotation of the polygon in degrees
+ * @param {number} sides Number of sides of the polygon
+ * @returns {{radius: number; center: {x:number; y:number}}}
+ */
+export function getPolygonPositionAndSize(w, h, rotation, sides) {
+  const vertices = regularPolygonVertices(sides, 1).map(d => rotate(d, rotation));
+
+  // The bounding box of the rotated unit polygon
+  const extents = vertices.reduce(
+    ({ minX, minY, maxX, maxY }, { x, y }) => {
+      return { minX: Math.min(x, minX), minY: Math.min(y, minY), maxX: Math.max(x, maxX), maxY: Math.max(y, maxY) };
+    },
+    { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity }
+  );
+
+  // The width and height of the unit polygon
+  const width = extents.maxX - extents.minX;
+  const height = extents.maxY - extents.minY;
+
+  // Scale
+  const scale = Math.min(w / width, h / height);
+
+  // Compute the largest radius that fits
+  const radius = scale;
+
+  // Compute the polygon's center in unit space
+  const unitCenter = {
+    x: (extents.minX + extents.maxX) / 2,
+    y: (extents.minY + extents.maxY) / 2
+  };
+
+  // Compute the center of the polygon within the rectangle
+  const center = {
+    x: w / 2 - unitCenter.x * scale,
+    y: h / 2 - unitCenter.y * scale
+  };
+
+  return { radius, center };
+}

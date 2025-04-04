@@ -44,7 +44,7 @@
   .mark rect {
     fill: var(--marker-color, currentColor);
     stroke: var(--marker-outline-color, transparent);
-    stroke-width: 2;
+    stroke-width: 1;
     opacity: var(--marker-opacity, 1);
   }
 </style>

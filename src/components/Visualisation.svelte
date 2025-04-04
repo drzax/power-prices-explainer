@@ -27,6 +27,10 @@
 
 <div>
   <Plot displayCentralZone={visState.config.displayCentralZone} segments={getSegmentsFromParties()}>
+    <Html>
+      <h1 class="title">{visState.config.title}</h1>
+    </Html>
+
     <Svg>
       {#each filteredData as data}<Result size={'sm'} {data} />{/each}
     </Svg>
@@ -81,6 +85,13 @@
 </div>
 
 <style lang="scss">
+  .title {
+    font-family: 'ABC Sans Nova';
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20px */
+  }
   div {
     --pty-color-alp: #e11f30;
     --pty-color-lnp: #0a52bf;

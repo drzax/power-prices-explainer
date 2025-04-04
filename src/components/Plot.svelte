@@ -1,6 +1,13 @@
 <script lang="ts">
   import Polygon from './Polygon.svg.svelte';
-  import { distance, getSegmentPolygons, regularPolygonVertices, rotate, translate } from '../lib/trig';
+  import {
+    distance,
+    getPolygonPositionAndSize,
+    getSegmentPolygons,
+    regularPolygonVertices,
+    rotate,
+    translate
+  } from '../lib/trig';
   import { visState } from '../lib/state.svelte';
   import Svg from './Svg.svelte';
 
@@ -18,46 +25,17 @@
   const fillet = 5;
   const rotation = 30;
 
-  let radius = $derived(Math.min(plot.width, plot.height) / 2);
+  let { radius, center } = $derived(getPolygonPositionAndSize(plot.width, plot.height, rotation, sides));
 
   let segmentPolygons = $derived(
     getSegmentPolygons(
-      regularPolygonVertices(sides, radius).map(v =>
-        translate(rotate(v, rotation), { x: plot.width / 2, y: plot.height / 2 })
-      )
+      regularPolygonVertices(sides, radius).map(v => translate(rotate(v, rotation), { x: center.x, y: center.y }))
     )
   );
   let axies = $derived(segmentPolygons.map(([start, end]) => [start, end]));
   $effect(() => {
     plot.axisLength = distance(axies[0][0], axies[0][1]);
   });
-
-  const labels = [
-    { text: 'Test 2025 1', x: 100, y: 10, offsetX: 50, offsetY: 30 },
-    { text: 'Test 2025 2', orientation: 'left', x: 100, y: 30 },
-
-    { text: 'Test 2025 3', orientation: 'left', x: 100, y: 50, variant: 'square' },
-
-    { text: 'Test 2025 4', orientation: 'right', x: 100, y: 70, variant: 'diamond' },
-    {
-      text: 'Test 2025 5',
-      x: 100,
-      y: 200,
-      variant: 'square',
-      size: 'large',
-      offsetY: -50,
-      offsetX: 30
-    },
-    {
-      text: 'Test 2025 6',
-      x: 400,
-      y: 200,
-      variant: 'square',
-      size: 'large',
-      offsetY: 50,
-      offsetX: -30
-    }
-  ];
 </script>
 
 <div class="plot" bind:clientWidth={plot.width} bind:clientHeight={plot.height}>
@@ -78,7 +56,7 @@
         </linearGradient>
       {/each}
       <clipPath id="ternary-mask">
-        <Polygon {radius} {fillet} {sides} {rotation} cx={plot.width / 2} cy={plot.height / 2} />
+        <Polygon {radius} {fillet} {sides} {rotation} cx={center.x} cy={center.y} />
       </clipPath>
     </defs>
 
@@ -95,8 +73,8 @@
       <Polygon
         {sides}
         radius={plot.axisLength}
-        cx={plot.width / 2}
-        cy={plot.height / 2}
+        cx={center.x}
+        cy={center.y}
         rotation={rotation + 180 / sides}
         --polygon-color="var(--central-zone-colour, rgba(255,255,255,0.5))"
       />
