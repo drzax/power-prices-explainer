@@ -3,7 +3,7 @@
 <script lang="ts">
   import { parties } from '../lib/constants';
   import { getTernaryCoordinatesFromResult } from '../lib/data-accessors';
-  import { ternaryToCartesian } from '../lib/state.svelte';
+  import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import type { ResultType, ShapesType } from '../lib/types';
   import Mark from './Mark.svg.svelte';
 
@@ -15,7 +15,7 @@
 <Mark
   {size}
   --marker-color="var(--pty-color-{data.PartyAb.toLowerCase()})"
-  --marker-opacity="0.3"
+  --marker-opacity={visState.config.resultMarkerOpacity}
   {...ternaryToCartesian(getTernaryCoordinatesFromResult(data))}
   {variant}
 />

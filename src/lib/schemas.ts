@@ -53,6 +53,7 @@ export const VisConfigSchema = object({
   displaySegments: boolean(),
   displayAxes: boolean(),
   displayCentralZone: boolean(),
+  resultMarkerOpacity: number(),
   deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
   arrows: array(ArrowSchema),
   filters: object({

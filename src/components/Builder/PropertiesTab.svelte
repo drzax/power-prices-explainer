@@ -86,6 +86,13 @@
       <Checkbox bind:checked={visState.config.displayTernaryOutline} labelText="Display outline" />
       <Checkbox bind:checked={visState.config.displaySegments} labelText="Display segments" />
       <Checkbox bind:checked={visState.config.displayAxes} labelText="Display axes" />
+      <NumberInput
+        label="Result marker opacity"
+        bind:value={visState.config.resultMarkerOpacity}
+        min={0}
+        max={1}
+        step={0.1}
+      />
     </AccordionItem>
 
     <AccordionItem title="Axis labels">

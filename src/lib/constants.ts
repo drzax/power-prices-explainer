@@ -55,6 +55,7 @@ export const defaultVisConfig: VisConfigType = {
   displaySegments: true,
   displayAxes: true,
   displayCentralZone: false,
+  resultMarkerOpacity: 0.5,
   deemphasiseSectors: [false, false, false],
   arrows: [],
   filters: { year: [], electorate: [], party: [] },
