@@ -1,6 +1,3 @@
-const path = require('path');
-const fs = require('fs');
-
 const includedDependencies = ['carbon-components-svelte', 'carbon-icons-svelte', /@abcnews\/svelte-scrollyteller/];
 const getLoaderDefinition = (config, testSourceMatch, loaderMatch) =>
   config.module.rules
