@@ -26,7 +26,13 @@
 </script>
 
 <div>
-  <Plot displayCentralZone={visState.config.displayCentralZone} segments={getSegmentsFromParties()}>
+  <Plot
+    displayCentralZone={visState.config.displayCentralZone}
+    displayAxes={visState.config.displayAxes}
+    displayOutline={visState.config.displayTernaryOutline}
+    displaySegments={visState.config.displaySegments}
+    segments={getSegmentsFromParties()}
+  >
     <Html>
       <h1 class="title">{visState.config.title}</h1>
     </Html>
@@ -91,10 +97,16 @@
     font-style: normal;
     font-weight: 700;
     line-height: 100%; /* 20px */
+    position: absolute;
+    top: 15%;
+    left: 15%;
   }
   div {
     --pty-color-alp: #e11f30;
     --pty-color-lnp: #0a52bf;
     --pty-color-oth: #757575;
+    --pty-color-text-alp: #e11f30;
+    --pty-color-text-lnp: #0a52bf;
+    --pty-color-text-oth: #595959;
   }
 </style>

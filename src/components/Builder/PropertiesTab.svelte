@@ -73,6 +73,15 @@
     <AccordionItem title="General" open>
       <TextInput bind:value={visState.config.title} labelText="Chart Title" />
       <Checkbox bind:checked={visState.config.displayCentralZone} labelText="Display central zone" />
+      <Checkbox bind:checked={visState.config.displayTernaryOutline} labelText="Display outline" />
+      <Checkbox bind:checked={visState.config.displaySegments} labelText="Display segments" />
+      <Checkbox bind:checked={visState.config.displayAxes} labelText="Display axes" />
+    </AccordionItem>
+
+    <AccordionItem title="Axis labels">
+      <TextInput bind:value={visState.config.axisLabels[0]} labelText="Top axis label" />
+      <TextInput bind:value={visState.config.axisLabels[2]} labelText="Left axis label" />
+      <TextInput bind:value={visState.config.axisLabels[1]} labelText="Right axis label" />
     </AccordionItem>
 
     <AccordionItem title="Filters">

@@ -6,21 +6,34 @@
     getSegmentPolygons,
     regularPolygonVertices,
     rotate,
-    translate
+    translate,
+    unitVector
   } from '../lib/trig';
   import { plotMargins } from '../lib/constants';
   import { visState } from '../lib/state.svelte';
   import Svg from './Svg.svelte';
+  import Html from './Html.svelte';
+  import AxisLabel from './AxisLabel.svelte';
 
   const plot = visState.dimensions;
 
   interface Props {
     displayCentralZone?: boolean;
+    displayAxes?: boolean;
+    displayOutline?: boolean;
+    displaySegments?: boolean;
     segments: { id: string; label: string; gradientStops: { offset: string; color: string }[] }[];
     [key: string]: unknown;
   }
 
-  let { children, displayCentralZone = false, segments }: Props = $props();
+  let {
+    children,
+    displayCentralZone = false,
+    displayAxes = true,
+    displayOutline = true,
+    displaySegments = false,
+    segments
+  }: Props = $props();
 
   const sides = $derived(segments.length);
   const fillet = 5;
@@ -33,13 +46,14 @@
 
   let { radius, center } = $derived(getPolygonPositionAndSize(width, height, rotation, sides));
 
-  let segmentPolygons = $derived(
-    getSegmentPolygons(
-      regularPolygonVertices(sides, radius).map(v =>
-        translate(rotate(v, rotation), { x: center.x + plotMargins.left, y: center.y + plotMargins.top })
-      )
+  let vertices = $derived(
+    regularPolygonVertices(sides, radius).map(v =>
+      translate(rotate(v, rotation), { x: center.x + plotMargins.left, y: center.y + plotMargins.top })
     )
   );
+
+  let segmentPolygons = $derived(getSegmentPolygons(vertices));
+
   let axies = $derived(segmentPolygons.map(([start, end]) => [start, end]));
   $effect(() => {
     plot.axisLength = distance(axies[0][0], axies[0][1]);
@@ -74,31 +88,57 @@
         />
       </clipPath>
     </defs>
-
-    {#each segmentPolygons as segment, i}
-      <path
-        clip-path="url(#ternary-mask)"
-        d={`M${segment.map(({ x, y }) => `${x} ${y}`).join('L')}Z`}
-        fill="url(#gradient-{segments[i].id})"
-        class="segment {segments[i].id}"
-      />
-    {/each}
+    {#if displaySegments}
+      {#each segmentPolygons as segment, i}
+        <path
+          clip-path="url(#ternary-mask)"
+          d={`M${segment.map(({ x, y }) => `${x} ${y}`).join('L')}Z`}
+          fill="url(#gradient-{segments[i].id})"
+          class="segment {segments[i].id}"
+        />
+      {/each}
+    {/if}
 
     {#if displayCentralZone}
       <Polygon
         {sides}
         radius={plot.axisLength}
-        cx={center.x}
-        cy={center.y}
+        cx={center.x + plotMargins.left}
+        cy={center.y + plotMargins.top}
         rotation={rotation + 180 / sides}
         --polygon-color="var(--central-zone-colour, rgba(255,255,255,0.5))"
       />
     {/if}
 
-    ${#each axies as [start, end], i}
-      <line class="axis" x1={start.x} y1={start.y} x2={end.x} y2={end.y} />
-    {/each}
+    {#if displayAxes}
+      ${#each axies as [start, end]}
+        <line class="axis" x1={start.x} y1={start.y} x2={end.x} y2={end.y} />
+      {/each}
+    {/if}
+
+    {#if displayOutline}
+      <Polygon
+        --polygon-outline-color="#000"
+        {sides}
+        {radius}
+        {fillet}
+        cx={center.x + plotMargins.left}
+        cy={center.y + plotMargins.top}
+        {rotation}
+      />
+    {/if}
   </Svg>
+  <Html>
+    {#each vertices as { x, y }, i}
+      <AxisLabel
+        --label-color="var(--pty-color-text-{segments[(i + 2) % sides].id})"
+        text={visState.config.axisLabels[(i + 1) % sides] || segments[(i + 2) % sides].label}
+        {x}
+        {y}
+        vector={unitVector({ x: center.x + plotMargins.left, y: center.y + plotMargins.top }, { x, y })}
+      />
+    {/each}
+  </Html>
 
   {@render children?.()}
 </div>

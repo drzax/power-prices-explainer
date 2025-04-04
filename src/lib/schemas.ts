@@ -43,8 +43,10 @@ export const HighlightSchema = object({
 
 export const VisConfigSchema = object({
   title: string(),
-  axisLabels: optional(array(string())),
+  axisLabels: array(string()),
   displayTernaryOutline: boolean(),
+  displaySegments: boolean(),
+  displayAxes: boolean(),
   displayCentralZone: boolean(),
   deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
   arrows: array(object({})),

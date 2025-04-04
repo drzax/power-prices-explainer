@@ -198,6 +198,16 @@ export const distance = (a, b) => Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.
 
 /**
  *
+ * @param {{x:number; y:number}} a Point to get the unit vector from
+ * @param {{x:number; y: number}} b Point to get the unit vector to
+ */
+export const unitVector = (a, b) => {
+  let d = distance(a, b);
+  return { x: (a.x - b.x) / d, y: (a.y - b.y) / d };
+};
+
+/**
+ *
  * @param {{x:number, y:number; r: number}} c1
  * @param {{x:number, y:number; r: number}} c2
  * @returns {string}

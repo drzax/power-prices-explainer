@@ -49,7 +49,9 @@ export const parties = new Map<string, PartyConstantsType>([
 export const defaultVisConfig: VisConfigType = {
   title: '',
   axisLabels: [],
-  displayTernaryOutline: true,
+  displayTernaryOutline: false,
+  displaySegments: true,
+  displayAxes: true,
   displayCentralZone: false,
   deemphasiseSectors: [false, false, false],
   arrows: [],
