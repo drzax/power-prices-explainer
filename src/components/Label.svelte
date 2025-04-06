@@ -4,6 +4,8 @@
   let {
     x,
     y,
+    offsetX,
+    offsetY,
     orientation = 'middle',
     text
   }: {
@@ -23,8 +25,8 @@
 
 <div
   class="label-position"
-  style:left={x + 'px'}
-  style:top={y + 'px'}
+  style:left={x + (offsetX || 0) + 'px'}
+  style:top={y + (offsetY || 0) + 'px'}
   style:--label-width={width + 'px'}
   style:--label-height={height + 'px'}
 >

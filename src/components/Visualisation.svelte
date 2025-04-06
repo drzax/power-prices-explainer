@@ -25,6 +25,8 @@
       );
     });
   });
+
+  let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
 </script>
 
 <div>
@@ -36,8 +38,13 @@
     segments={getSegmentsFromParties()}
   >
     <Html>
-      <h1 class="title">{visState.config.title}</h1>
+      {#if singleYear & !visState.config.title}
+        <h1 class="title">{visState.config.filters.year[0]}</h1>
+      {:else}
+        <h1 class="title">{visState.config.title}</h1>
+      {/if}
     </Html>
+
 
     <Svg>
       {#each filteredData as data}<Result size={'sm'} {data} />{/each}
@@ -102,6 +109,7 @@
             --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
             {...ternaryToCartesian(mark.location)}
             text={mark.label}
+            offsetY={-15}
             orientation={mark.orientation}
           />
         {/if}
@@ -127,17 +135,27 @@
     font-weight: 700;
     line-height: 100%; /* 20px */
     position: absolute;
-    top: 15%;
-    left: 15%;
+    top: 20%;
+    left: 10%;
   }
+
+  @media (min-width: 72em) {
+    .title {
+      font-size: 32px;
+    }
+  }
+
+
   div {
     width: 100%;
     height: 100%;
     --pty-color-alp: #e11f30;
     --pty-color-lnp: #0a52bf;
     --pty-color-oth: #757575;
+    --pty-color-blk: #000000;
     --pty-color-text-alp: #e11f30;
     --pty-color-text-lnp: #0a52bf;
     --pty-color-text-oth: #595959;
+    --pty-color-text-blk: #000000;
   }
 </style>

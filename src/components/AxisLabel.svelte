@@ -8,14 +8,23 @@
 
   $effect(() => {
     console.log('width, height :>> ', width, height);
+    console.log('label :>> ', text, maxWidth);
   });
 
   let offsetX = $derived((vector.x * (width + 12)) / 2);
   let offsetY = $derived((vector.y * (height + 12)) / 2);
+  let maxWidth = $derived(text.length < 10 ? 40 : 250);
 </script>
 
 <div style:top="{y}px" style:left="{x}px" class="label-segment" transition:fade>
-  <div bind:clientWidth={width} bind:clientHeight={height} style:transform="translate({-offsetX}px, {-offsetY}px)">
+  <div
+    bind:clientWidth={width}
+    bind:clientHeight={height}
+    style="
+        transform: translate({-offsetX}px, {-offsetY}px);
+        max-width: {maxWidth}px;
+    "
+  >
     {text}
   </div>
 </div>

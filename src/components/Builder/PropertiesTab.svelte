@@ -3,6 +3,7 @@
     Accordion,
     AccordionItem,
     MultiSelect,
+    Select,
     Checkbox,
     TextInput,
     Button,
@@ -13,6 +14,7 @@
   import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
   import { visState } from '../../lib/state.svelte';
   import { data, electorates, heldBy, years } from '../../lib/data';
+  import { getTernaryCoordinatesFromResult } from '../../lib/data-accessors';
   import type { AnnotationType, ArrowType, CustomMarkType, HighlightType } from '../../lib/types';
   import { orientations, parties } from '../../lib/schemas';
   import Position from '../Position.svelte';
@@ -21,6 +23,19 @@
   let currentCustomMark: CustomMarkType | null = $state(null);
   let currentHighlight: HighlightType | null = $state(null);
   let currentArrow: ArrowType | null = $state(null);
+
+  let filteredData = $derived.by(() => {
+    return data.filter(d => {
+      const {
+        filters: { year, electorate, party }
+      } = visState.config;
+      return (
+        (year.length === 0 || year.includes(d.Year)) &&
+        (electorate.length === 0 || electorate.includes(d.DivisionNm)) &&
+        (party.length === 0 || party.includes(d.PartyAb))
+      );
+    });
+  });
 
   const addAnnotation = () => {
     currentAnnotation = {
@@ -104,8 +119,9 @@
     <AccordionItem title="Filters">
       <MultiSelect
         titleText="Election year"
+        filterable
         bind:selectedIds={visState.config.filters.year}
-        items={years.map(d => ({ id: d, text: d.toString() }))}
+        items={[{id: 'none', text: 'None'}, ...years.map(d => ({ id: d, text: d.toString() }))]}
         sortItem={() => {}}
       />
       <MultiSelect
@@ -116,6 +132,7 @@
       />
       <MultiSelect
         titleText="Electorate"
+        filterable
         bind:selectedIds={visState.config.filters.electorate}
         items={electorates.map(d => ({ id: d, text: d }))}
         sortItem={() => {}}
@@ -266,7 +283,7 @@
       on:select={({ detail }) => {
         if (currentCustomMark) currentCustomMark.party = detail.selectedId;
       }}
-      items={parties.map(d => ({ id: d, text: d }))}
+      items={[{ id: 'blk', text: 'Black'}, ...parties.map(d => ({ id: d, text: d }))]}
     />
     <Dropdown
       size="sm"
@@ -292,6 +309,17 @@
 
   {#if currentAnnotation}
     <h2>Edit Annotation</h2>
+
+    <Dropdown
+      titleText="Annotate an electorate"
+      selectedId={null}
+      on:select={({ detail }) => {
+        currentAnnotation.markLocation = getTernaryCoordinatesFromResult(detail.selectedItem);
+        currentAnnotation.text = detail.selectedItem.DivisionNm;
+      }}
+      items={filteredData.map(d => ({ ...d, text: `${d.Year} ${d.DivisionNm}` }))}
+    />
+
     <h3>Mark</h3>
     <NumberInput min={1} bind:value={currentAnnotation.radius} label="Radius" />
     <Position bind:position={currentAnnotation.markLocation} />

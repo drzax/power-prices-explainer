@@ -21,6 +21,7 @@ Promise.all([whenOdysseyLoaded, proxy('election-ternary-plots')]).then(() => {
       console.error(errorMessage, e);
       appMountNode.innerHTML = `<p style="border:1px solid red;padding:1rem;">${errorMessage}</p>`;
     }
+
   });
 });
 
