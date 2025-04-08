@@ -12,34 +12,15 @@
   const updateState = detail => {
     try {
       visState.config = decode(detail.config);
+      visState.loaded = true;
     } catch (e) {
       console.error(e, detail);
     }
   };
 
-  // onMount(() => {
-  //   Array.from(document.querySelectorAll('strong'))
-  //     .filter(p => p.innerText.toString() === 'Coalition')
-  //     .forEach(p => {
-  //       p.classList.add('party-label');
-  //       p.classList.add('label-lnp');
-  //     });
   //
-  //   Array.from(document.querySelectorAll('strong'))
-  //     .filter(p => p.innerText.toString() === 'Labor')
-  //     .forEach(p => {
-  //       p.classList.add('party-label');
-  //       p.classList.add('label-alp');
-  //     });
+  // Find any bolded electorate names in the panel copy, and enhance them visually
   //
-  //   Array.from(document.querySelectorAll('strong'))
-  //     .filter(p => p.innerText.toString() === 'Other' || p.innerText.toString() === 'Independent')
-  //     .forEach(p => {
-  //       p.classList.add('party-label');
-  //       p.classList.add('label-oth');
-  //     });
-  // });
-
   let { panels } = $props();
   let annotatedPanels = $derived.by(() => panels.map(p =>
     ({
@@ -59,6 +40,10 @@
     })
   ));
 
+  //
+  // Replace electorate names with the party colours of the winner for that year (based on the
+  // filters in the marker data).
+  //
   const enhanceText = (child, year) => {
     const result = data.find(d => d.DivisionNm === child.innerText && d.Year === year);
     child.classList.add('electorate-label');
@@ -85,14 +70,17 @@
   };
 </script>
 
-<Scrollyteller panels={annotatedPanels} onMarker={updateState} layout={{ align: 'left', mobileVariant: 'rows', resizeInteractive: true }}>
+<Scrollyteller
+  panels={annotatedPanels}
+  onMarker={updateState}
+  layout={{ align: 'left', mobileVariant: 'rows', resizeInteractive: true }}
+>
   <Visualisation />
 </Scrollyteller>
 
 <style>
 
-  :global(.electorate-label),
-  :global(.party-label) {
+  :global(.electorate-label) {
     --pty-color-alp: #B91321;
     --pty-color-lnp: #0041A3;
     --pty-color-oth: #404040;
@@ -105,16 +93,7 @@
     padding-right: 6px;
     padding-left: 4px;
     border-radius: 3px;
-  }
-
-  :global(.label-lnp) {
-    color: var(--pty-color-lnp);
-  }
-  :global(.label-alp) {
-    color: var(--pty-color-alp);
-  }
-  :global(.label-oth) {
-    color: var(--pty-color-oth);
+    text-wrap-mode: nowrap;
   }
 
   :global(.electorate-label-lnp) {

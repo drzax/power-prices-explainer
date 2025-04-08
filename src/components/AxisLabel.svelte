@@ -14,6 +14,7 @@
   let offsetX = $derived((vector.x * (width + 12)) / 2);
   let offsetY = $derived((vector.y * (height + 12)) / 2);
   let maxWidth = $derived(text.length < 10 ? 40 : 250);
+
 </script>
 
 {#key text}

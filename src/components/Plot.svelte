@@ -133,17 +133,19 @@
       />
     {/if}
   </Svg>
-  <Html>
-    {#each vertices as { x, y }, i}
-      <AxisLabel
-        --label-color="var(--pty-color-text-{segments[(i + 2) % sides].id})"
-        text={visState.config.axisLabels[(i + 1) % sides] || segments[(i + 2) % sides].label}
-        {x}
-        {y}
-        vector={unitVector({ x: center.x + plotMargins.left, y: center.y + plotMargins.top }, { x, y })}
-      />
-    {/each}
-  </Html>
+  {#if visState.loaded}
+    <Html>
+      {#each vertices as { x, y }, i}
+        <AxisLabel
+          --label-color="var(--pty-color-text-{segments[(i + 2) % sides].id})"
+          text={visState.config.axisLabels[(i + 1) % sides] || segments[(i + 2) % sides].label}
+          {x}
+          {y}
+          vector={unitVector({ x: center.x + plotMargins.left, y: center.y + plotMargins.top }, { x, y })}
+        />
+      {/each}
+    </Html>
+  {/if}
 
   {@render children?.()}
 </div>
