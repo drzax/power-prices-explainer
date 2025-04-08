@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
   import { data, electorates } from '../lib/data';
@@ -38,6 +39,8 @@
   });
 
   let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
+
+  let title = $derived(visState.config.title || visState.config.filters.year[0]);
 </script>
 
 <div>
@@ -49,10 +52,12 @@
     segments={getSegmentsFromParties()}
   >
     <Html>
-      {#if singleYear & !visState.config.title}
-        <h1 class="title">{visState.config.filters.year[0]}</h1>
-      {:else}
-        <h1 class="title">{visState.config.title}</h1>
+      {#if title && title !== 'none'}
+        {#key title}
+          <h1 class="title" transition:fade|global={{ delay: 400 }}>
+            {title}
+          </h1>
+        {/key}
       {/if}
     </Html>
 
@@ -146,7 +151,7 @@
     left: 10%;
   }
 
-  @media (min-width: 72em) {
+  @media (min-width: 62rem) {
     .title {
       font-size: 32px;
     }

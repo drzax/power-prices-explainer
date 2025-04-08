@@ -158,9 +158,10 @@
     max-width: 85vw;
     max-height: 45vh;
   }
-  @media (min-width: 72em) {
+  @media (min-width: 62rem) {
     .plot {
-      max-height: 65vh !important;
+      max-height: unset !important;
+      max-width: unset !important;
     }
   }
 
