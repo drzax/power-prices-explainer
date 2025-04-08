@@ -52,7 +52,7 @@
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgEl.setAttribute('width', '15');
     svgEl.setAttribute('height', '15');
-    svgEl.setAttribute('style', 'margin-right: 2px;');
+    svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
     child.prepend(svgEl);
 
     const variant = parties.get(result.PartyAb.toLocaleLowerCase())?.shape || 'none';
@@ -61,6 +61,7 @@
       target: svgEl,
       props: {
         size: 'md',
+        disableResponsiveSizing: true,
         variant,
         x: 7.5,
         y: 7.5,

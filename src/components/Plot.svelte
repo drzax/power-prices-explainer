@@ -158,6 +158,12 @@
     max-width: 85vw;
     max-height: 45vh;
   }
+  @media (min-width: 72em) {
+    .plot {
+      max-height: 65vh !important;
+    }
+  }
+
   .axis {
     stroke: #000;
     stroke-opacity: 0.2;

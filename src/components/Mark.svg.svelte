@@ -10,7 +10,8 @@
     text,
     opacity = 1,
     variant = 'circle',
-    size = 'sm'
+    size = 'sm',
+    disableResponsiveSizing = false,
   }: {
     x: number;
     y: number;
@@ -20,6 +21,7 @@
     size?: 'sm' | 'md' | 'lg';
     offsetX?: number;
     offsetY?: number;
+    disableResponsiveSizing?: boolean;
   } = $props();
 
   let innerWidth = $state(0);
@@ -32,7 +34,7 @@
 
   $effect(() => {
     // console.log(innerWidth, LARGE_TABLET_BREAKPOINT);
-    if (innerWidth > LARGE_TABLET_BREAKPOINT) {
+    if (innerWidth > LARGE_TABLET_BREAKPOINT && !disableResponsiveSizing) {
       sizes = {
         sm: 9,
         md: 11,

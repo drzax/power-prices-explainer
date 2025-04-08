@@ -83,6 +83,7 @@
           --arrow-fill-color="url(#arrow-gradient)"
           from={ternaryToCartesian(arrow.from)}
           to={ternaryToCartesian(arrow.to)}
+          lineWidth={6}
         />
       {/each}
       {#each visState.config.highlights as highlight}
