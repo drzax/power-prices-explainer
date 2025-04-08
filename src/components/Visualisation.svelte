@@ -3,6 +3,7 @@
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
   import { data, electorates } from '../lib/data';
+  import { DESKTOP_BREAKPOINT } from '../lib/constants';
 
   import Plot from './Plot.svelte';
   import Svg from './Svg.svelte';
@@ -28,6 +29,8 @@
   //   }).sort((a, b) => a.DivisionNm.localeCompare(b.DivisionNm))
   // });
 
+  let innerWidth = $state(0);
+
   let filteredData = $derived.by(() => {
     const { year, electorate, party } = visState.config.filters;
     const activeYear = year[0] || 2022;
@@ -39,9 +42,12 @@
   });
 
   let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
-
   let title = $derived(visState.config.title || visState.config.filters.year[0]);
+
+  let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
 </script>
+
+<svelte:window bind:innerWidth />
 
 <div>
   <Plot
@@ -74,7 +80,7 @@
           size="md"
           --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
           {...ternaryToCartesian(mark.location)}
-          variant={parties.get(mark.party.toUpperCase())?.shape}
+          variant={parties.get(mark.party.toLowerCase())?.shape}
         />
       {/each}
       <defs>
@@ -110,7 +116,7 @@
         <Label
           --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
           {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-          offsetY={-15}
+          offsetY={labelOffset}
           text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
           orientation={highlight.label.orientation}
         />
@@ -120,7 +126,7 @@
           <Label
             --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
             {...ternaryToCartesian(mark.location)}
-            offsetY={-15}
+            offsetY={labelOffset}
             text={mark.label}
             orientation={mark.orientation}
           />
@@ -141,7 +147,7 @@
 
 <style lang="scss">
   .title {
-    font-family: 'ABC Sans Nova';
+    font-family: var(--dls-font-stack-sans);
     font-size: 20px;
     font-style: normal;
     font-weight: 700;

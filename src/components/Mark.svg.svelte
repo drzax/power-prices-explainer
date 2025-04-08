@@ -33,26 +33,31 @@
   });
 
   $effect(() => {
-    // console.log(innerWidth, LARGE_TABLET_BREAKPOINT);
     if (innerWidth > LARGE_TABLET_BREAKPOINT && !disableResponsiveSizing) {
       sizes = {
         sm: 9,
         md: 11,
         lg: 13,
       };
+    } else if (innerWidth > DESKTOP_BREAKPOINT && !disableResponsiveSizing) {
+      sizes = {
+        sm: 11,
+        md: 13,
+        lg: 15,
+      };
     }
   });
 
   let side = $derived(sizes[size]);
-  let diagonal = $derived(Math.sqrt(Math.pow(side, 2) * 2));
+  let diagonal = $derived(Math.sqrt(Math.pow(side, 2) * 2) * 0.9);
   let radius = $derived(side / 2);
 </script>
 
 <svelte:window bind:innerWidth />
 
-<g class="mark" transition:fade={{ delay: 400 }}>
+<g class="mark" transition:fade={{ delay: 850 }}>
   {#if variant === 'square'}
-    <rect x={x - radius} y={y - radius} width={side} height={side} />
+    <rect x={x - radius} y={y - radius} width={side * 0.9} height={side * 0.9} />
   {:else if variant === 'diamond'}
     <polygon points="{x},{y - diagonal / 2} {x + diagonal / 2},{y} {x},{y + diagonal / 2} {x - diagonal / 2},{y}" />
   {:else}
@@ -66,7 +71,7 @@
   .mark rect {
     fill: var(--marker-color, currentColor);
     stroke: var(--marker-outline-color, transparent);
-    stroke-width: 1;
+    stroke-width: 1.5;
     opacity: var(--marker-opacity, 1);
   }
 </style>

@@ -50,8 +50,8 @@
     child.classList.add(`electorate-label-${result.PartyAb.toLowerCase()}`);
 
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svgEl.setAttribute('width', '15');
-    svgEl.setAttribute('height', '15');
+    svgEl.setAttribute('width', '16');
+    svgEl.setAttribute('height', '16');
     svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
     child.prepend(svgEl);
 
@@ -64,7 +64,7 @@
         disableResponsiveSizing: true,
         variant,
         x: 7.5,
-        y: 7.5,
+        y: 9,
         '--marker-color': `var(--pty-color-${result.PartyAb.toLowerCase()})`
       },
     });
@@ -92,9 +92,18 @@
 
     padding: 2px;
     padding-right: 6px;
-    padding-left: 4px;
+    padding-left: 6px;
+
+    font-size: 16px;
+
     border-radius: 3px;
     text-wrap-mode: nowrap;
+  }
+
+  @media (min-width: 72rem) {
+    :global(.electorate-label) {
+      font-size: 18px;
+    }
   }
 
   :global(.electorate-label-lnp) {

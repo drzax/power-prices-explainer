@@ -12,7 +12,7 @@
   let { data, size }: { data: ResultType; size: 'sm' | 'md' | 'lg' } = $props();
 
   const opts = {
-		duration: 800,
+		duration: 1500,
 		easing: cubicOut
 	};
 	let x = new Tween(0, opts);

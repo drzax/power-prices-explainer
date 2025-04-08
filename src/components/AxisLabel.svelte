@@ -6,11 +6,6 @@
   let width = $state(0);
   let height = $state(0);
 
-  // $effect(() => {
-  //   console.log('width, height :>> ', width, height);
-  //   console.log('label :>> ', text, maxWidth);
-  // });
-
   let offsetX = $derived((vector.x * (width + 12)) / 2);
   let offsetY = $derived((vector.y * (height + 12)) / 2);
   let maxWidth = $derived(text.length < 10 ? 40 : 250);
@@ -39,12 +34,18 @@
     position: absolute;
     transform: translate(-50%, -50%);
     text-align: center;
-    font-family: 'ABC Sans Nova';
+    font-family: var(--dls-font-stack-sans);
     font-size: 13px;
     font-style: normal;
     font-weight: 700;
     line-height: 120%; /* 15.6px */
     width: max(min-content, 8em);
     color: var(--label-color, #000);
+  }
+
+  @media (min-width: 72rem) {
+    .label-segment {
+      font-size: 16px;
+    }
   }
 </style>

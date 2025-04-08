@@ -7,9 +7,9 @@ export const DESKTOP_BREAKPOINT = 1500;
 
 export const plotMargins = {
   top: 40,
-  right: 20,
+  right: 40,
   bottom: 20,
-  left: 20
+  left: 40
 };
 
 export const parties = new Map<string, PartyConstantsType>([
@@ -29,7 +29,7 @@ export const parties = new Map<string, PartyConstantsType>([
     'oth',
     {
       label: '100% Other candidates',
-      shape: 'square',
+      shape: 'diamond',
       gradientStops: [
         { offset: '25%', color: '#f2f2f2' },
         { offset: '75%', color: '#c4c4c4' },
@@ -41,7 +41,7 @@ export const parties = new Map<string, PartyConstantsType>([
     'lnp',
     {
       label: '100% LNP',
-      shape: 'diamond',
+      shape: 'square',
       gradientStops: [
         { offset: '25%', color: '#EBF1FA' },
         { offset: '75%', color: ' #B2C9EB' },

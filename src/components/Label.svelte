@@ -25,7 +25,8 @@
 
 {#key `${text}-${x}-${y}`}
   <div
-    transition:fade|global={{ delay: 400 }}
+    in:fade|global={{ delay: 650 }}
+    out:fade|global={{ delay: 0 }}
     class="label-position"
     style:left={x + (offsetX || 0) + 'px'}
     style:top={y + (offsetY || 0) + 'px'}
@@ -44,22 +45,29 @@
   }
 
   .label {
+    font-family: var(--dls-font-stack-sans);
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 14px */
+    color: var(--highlighter-color);
+
     position: absolute;
     top: 0.05em;
     display: block;
     transform: translate(-50%, -50%);
     white-space: nowrap;
-    color: var(--highlighter-color);
-    font-family: 'ABC Sans Nova';
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 100%; /* 14px */
     text-shadow:
       -1px -1px 0 white,
       1px -1px 0 white,
       -1px 1px 0 white,
       1px 1px 0 white;
+  }
+
+  @media (min-width: 72rem) {
+    :global(.label) {
+      font-size: 16px !important;
+    }
   }
 
   .left {
