@@ -6,28 +6,31 @@
   let width = $state(0);
   let height = $state(0);
 
-  $effect(() => {
-    console.log('width, height :>> ', width, height);
-    console.log('label :>> ', text, maxWidth);
-  });
+  // $effect(() => {
+  //   console.log('width, height :>> ', width, height);
+  //   console.log('label :>> ', text, maxWidth);
+  // });
 
   let offsetX = $derived((vector.x * (width + 12)) / 2);
   let offsetY = $derived((vector.y * (height + 12)) / 2);
   let maxWidth = $derived(text.length < 10 ? 40 : 250);
 </script>
 
-<div style:top="{y}px" style:left="{x}px" class="label-segment" transition:fade>
-  <div
-    bind:clientWidth={width}
-    bind:clientHeight={height}
-    style="
-        transform: translate({-offsetX}px, {-offsetY}px);
-        max-width: {maxWidth}px;
-    "
-  >
-    {text}
+{#key text}
+  <div style:top="{y}px" style:left="{x}px" class="label-segment">
+    <div
+      transition:fade={{ delay: 400 }}
+      bind:clientWidth={width}
+      bind:clientHeight={height}
+      style="
+          transform: translate({-offsetX}px, {-offsetY}px);
+          max-width: {maxWidth}px;
+      "
+    >
+      {text}
+    </div>
   </div>
-</div>
+{/key}
 
 <style>
   .label-segment {

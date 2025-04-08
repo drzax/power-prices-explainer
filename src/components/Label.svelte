@@ -23,15 +23,18 @@
   let height = $state(0);
 </script>
 
-<div
-  class="label-position"
-  style:left={x + (offsetX || 0) + 'px'}
-  style:top={y + (offsetY || 0) + 'px'}
-  style:--label-width={width + 'px'}
-  style:--label-height={height + 'px'}
->
-  <div bind:clientWidth={width} bind:clientHeight={height} class="label {orientation}">{text}</div>
-</div>
+{#key `${text}-${x}-${y}`}
+  <div
+    transition:fade|global={{ delay: 400 }}
+    class="label-position"
+    style:left={x + (offsetX || 0) + 'px'}
+    style:top={y + (offsetY || 0) + 'px'}
+    style:--label-width={width + 'px'}
+    style:--label-height={height + 'px'}
+  >
+    <div bind:clientWidth={width} bind:clientHeight={height} class="label {orientation}">{text}</div>
+  </div>
+{/key}
 
 <style>
   .label-position {
@@ -46,6 +49,7 @@
     display: block;
     transform: translate(-50%, -50%);
     white-space: nowrap;
+    color: var(--highlighter-color);
     font-family: 'ABC Sans Nova';
     font-size: 14px;
     font-style: normal;

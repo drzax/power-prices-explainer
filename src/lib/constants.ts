@@ -2,6 +2,9 @@ import { type Marker, type PartyConstantsType, type VisConfigType } from './type
 
 export const MARKER_NAME = 'electionternaryplots';
 
+export const LARGE_TABLET_BREAKPOINT = 992;
+export const DESKTOP_BREAKPOINT = 1500;
+
 export const plotMargins = {
   top: 40,
   right: 20,

@@ -1,4 +1,5 @@
 const includedDependencies = ['carbon-components-svelte', 'carbon-icons-svelte', /@abcnews\/svelte-scrollyteller/];
+// const includedDependencies = ['carbon-components-svelte', 'carbon-icons-svelte', /svelte-scrollyteller/];
 const getLoaderDefinition = (config, testSourceMatch, loaderMatch) =>
   config.module.rules
     .find(({ test }) => test?.source.indexOf(testSourceMatch) > -1)

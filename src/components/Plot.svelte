@@ -134,7 +134,7 @@
     {/if}
   </Svg>
   <Html>
-    {#each vertices as { x, y }, i (i)}
+    {#each vertices as { x, y }, i}
       <AxisLabel
         --label-color="var(--pty-color-text-{segments[(i + 2) % sides].id})"
         text={visState.config.axisLabels[(i + 1) % sides] || segments[(i + 2) % sides].label}
@@ -151,8 +151,10 @@
 <style>
   .plot {
     position: relative;
-    width: 100%;
-    height: 100%;
+    margin: auto;
+    aspect-ratio: 1;
+    max-width: 85vw;
+    max-height: 45vh;
   }
   .axis {
     stroke: #000;

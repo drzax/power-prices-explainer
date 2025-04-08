@@ -13,12 +13,15 @@
 
   onMount(() => {
     try {
-      visState.config = parse(
-        VisConfigSchema,
-        decode(new URL(document.location.href).searchParams.get('config') || '')
-      );
+      const urlConfig = new URL(document.location.href).searchParams.get('config');
+      if (urlConfig) {
+        visState.config = parse(
+          VisConfigSchema,
+          decode(urlConfig || '')
+        );
+      }
     } catch (e) {
-      console.error(e, decode(new URL(document.location.href).searchParams.get('config') || ''));
+      console.error(e);
     }
   });
 

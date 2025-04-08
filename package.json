@@ -28,7 +28,7 @@
     "@abcnews/dev-proxy": "^1.2.1",
     "@abcnews/env-utils": "^4.0.0",
     "@abcnews/mount-utils": "^3.0.0",
-    "@abcnews/svelte-scrollyteller": "github:abcnews/svelte-scrollyteller#feature/future-news",
+    "@abcnews/svelte-scrollyteller": "github:abcnews/svelte-scrollyteller#feature/mobile-row-variant",
     "carbon-components-svelte": "^0.88.4",
     "carbon-icons-svelte": "^13.3.0",
     "d3-ternary": "^3.0.7",

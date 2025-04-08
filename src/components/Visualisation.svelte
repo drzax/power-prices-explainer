@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { ternaryToCartesian, visState } from '../lib/state.svelte';
+  import { parties } from '../lib/constants';
+  import { data, electorates } from '../lib/data';
+
   import Plot from './Plot.svelte';
   import Svg from './Svg.svelte';
   import Result from './Result.svg.svelte';
-  import { ternaryToCartesian, visState } from '../lib/state.svelte';
-  import { parties } from '../lib/constants';
-  import { data } from '../lib/data';
   import Mark from './Mark.svg.svelte';
   import Html from './Html.svelte';
   import Label from './Label.svelte';
@@ -13,17 +14,27 @@
   import LabelConnector from './LabelConnector.svelte';
 
   // Filter data based on vis configuration
+  // let filteredData = $derived.by(() => {
+  //   return data.filter(d => {
+  //     const {
+  //       filters: { year, electorate, party }
+  //     } = visState.config;
+  //     return (
+  //       year.includes(d.Year) &&
+  //       (electorate.length === 0 || electorate.includes(d.DivisionNm)) &&
+  //       (party.length === 0 || party.includes(d.PartyAb))
+  //     );
+  //   }).sort((a, b) => a.DivisionNm.localeCompare(b.DivisionNm))
+  // });
+
   let filteredData = $derived.by(() => {
-    return data.filter(d => {
-      const {
-        filters: { year, electorate, party }
-      } = visState.config;
-      return (
-        (year.length === 0 || year.includes(d.Year)) &&
-        (electorate.length === 0 || electorate.includes(d.DivisionNm)) &&
-        (party.length === 0 || party.includes(d.PartyAb))
-      );
-    });
+    const { year, electorate, party } = visState.config.filters;
+    const activeYear = year[0] || 2022;
+    return electorates.map(e => {
+      return data.find(d => d.DivisionNm === e && d.Year === activeYear)
+    })
+      .filter(d => !!d)
+      .filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm));
   });
 
   let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
@@ -47,11 +58,13 @@
 
 
     <Svg>
-      {#each filteredData as data}<Result size={'sm'} {data} />{/each}
+      {#each filteredData as data (data.DivisionNm)}
+        <Result size={'sm'} {data} />
+      {/each}
     </Svg>
 
     <Svg --marker-outline-color="white">
-      {#each visState.config.marks as mark}
+      {#each visState.config.marks as mark (JSON.stringify(mark.location))}
         <Mark
           size="md"
           --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
@@ -75,13 +88,7 @@
       {#each visState.config.highlights as highlight}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
         {#if result}
-          <Mark
-            size="md"
-            --marker-color="var(--pty-color-{result.PartyAb.toLowerCase()})"
-            --marker-outline-color="#fff"
-            {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-            variant={parties.get(result.PartyAb.toUpperCase())?.shape}
-          />
+          <Result size={'md'} data={result} />
         {/if}
       {/each}
       {#each visState.config.annotations as annotation, i (annotation)}
@@ -92,24 +99,23 @@
       {/each}
     </Svg>
     <Html>
-      {#each visState.config.highlights as highlight}
+      {#each visState.config.highlights as highlight (highlight.electorate)}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-        {#if result && (highlight.label.name || highlight.label.year)}
-          <Label
-            --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
-            {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-            text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
-            orientation={highlight.label.orientation}
-          />
-        {/if}
+        <Label
+          --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
+          {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
+          offsetY={-15}
+          text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
+          orientation={highlight.label.orientation}
+        />
       {/each}
       {#each visState.config.marks as mark}
         {#if mark.label && mark.label.length}
           <Label
             --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
             {...ternaryToCartesian(mark.location)}
-            text={mark.label}
             offsetY={-15}
+            text={mark.label}
             orientation={mark.orientation}
           />
         {/if}

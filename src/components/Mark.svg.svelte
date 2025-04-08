@@ -2,10 +2,13 @@
 
 <script lang="ts">
   import { fade } from 'svelte/transition';
+  import { LARGE_TABLET_BREAKPOINT, DESKTOP_BREAKPOINT } from '../lib/constants';
 
   let {
     x,
     y,
+    text,
+    opacity = 1,
     variant = 'circle',
     size = 'sm'
   }: {
@@ -19,18 +22,33 @@
     offsetY?: number;
   } = $props();
 
-  const sizes = {
+  let innerWidth = $state(0);
+
+  let sizes = $state({
     sm: 7,
     md: 9,
     lg: 11
-  };
+  });
+
+  $effect(() => {
+    // console.log(innerWidth, LARGE_TABLET_BREAKPOINT);
+    if (innerWidth > LARGE_TABLET_BREAKPOINT) {
+      sizes = {
+        sm: 9,
+        md: 11,
+        lg: 13,
+      };
+    }
+  });
 
   let side = $derived(sizes[size]);
   let diagonal = $derived(Math.sqrt(Math.pow(side, 2) * 2));
   let radius = $derived(side / 2);
 </script>
 
-<g class="mark" transition:fade>
+<svelte:window bind:innerWidth />
+
+<g class="mark" transition:fade={{ delay: 400 }}>
   {#if variant === 'square'}
     <rect x={x - radius} y={y - radius} width={side} height={side} />
   {:else if variant === 'diamond'}
