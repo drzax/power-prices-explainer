@@ -1,5 +1,6 @@
 import { array, parse } from 'valibot';
-import results from '../data/electorates.csv';
+import results from '../data/electorates2.csv';
+import nationalResults from '../data/national_partyvotes_history.csv';
 import { ResultSchema } from './schemas';
 
 function capitalizeFirstLetter(str) {
@@ -9,6 +10,9 @@ function capitalizeFirstLetter(str) {
 export const data = parse(array(ResultSchema), results)
   .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
+
+export const nationalData = parse(array(ResultSchema), results)
+  .map(d => ({ ...d, id: d.Year }));
 
 export const electorates = data.map(d => d.DivisionNm).filter((d, i, arr) => arr.indexOf(d) === i);
 
