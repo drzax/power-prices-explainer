@@ -1,15 +1,22 @@
 import { array, parse } from 'valibot';
 import results from '../data/electorates2.csv';
 import nationalResults from '../data/national_partyvotes_history.csv';
+import mrpPoll from '../data/redbridge-accent-mrp-2025-04-17.csv';
 import { ResultSchema } from './schemas';
 
 function capitalizeFirstLetter(str) {
   return str.split(' ').map(segment => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase()).join(' ');
 }
 
-export const data = parse(array(ResultSchema), results)
+export const rawData = parse(array(ResultSchema), results)
   .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
+
+export const mrpData = parse(array(ResultSchema), mrpPoll)
+  .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
+  .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
+
+export const data = [...rawData, ...mrpData];
 
 export const nationalData = parse(array(ResultSchema), results)
   .map(d => ({ ...d, id: d.Year }));

@@ -17,7 +17,8 @@
 	};
 	let x = new Tween(0, opts);
   let y = new Tween(0, opts);
-  let variant = $derived(parties.get(data.PartyAb.toLocaleLowerCase())?.shape || 'none');
+  let party = $derived(data.PartyAb.toLocaleLowerCase());
+  let variant = $derived(parties.get(party)?.shape || (party === 'tooclose' ? 'square' : '') || 'none');
 
   $effect(() => {
     const coords = ternaryToCartesian(getTernaryCoordinatesFromResult(data));

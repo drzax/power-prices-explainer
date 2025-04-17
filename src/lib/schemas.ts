@@ -1,7 +1,7 @@
 import { array, boolean, number, object, optional, picklist, string, tuple } from 'valibot';
 
 export const orientations = ['left', 'right', 'middle'] as const;
-export const parties = ['OTH', 'LNP', 'ALP'] as const;
+export const parties = ['OTH', 'LNP', 'ALP', 'TOOCLOSE'] as const;
 export const shapes = ['circle', 'diamond', 'square'] as const;
 
 export const ShapesSchema = picklist(shapes);
