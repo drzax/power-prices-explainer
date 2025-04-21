@@ -13,7 +13,7 @@
   import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
   import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
   import { visState } from '../../lib/state.svelte';
-  import { data, electorates, heldBy, years } from '../../lib/data';
+  import { data, pollsters, electorates, heldBy, years } from '../../lib/data';
   import { getTernaryCoordinatesFromResult } from '../../lib/data-accessors';
   import type { AnnotationType, ArrowType, CustomMarkType, HighlightType } from '../../lib/types';
   import { orientations, parties } from '../../lib/schemas';
@@ -117,14 +117,28 @@
     </AccordionItem>
 
     <AccordionItem title="Filters">
+
       <Checkbox bind:checked={visState.config.nationalPolls} labelText="Show national polls" />
-      <MultiSelect
-        titleText="Election year"
-        filterable
-        bind:selectedIds={visState.config.filters.year}
-        items={[{id: 'none', text: 'None'}, ...years.map(d => ({ id: d, text: d.toString() }))]}
-        sortItem={() => {}}
-      />
+      <Checkbox bind:checked={visState.config.mrpPolls} labelText="Show MRP polls" />
+
+      {#if visState.config.mrpPolls}
+        <MultiSelect
+          titleText="Pollsters"
+          filterable
+          bind:selectedIds={visState.config.filters.pollsters}
+          items={[...pollsters.map(d => ({ id: d, text: d }))]}
+          sortItem={() => {}}
+        />
+      {:else}
+        <MultiSelect
+          titleText="Election year"
+          filterable
+          bind:selectedIds={visState.config.filters.year}
+          items={[{id: 'none', text: 'None'}, ...years.map(d => ({ id: d, text: d.toString() }))]}
+          sortItem={() => {}}
+        />
+      {/if}
+
       <MultiSelect
         titleText="Party"
         bind:selectedIds={visState.config.filters.party}

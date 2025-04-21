@@ -8,6 +8,7 @@
 
   let offsetX = $derived((vector.x * (width + 12)) / 2);
   let offsetY = $derived((vector.y * (height + 12)) / 2);
+  let offsetYAdjusted = $derived(text.length < 10 ? offsetY : offsetY - 7);
   let maxWidth = $derived(text.length < 10 ? 40 : 250);
 
 </script>
@@ -20,7 +21,7 @@
       bind:clientWidth={width}
       bind:clientHeight={height}
       style="
-          transform: translate({-offsetX}px, {-offsetY}px);
+          transform: translate({-offsetX}px, {-offsetYAdjusted}px);
           max-width: {maxWidth}px;
       "
     >

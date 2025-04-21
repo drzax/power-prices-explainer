@@ -2,7 +2,7 @@
   import { fade } from 'svelte/transition';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
-  import { data, electorates, nationalPolls2025 } from '../lib/data';
+  import { data, polls, electorates, nationalPolls2025 } from '../lib/data';
   import { DESKTOP_BREAKPOINT } from '../lib/constants';
 
   import Plot from './Plot.svelte';
@@ -32,7 +32,7 @@
   let innerWidth = $state(0);
 
   let filteredData = $derived.by(() => {
-    const { year, electorate, party } = visState.config.filters;
+    const { year, electorate, party, pollsters } = visState.config.filters;
     const activeYear = year[0] || 2022;
 
     // Use alternate dataset if in 'national polls' mode
@@ -40,15 +40,22 @@
       return nationalPolls2025;
     }
 
-    return electorates.map(e => {
-      return data.find(d => d.DivisionNm === e && d.Year === activeYear)
-    })
+    if (visState.config.mrpPolls) {
+      return electorates.map(e =>
+        polls.find(d => d.DivisionNm === e && d.Year === pollsters[0])
+      )
+        .filter(d => !!d);
+    }
+
+    return electorates.map(e =>
+       data.find(d => d.DivisionNm === e && d.Year === activeYear)
+    )
       .filter(d => !!d)
       .filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm));
   });
 
   let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
-  let title = $derived(visState.config.title || visState.config.filters.year[0]);
+  let title = $derived(visState.config.title || visState.config.filters.year[0] || visState.config.filters.pollsters[0]);
 
   let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
 </script>
@@ -89,20 +96,22 @@
           variant={parties.get(mark.party.toLowerCase())?.shape}
         />
       {/each}
+
       <defs>
-        <linearGradient id="arrow-gradient" gradientUnits="userSpaceOnUse">
-          <stop offset="5%" stop-color="white" />
-          <stop offset="50%" stop-color="white" stop-opacity="0" />
+        <linearGradient id="arrow-gradient">
+          <stop offset="60%" stop-color="rgb(255, 255, 255, 1)" />
+          <stop offset="100%" stop-color="rgb(255, 255, 255, 0)" />
         </linearGradient>
       </defs>
+
       {#each visState.config.arrows as arrow}
         <Arrow
           --arrow-fill-color="url(#arrow-gradient)"
           from={ternaryToCartesian(arrow.from)}
           to={ternaryToCartesian(arrow.to)}
-          lineWidth={6}
         />
       {/each}
+
       {#each visState.config.highlights as highlight}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
         {#if result}

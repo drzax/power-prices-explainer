@@ -19,12 +19,10 @@ const rawData = parse(array(ResultSchema), results)
   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
 
 const redbridgeMrpData = parse(array(ResultSchema), redbridgeMrpPoll)
-  .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
   .map(d => ({ ...d, Year: `Redbridge` }))
   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
 
 const yougovMrpData = parse(array(ResultSchema), yougovMrpPoll)
-  .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
   .map(d => ({ ...d, Year: `YouGov` }))
   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
 
@@ -37,10 +35,13 @@ export const nationalPolls2025 = parse(array(ResultSchema), nationalPolls)
 //   .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
 //   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
 
-export const data = [...rawData, ...redbridgeMrpData, ...yougovMrpData];
+export const polls = [...redbridgeMrpData, ...yougovMrpData];
+export const pollsters = ['Redbridge', 'YouGov'];
 
-export const nationalData = parse(array(ResultSchema), results)
-  .map(d => ({ ...d, id: d.Year }));
+export const data = [...rawData];
+
+// export const nationalData = parse(array(ResultSchema), results)
+//   .map(d => ({ ...d, id: d.Year }));
 
 export const electorates = data.map(d => d.DivisionNm).filter((d, i, arr) => arr.indexOf(d) === i);
 

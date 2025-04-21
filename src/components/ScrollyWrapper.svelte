@@ -48,14 +48,20 @@
     const result = data.find(d => d.DivisionNm === child.innerText && d.Year === year);
     child.classList.add('electorate-label');
     child.classList.add(`electorate-label-${result.PartyAb.toLowerCase()}`);
+    const variant = parties.get(result.PartyAb.toLocaleLowerCase())?.shape || 'none';
 
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgEl.setAttribute('width', '16');
     svgEl.setAttribute('height', '16');
-    svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
     child.prepend(svgEl);
 
-    const variant = parties.get(result.PartyAb.toLocaleLowerCase())?.shape || 'none';
+    if (variant === 'square') {
+      svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 2px;');
+    } else if (variant === 'circle') {
+      svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
+    } else {
+      svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
+    }
 
     mount(Mark, {
       target: svgEl,
@@ -91,8 +97,8 @@
     --pty-color-bg-oth: #E3E3E3;
 
     padding: 2px;
-    padding-right: 6px;
-    padding-left: 6px;
+    padding-right: 5px;
+    padding-left: 3px;
 
     font-size: 16px;
 
@@ -117,5 +123,16 @@
   :global(.electorate-label-oth) {
     color: var(--pty-color-oth);
     background: var(--pty-color-bg-oth);
+  }
+
+
+  /* Style the header */
+  :global(.st-panel-root.first) {
+    margin-top: 92dvh !important;
+  }
+
+  :global(.Header-content),
+  :global(.Header) {
+    width: auto !important;
   }
 </style>

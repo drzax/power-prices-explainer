@@ -57,10 +57,12 @@ export const VisConfigSchema = object({
   deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
   arrows: array(ArrowSchema),
   nationalPolls: boolean(),
+  mrpPolls: boolean(),
   filters: object({
     year: array(number()),
     electorate: array(string()),
-    party: array(string())
+    party: array(string()),
+    pollsters: array(string())
   }),
   highlights: array(HighlightSchema),
   marks: array(CustomMarkSchema),
