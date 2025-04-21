@@ -25,7 +25,7 @@
 
 {#key `${text}-${x}-${y}`}
   <div
-    in:fade|global={{ delay: 650 }}
+    in:fade|global={{ delay: 850 }}
     out:fade|global={{ delay: 0 }}
     class="label-position"
     style:left={x + (offsetX || 0) + 'px'}

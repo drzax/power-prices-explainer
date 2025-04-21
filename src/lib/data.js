@@ -20,7 +20,7 @@ const rawData = parse(array(ResultSchema), results)
 
 const redbridgeMrpData = parse(array(ResultSchema), redbridgeMrpPoll)
   .map(d => ({ ...d, DivisionNm: capitalizeFirstLetter(d.DivisionNm) }))
-  .map(d => ({ ...d, Year: `Redbridge/Accent` }))
+  .map(d => ({ ...d, Year: `Redbridge` }))
   .map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }));
 
 const yougovMrpData = parse(array(ResultSchema), yougovMrpPoll)
