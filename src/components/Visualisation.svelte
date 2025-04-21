@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
   import { data, polls, electorates, nationalPolls2025 } from '../lib/data';
@@ -55,7 +55,18 @@
   });
 
   let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
-  let title = $derived(visState.config.title || visState.config.filters.year[0] || visState.config.filters.pollsters[0]);
+  let defaultTitle = $derived(visState.config.mrpPolls ? visState.config.filters.pollsters[0] : visState.config.filters.year[0]);
+  let title = $derived(visState.config.title || defaultTitle);
+
+  const TITLE_ANIMATION_DUR = 850;
+  let previousTitle = $state('');
+  let direction = $state('down');
+  $effect(() => {
+    if (previousTitle !== title) {
+      direction = previousTitle > title ? 'down' : 'up';
+      previousTitle = title;
+    }
+  });
 
   let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
 </script>
@@ -73,7 +84,11 @@
     <Html>
       {#if title && title !== 'none'}
         {#key title}
-          <h1 class="title" transition:fade|global={{ delay: 400 }}>
+          <h1
+            class="title"
+            in:fly={{ duration: TITLE_ANIMATION_DUR, y: direction === 'up' ? '1em' : '-1em'}}
+            out:fly={{ duration: TITLE_ANIMATION_DUR, y: direction === 'up' ? '-1em' : '1em'}}
+          >
             {title}
           </h1>
         {/key}

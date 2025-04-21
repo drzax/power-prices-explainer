@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@abcnews/aunty": "^16.0.0",
+		"@benzara/svelte-animated-counter": "^0.0.3",
 		"@testing-library/svelte": "^5.2.7",
 		"@types/d3-dsv": "^3.0.7",
 		"@types/jest": "^29.5.14",

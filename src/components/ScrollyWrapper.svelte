@@ -127,8 +127,10 @@
 
 
   /* Style the header */
-  :global(.st-panel-root.first) {
-    margin-top: 92dvh !important;
+  @media (max-width: 62rem) {
+    :global(.st-panel-root.first) {
+      margin-top: 92dvh !important;
+    }
   }
 
   :global(.Header-content),
