@@ -15,7 +15,8 @@
 {#key text}
   <div style:top="{y}px" style:left="{x}px" class="label-segment">
     <div
-      transition:fade={{ delay: 850 }}
+      in:fade={{ delay: 850 }}
+      out:fade={{ delay: 0 }}
       bind:clientWidth={width}
       bind:clientHeight={height}
       style="
