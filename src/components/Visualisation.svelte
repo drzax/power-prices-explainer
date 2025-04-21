@@ -2,7 +2,7 @@
   import { fade } from 'svelte/transition';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
-  import { data, electorates } from '../lib/data';
+  import { data, electorates, nationalPolls2025 } from '../lib/data';
   import { DESKTOP_BREAKPOINT } from '../lib/constants';
 
   import Plot from './Plot.svelte';
@@ -34,6 +34,12 @@
   let filteredData = $derived.by(() => {
     const { year, electorate, party } = visState.config.filters;
     const activeYear = year[0] || 2022;
+
+    // Use alternate dataset if in 'national polls' mode
+    if (visState.config.nationalPolls) {
+      return nationalPolls2025;
+    }
+
     return electorates.map(e => {
       return data.find(d => d.DivisionNm === e && d.Year === activeYear)
     })

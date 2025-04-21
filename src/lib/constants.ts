@@ -61,6 +61,7 @@ export const defaultVisConfig: VisConfigType = {
   resultMarkerOpacity: 0.5,
   deemphasiseSectors: [false, false, false],
   arrows: [],
+  nationalPolls: false,
   filters: { year: [], electorate: [], party: [] },
   highlights: [],
   marks: [],

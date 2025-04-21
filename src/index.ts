@@ -6,6 +6,7 @@ import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import { proxy } from '@abcnews/dev-proxy';
 
 Promise.all([whenOdysseyLoaded, proxy('election-ternary-plots')]).then(() => {
+
   const mounts = selectMounts('scrollyteller', { markAsUsed: false });
   mounts.forEach(appMountNode => {
     const id = getMountValue(appMountNode, 'scrollyteller').match(/NAME([a-z0-9]+)/)?.[1];

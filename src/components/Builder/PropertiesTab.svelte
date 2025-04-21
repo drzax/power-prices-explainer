@@ -117,6 +117,7 @@
     </AccordionItem>
 
     <AccordionItem title="Filters">
+      <Checkbox bind:checked={visState.config.nationalPolls} labelText="Show national polls" />
       <MultiSelect
         titleText="Election year"
         filterable
