@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack, tick } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
@@ -11,23 +12,10 @@
   import Mark from './Mark.svg.svelte';
   import Html from './Html.svelte';
   import Label from './Label.svelte';
+  import ScrollingTitle from './ScrollingTitle.svelte';
   import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
   import Arrow from './Arrow.svg.svelte';
   import LabelConnector from './LabelConnector.svelte';
-
-  // Filter data based on vis configuration
-  // let filteredData = $derived.by(() => {
-  //   return data.filter(d => {
-  //     const {
-  //       filters: { year, electorate, party }
-  //     } = visState.config;
-  //     return (
-  //       year.includes(d.Year) &&
-  //       (electorate.length === 0 || electorate.includes(d.DivisionNm)) &&
-  //       (party.length === 0 || party.includes(d.PartyAb))
-  //     );
-  //   }).sort((a, b) => a.DivisionNm.localeCompare(b.DivisionNm))
-  // });
 
   let innerWidth = $state(0);
 
@@ -58,16 +46,6 @@
   let defaultTitle = $derived(visState.config.mrpPolls ? visState.config.filters.pollsters[0] : visState.config.filters.year[0]);
   let title = $derived(visState.config.title || defaultTitle);
 
-  const TITLE_ANIMATION_DUR = 850;
-  let previousTitle = $state('');
-  let direction = $state('down');
-  $effect(() => {
-    if (previousTitle !== title) {
-      direction = previousTitle > title ? 'down' : 'up';
-      previousTitle = title;
-    }
-  });
-
   let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
 </script>
 
@@ -82,19 +60,8 @@
     segments={getSegmentsFromParties()}
   >
     <Html>
-      {#if title && title !== 'none'}
-        {#key title}
-          <h1
-            class="title"
-            in:fly={{ duration: TITLE_ANIMATION_DUR, y: direction === 'up' ? '1em' : '-1em'}}
-            out:fly={{ duration: TITLE_ANIMATION_DUR, y: direction === 'up' ? '-1em' : '1em'}}
-          >
-            {title}
-          </h1>
-        {/key}
-      {/if}
+      <ScrollingTitle {title} />
     </Html>
-
 
     <Svg>
       {#each filteredData as data (data.DivisionNm)}
@@ -176,23 +143,6 @@
 </div>
 
 <style lang="scss">
-  .title {
-    font-family: var(--dls-font-stack-sans);
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 100%; /* 20px */
-    position: absolute;
-    top: 20%;
-    left: 10%;
-  }
-
-  @media (min-width: 62rem) {
-    .title {
-      font-size: 32px;
-    }
-  }
-
 
   div {
     width: 100%;
