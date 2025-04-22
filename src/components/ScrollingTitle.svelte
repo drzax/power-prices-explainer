@@ -10,14 +10,24 @@
 
   let previousTitle = $state('');
   let direction = $state('down');
+
   let titleAfterTick = $state('');
+  let titleAfterTick2ndLine = $state('');
+
   $effect(() => {
     const pTitle = untrack(() => previousTitle);
     if (pTitle !== title) {
       direction = pTitle < title ? 'up' : 'down';
       untrack(() => { previousTitle = title; });
       tick().then(() => {
-        titleAfterTick = String(title);
+        if (title && String(title).indexOf('2025 Model') > -1) {
+          const [first, second] = String(title).split(':');
+          titleAfterTick = first;
+          titleAfterTick2ndLine = second;
+        } else {
+          titleAfterTick = String(title);
+          titleAfterTick2ndLine = '';
+        }
       });
     }
   });
@@ -27,11 +37,13 @@
 {#if titleAfterTick && titleAfterTick !== 'none'}
   {#key titleAfterTick}
     <h1
-      class="title"
+      class="title {titleAfterTick2ndLine ? 'two-lines' : ''}"
       in:fly={{ duration, easing, y: direction === 'down' ? '1em' : '-1em'}}
       out:fly={{ duration, easing, y: direction === 'down' ? '-1em' : '1em'}}
     >
       {titleAfterTick}
+      <br />
+      {titleAfterTick2ndLine}
     </h1>
   {/key}
 {/if}
@@ -48,9 +60,23 @@
     left: 10%;
   }
 
+  @media (max-width: 61rem) {
+    :global(.title.two-lines) {
+      font-size: 16px !important;
+      line-height: 120% !important;
+      text-align: center;
+    }
+  }
+
   @media (min-width: 62rem) {
     .title {
       font-size: 32px;
+    }
+
+    :global(.title.two-lines) {
+      font-size: 28px !important;
+      line-height: 120% !important;
+      text-align: center;
     }
   }
 </style>
