@@ -135,12 +135,20 @@
   /* Style the header */
   @media (max-width: 62rem) {
     :global(.st-panel-root.first) {
-      margin-top: 92dvh !important;
+      margin-top: 98dvh !important;
+
+      :global(.st-panel) {
+        padding-top: 0;
+      }
     }
   }
 
   :global(.Header-content),
   :global(.Header) {
     width: auto !important;
+
+    :global(h1) {
+      margin-top: 0;
+    }
   }
 </style>
