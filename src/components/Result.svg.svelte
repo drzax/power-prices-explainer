@@ -9,7 +9,7 @@
   import type { ResultType, ShapesType } from '../lib/types';
   import Mark from './Mark.svg.svelte';
 
-  let { data, size }: { data: ResultType; size: 'sm' | 'md' | 'lg' } = $props();
+  let { data, size, opacity }: { data: ResultType; size: 'sm' | 'md' | 'lg', opacity?: number } = $props();
 
   const opts = {
 		duration: 1500,
@@ -19,6 +19,7 @@
   let y = new Tween(0, opts);
   let party = $derived(data.PartyAb.toLocaleLowerCase());
   let variant = $derived(parties.get(party)?.shape || (party === 'tooclose' ? 'square' : '') || 'none');
+  let markerOpacity = $derived(opacity ? opacity : visState.config.resultMarkerOpacity);
 
   $effect(() => {
     const coords = ternaryToCartesian(getTernaryCoordinatesFromResult(data));
@@ -37,7 +38,7 @@
     text={data.id}
     {size}
     --marker-color="var(--pty-color-{data.PartyAb.toLowerCase()})"
-    --marker-opacity={visState.config.resultMarkerOpacity}
+    --marker-opacity={markerOpacity}
     x={x.current}
     y={y.current}
     {variant}

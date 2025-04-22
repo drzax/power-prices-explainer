@@ -37,12 +37,13 @@
         const year = panelData.filters.year[0] || '2022';
         for (let i = 0; i < n.childNodes.length; i++) {
           const child = n.childNodes[i];
+          if (child.nodeName === 'STRONG' && Object.keys(SPECIAL_CASES).indexOf(child.innerText.toLowerCase()) > -1) {
+            enhanceText(child, year, SPECIAL_CASES[child.innerText.toLowerCase()]);
+            continue;
+          }
           if (child.nodeName === 'STRONG' && electorates.indexOf(child.innerText) > -1) {
             const seatResult = data.find(d => d.DivisionNm === child.innerText && d.Year === year);
             enhanceText(child, year, seatResult.PartyAb.toLowerCase());
-          }
-          if (child.nodeName === 'STRONG' && Object.keys(SPECIAL_CASES).indexOf(child.innerText.toLowerCase()) > -1) {
-            enhanceText(child, year, SPECIAL_CASES[child.innerText.toLowerCase()]);
           }
         }
         return n;
@@ -66,12 +67,17 @@
 
     const colourVar = `var(--pty-color-icon-${party})`;
 
+    let x = 7.5;
+    let y = 9;
+
     if (variant === 'square') {
       svgEl.setAttribute('style', `margin-right: 1px; padding-top: 2px; color: ${colourVar}`);
     } else if (variant === 'circle') {
       svgEl.setAttribute('style', `margin-right: 1px; padding-top: 1px; color: ${colourVar}`);
     } else {
-      svgEl.setAttribute('style', `margin-right: 1px; padding-top: 1px; color: ${colourVar}`);
+      svgEl.setAttribute('style', `margin-right: 0.5px; padding-top: 2px; color: ${colourVar}`);
+      x -= 0.5;
+      y -= 1;
     }
 
     mount(Mark, {
@@ -80,8 +86,8 @@
         size: 'md',
         disableResponsiveSizing: true,
         variant,
-        x: 7.5,
-        y: 9,
+        x,
+        y,
       },
     });
   };
@@ -110,9 +116,14 @@
     --pty-color-bg-alp: #F9D2D6;
     --pty-color-bg-oth: #E3E3E3;
 
-    padding: 2px;
+    padding-bottom: 2px;
     padding-right: 5px;
     padding-left: 4px;
+
+    /* Deal with Firefox weirdness.. */
+    padding-top: 4px;
+    -webkit-padding-before: 2px;
+    /* -- */
 
     border-radius: 3px;
     text-wrap-mode: nowrap;

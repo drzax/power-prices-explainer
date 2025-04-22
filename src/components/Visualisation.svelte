@@ -96,7 +96,7 @@
       {#each visState.config.highlights as highlight}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
         {#if result}
-          <Result size={'md'} data={result} />
+          <Result size={'md'} data={result} opacity={1} />
         {/if}
       {/each}
     </Svg>
