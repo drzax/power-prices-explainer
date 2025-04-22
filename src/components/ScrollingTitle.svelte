@@ -17,7 +17,7 @@
       direction = pTitle < title ? 'up' : 'down';
       untrack(() => { previousTitle = title; });
       tick().then(() => {
-        titleAfterTick = title;
+        titleAfterTick = String(title);
       });
     }
   });
