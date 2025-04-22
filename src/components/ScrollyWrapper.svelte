@@ -18,6 +18,12 @@
     }
   };
 
+  const SPECIAL_CASES = {
+    'red': 'alp',
+    'blue': 'lnp',
+    'grey': 'oth',
+  };
+
   //
   // Find any bolded electorate names in the panel copy, and enhance them visually
   //
@@ -32,7 +38,11 @@
         for (let i = 0; i < n.childNodes.length; i++) {
           const child = n.childNodes[i];
           if (child.nodeName === 'STRONG' && electorates.indexOf(child.innerText) > -1) {
-            enhanceText(child, year);
+            const seatResult = data.find(d => d.DivisionNm === child.innerText && d.Year === year);
+            enhanceText(child, year, seatResult.PartyAb.toLowerCase());
+          }
+          if (child.nodeName === 'STRONG' && Object.keys(SPECIAL_CASES).indexOf(child.innerText.toLowerCase()) > -1) {
+            enhanceText(child, year, SPECIAL_CASES[child.innerText.toLowerCase()]);
           }
         }
         return n;
@@ -44,18 +54,17 @@
   // Replace electorate names with the party colours of the winner for that year (based on the
   // filters in the marker data).
   //
-  const enhanceText = (child, year) => {
-    const result = data.find(d => d.DivisionNm === child.innerText && d.Year === year);
+  const enhanceText = (child, year, party) => {
     child.classList.add('electorate-label');
-    child.classList.add(`electorate-label-${result.PartyAb.toLowerCase()}`);
-    const variant = parties.get(result.PartyAb.toLocaleLowerCase())?.shape || 'none';
+    child.classList.add(`electorate-label-${party}`);
+    const variant = parties.get(party)?.shape || 'none';
 
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgEl.setAttribute('width', '16');
     svgEl.setAttribute('height', '16');
     child.prepend(svgEl);
 
-    const colourVar = `var(--pty-color-icon-${result.PartyAb.toLowerCase()})`;
+    const colourVar = `var(--pty-color-icon-${party})`;
 
     if (variant === 'square') {
       svgEl.setAttribute('style', `margin-right: 1px; padding-top: 2px; color: ${colourVar}`);
