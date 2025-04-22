@@ -40,7 +40,7 @@ export const parties = new Map<string, PartyConstantsType>([
   [
     'lnp',
     {
-      label: '100% LNP',
+      label: '100% L/NP',
       shape: 'square',
       gradientStops: [
         { offset: '25%', color: '#EBF1FA' },
