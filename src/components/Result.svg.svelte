@@ -34,6 +34,7 @@
 
 {#if variant !== 'none' && x.current !== 0 && y.current !== 0}
   <Mark
+    text={data.id}
     {size}
     --marker-color="var(--pty-color-{data.PartyAb.toLowerCase()})"
     --marker-opacity={visState.config.resultMarkerOpacity}

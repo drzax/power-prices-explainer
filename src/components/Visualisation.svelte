@@ -19,9 +19,9 @@
 
   let innerWidth = $state(0);
 
+  let activeYear = $derived(visState.config.filters.year[0] || 2022);
   let filteredData = $derived.by(() => {
     const { year, electorate, party, pollsters } = visState.config.filters;
-    const activeYear = year[0] || 2022;
 
     // Use alternate dataset if in 'national polls' mode
     if (visState.config.nationalPolls) {
@@ -42,8 +42,7 @@
       .filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm));
   });
 
-  let singleYear = $derived(visState.config.filters.year.length === 1 && visState.config.filters.year[0] !== 'none');
-  let defaultTitle = $derived(visState.config.mrpPolls ? visState.config.filters.pollsters[0] : visState.config.filters.year[0]);
+  let defaultTitle = $derived(visState.config.mrpPolls ? visState.config.filters.pollsters[0] : activeYear);
   let title = $derived(visState.config.title || defaultTitle);
 
   let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
@@ -100,12 +99,6 @@
           <Result size={'md'} data={result} />
         {/if}
       {/each}
-      {#each visState.config.annotations as annotation, i (annotation)}
-        <LabelConnector
-          markerPosition={{ ...ternaryToCartesian(annotation.markLocation), r: annotation.radius }}
-          labelPosition={{ ...ternaryToCartesian(annotation.textLocation), r: 20 }}
-        />
-      {/each}
     </Svg>
     <Html>
       {#each visState.config.highlights as highlight (highlight.electorate)}
@@ -126,15 +119,6 @@
             offsetY={labelOffset}
             text={mark.label}
             orientation={mark.orientation}
-          />
-        {/if}
-      {/each}
-      {#each visState.config.annotations as annotation, i (annotation)}
-        {#if annotation.text && annotation.text.length}
-          <Label
-            {...ternaryToCartesian(annotation.textLocation)}
-            text={annotation.text}
-            orientation={annotation.orientation}
           />
         {/if}
       {/each}

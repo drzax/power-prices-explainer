@@ -55,12 +55,14 @@
     svgEl.setAttribute('height', '16');
     child.prepend(svgEl);
 
+    const colourVar = `var(--pty-color-icon-${result.PartyAb.toLowerCase()})`;
+
     if (variant === 'square') {
-      svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 2px;');
+      svgEl.setAttribute('style', `margin-right: 1px; padding-top: 2px; color: ${colourVar}`);
     } else if (variant === 'circle') {
-      svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
+      svgEl.setAttribute('style', `margin-right: 1px; padding-top: 1px; color: ${colourVar}`);
     } else {
-      svgEl.setAttribute('style', 'margin-right: 2px; padding-top: 1px;');
+      svgEl.setAttribute('style', `margin-right: 1px; padding-top: 1px; color: ${colourVar}`);
     }
 
     mount(Mark, {
@@ -71,7 +73,6 @@
         variant,
         x: 7.5,
         y: 9,
-        '--marker-color': `var(--pty-color-${result.PartyAb.toLowerCase()})`
       },
     });
   };
@@ -92,23 +93,28 @@
     --pty-color-lnp: #0041A3;
     --pty-color-oth: #404040;
 
+    --pty-color-icon-alp: #E11F30;
+    --pty-color-icon-lnp: #0A52BF;
+    --pty-color-icon-oth: #757575;
+
     --pty-color-bg-lnp: #CEDCF2;
     --pty-color-bg-alp: #F9D2D6;
     --pty-color-bg-oth: #E3E3E3;
 
     padding: 2px;
     padding-right: 5px;
-    padding-left: 3px;
-
-    font-size: 16px;
+    padding-left: 4px;
 
     border-radius: 3px;
     text-wrap-mode: nowrap;
+
+    /* in-text labels slightly smaller than other text to retain balance */
+    font-size: calc(var(--od-font-size) - 2px);
   }
 
-  @media (min-width: 72rem) {
+  @media (min-width: 90rem) {
     :global(.electorate-label) {
-      font-size: 18px;
+      font-size: calc(1.25rem - 2px);
     }
   }
 

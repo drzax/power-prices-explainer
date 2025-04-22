@@ -33,7 +33,7 @@
 		"carbon-components-svelte": "^0.88.4",
 		"carbon-icons-svelte": "^13.3.0",
 		"d3-ternary": "^3.0.7",
-		"svelte": "^5.20.2",
+		"svelte": "^5.28.1",
 		"valibot": "^1.0.0"
 	}
 }
