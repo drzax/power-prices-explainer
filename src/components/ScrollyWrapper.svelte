@@ -110,6 +110,11 @@
     }
   }
 
+  /* override dark mode */
+  :global(.st-panel) {
+    color: black !important;
+  }
+
   :global(.electorate-label) {
     --pty-color-alp: #B91321;
     --pty-color-lnp: #0041A3;
