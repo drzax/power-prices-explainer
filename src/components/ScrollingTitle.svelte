@@ -17,10 +17,13 @@
   $effect(() => {
     const pTitle = untrack(() => previousTitle);
     if (pTitle !== title) {
-      direction = pTitle < title ? 'up' : 'down';
+      const is2025Poll = title && String(title).indexOf('2025 Model') > -1;
+
+      direction = is2025Poll ? 'up' : (pTitle < title ? 'up' : 'down');
       untrack(() => { previousTitle = title; });
+
       tick().then(() => {
-        if (title && String(title).indexOf('2025 Model') > -1) {
+        if (is2025Poll > -1) {
           const [first, second] = String(title).split(':');
           titleAfterTick = first;
           titleAfterTick2ndLine = second;

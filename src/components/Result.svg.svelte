@@ -18,11 +18,11 @@
 	let x = new Tween(0, opts);
   let y = new Tween(0, opts);
   let party = $derived(data.PartyAb.toLocaleLowerCase());
-  let variant = $derived(parties.get(party)?.shape || (party === 'tooclose' ? 'circle' : '') || 'none');
   let markerOpacity = $derived(opacity ? opacity : visState.config.resultMarkerOpacity);
 
   $effect(() => {
     const coords = ternaryToCartesian(getTernaryCoordinatesFromResult(data));
+    // Don't tween in from null results
     if (x.current === 0 && y.current === 0) {
       x.set(coords.x, { duration: 0 })
       y.set(coords.y, { duration: 0 })
@@ -30,6 +30,22 @@
       x.target = coords.x;
       y.target = coords.y;
     }
+  });
+
+  let variant = $derived.by(() => {
+    // For undecided seats, use the variant of the highest primary vote (they'll be greyed out)
+    if (party === 'tooclose') {
+      const [OTH, ALP, LNP] = getTernaryCoordinatesFromResult(data);
+      if (OTH > ALP && OTH > LNP) {
+        return 'diamond';
+      }
+      if (LNP > ALP && LNP > OTH) {
+        return 'square';
+      }
+      return 'circle';
+    }
+
+    return parties.get(party)?.shape || 'none';
   });
 </script>
 
