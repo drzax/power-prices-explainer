@@ -135,6 +135,8 @@
     --pty-color-lnp: #0a52bf;
     --pty-color-oth: #757575;
     --pty-color-blk: #000000;
+    --pty-color-tooclose: #AAAAAA;
+
     --pty-color-text-alp: #e11f30;
     --pty-color-text-lnp: #0a52bf;
     --pty-color-text-oth: #595959;

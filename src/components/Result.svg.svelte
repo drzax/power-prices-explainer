@@ -18,7 +18,7 @@
 	let x = new Tween(0, opts);
   let y = new Tween(0, opts);
   let party = $derived(data.PartyAb.toLocaleLowerCase());
-  let variant = $derived(parties.get(party)?.shape || (party === 'tooclose' ? 'square' : '') || 'none');
+  let variant = $derived(parties.get(party)?.shape || (party === 'tooclose' ? 'circle' : '') || 'none');
   let markerOpacity = $derived(opacity ? opacity : visState.config.resultMarkerOpacity);
 
   $effect(() => {
