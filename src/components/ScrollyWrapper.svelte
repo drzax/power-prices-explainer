@@ -103,6 +103,12 @@
 
 <style>
 
+  @media (max-width: 62rem) {
+    :global(.viz) {
+      transform: translateY(-20px) !important;
+    }
+  }
+
   :global(.electorate-label) {
     --pty-color-alp: #B91321;
     --pty-color-lnp: #0041A3;
