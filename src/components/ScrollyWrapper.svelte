@@ -111,7 +111,7 @@
   }
 
   /* override dark mode */
-  :global(.st-panel) {
+  :global(.st-panel p) {
     color: black !important;
   }
 
