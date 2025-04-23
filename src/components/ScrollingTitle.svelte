@@ -41,7 +41,7 @@
   {#key titleAfterTick}
     <h1
       class="title {titleAfterTick2ndLine ? 'two-lines' : ''}"
-      in:fly={{ duration, easing, y: direction === 'down' ? '1em' : '-1em'}}
+      in:fly={{ duration, easing, delay: titleAfterTick2ndLine ? 300 : 0, y: direction === 'down' ? '1em' : '-1em'}}
       out:fly={{ duration, easing, y: direction === 'down' ? '-1em' : '1em'}}
     >
       {titleAfterTick}
