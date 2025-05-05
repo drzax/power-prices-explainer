@@ -13,7 +13,7 @@
         const coords = ternaryToCartesian(getTernaryCoordinatesFromResult(result));
         if (i === arr.length - 1 && arr.length > 1) {
           const previousCoords = ternaryToCartesian(getTernaryCoordinatesFromResult(arr[i - 1]));
-          const d = distance(previousCoords, coords) - 8;
+          const d = distance(previousCoords, coords) - 10;
           const v = unitVector(previousCoords, coords);
 
           return `${previousCoords.x - d * v.x},${previousCoords.y - d * v.y}`;
@@ -33,4 +33,4 @@
   stroke-linecap="round"
   stroke-dashoffset="-10"
   marker-end="url(#arrow)"
-/> />
+/>

@@ -10,15 +10,13 @@
   import { onMount } from 'svelte';
   import { parse } from 'valibot';
   import { VisConfigSchema } from '../lib/schemas';
+  import UpdateChecker from './UpdateChecker.svelte';
 
   onMount(() => {
     try {
       const urlConfig = new URL(document.location.href).searchParams.get('config');
       if (urlConfig) {
-        visState.config = parse(
-          VisConfigSchema,
-          decode(urlConfig || '')
-        );
+        visState.config = parse(VisConfigSchema, decode(urlConfig || ''));
       }
     } catch (e) {
       console.error(e);
@@ -34,6 +32,7 @@
   });
 </script>
 
+<UpdateChecker />
 <main>
   <article>
     <figure>

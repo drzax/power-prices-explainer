@@ -3,7 +3,6 @@
     Accordion,
     AccordionItem,
     MultiSelect,
-    Select,
     Checkbox,
     TextInput,
     Button,
@@ -337,10 +336,13 @@
       titleText="Annotate an electorate"
       selectedId={null}
       on:select={({ detail }) => {
-        currentAnnotation.markLocation = getTernaryCoordinatesFromResult(detail.selectedItem);
-        currentAnnotation.text = detail.selectedItem.DivisionNm;
+        if (!currentAnnotation) return;
+        const itemData = filteredData.find(d => d.id === detail.selectedItem.id);
+        if (!itemData) return;
+        currentAnnotation.markLocation = getTernaryCoordinatesFromResult(itemData);
+        currentAnnotation.text = itemData.DivisionNm;
       }}
-      items={filteredData.map(d => ({ ...d, text: `${d.Year} ${d.DivisionNm}` }))}
+      items={filteredData.map(d => ({ data: d, id: d.id, text: `${d.Year} ${d.DivisionNm}` }))}
     />
 
     <h3>Mark</h3>

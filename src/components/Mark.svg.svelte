@@ -3,21 +3,21 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import { LARGE_TABLET_BREAKPOINT, DESKTOP_BREAKPOINT } from '../lib/constants';
+  import Polygon from './Polygon.svg.svelte';
 
   let {
     x,
     y,
     text,
-    opacity = 1,
-    variant = 'circle',
+    variant = 'triangle',
     size = 'sm',
-    disableResponsiveSizing = false,
+    disableResponsiveSizing = false
   }: {
     x: number;
     y: number;
     orientation?: 'left' | 'right';
     text?: string;
-    variant?: 'circle' | 'square' | 'diamond';
+    variant?: 'circle' | 'square' | 'diamond' | 'triangle';
     size?: 'sm' | 'md' | 'lg';
     offsetX?: number;
     offsetY?: number;
@@ -37,13 +37,13 @@
       sizes = {
         sm: 9,
         md: 11,
-        lg: 13,
+        lg: 13
       };
     } else if (innerWidth > DESKTOP_BREAKPOINT && !disableResponsiveSizing) {
       sizes = {
         sm: 11,
         md: 13,
-        lg: 15,
+        lg: 15
       };
     }
   });
@@ -55,17 +55,23 @@
 
 <svelte:window bind:innerWidth />
 
-<g
-  class="mark {text}"
-  in:fade={{ delay: 850 }}
-  out:fade={{ delay: 0 }}
->
+<g class="mark {text}" in:fade={{ delay: 850 }} out:fade={{ delay: 0 }}>
   {#if variant === 'square'}
     <rect x={x - radius} y={y - radius} width={side * 0.9} height={side * 0.9} />
   {:else if variant === 'diamond'}
     <polygon points="{x},{y - diagonal / 2} {x + diagonal / 2},{y} {x},{y + diagonal / 2} {x - diagonal / 2},{y}" />
-  {:else}
+  {:else if variant === 'circle'}
     <circle cx={x} cy={y} r={radius} />
+  {:else if variant === 'triangle'}
+    <Polygon
+      --polygon-stroke-width="1px"
+      --polygon-outline-color="#444"
+      --polygon-color="transparent"
+      rotation={30}
+      {radius}
+      cx={x}
+      cy={y}
+    />
   {/if}
 </g>
 

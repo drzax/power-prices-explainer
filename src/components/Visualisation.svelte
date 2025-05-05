@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { untrack, tick } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
   import { data, polls, electorates, nationalPolls2025 } from '../lib/data';
@@ -15,7 +13,6 @@
   import ScrollingTitle from './ScrollingTitle.svelte';
   import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
   import Arrow from './Arrow.svg.svelte';
-  import LabelConnector from './LabelConnector.svelte';
   import { groups } from 'd3-array';
   import ArrowLink from './ArrowLink.svg.svelte';
 
@@ -67,27 +64,36 @@
     </Html>
 
     <Svg>
-      {#each filteredData as data (data.id)}
-        <Result size={'sm'} {data} />
+      <defs>
+        <marker
+          id="arrow"
+          viewBox="0 0 14 14"
+          refX="6"
+          refY="7"
+          markerWidth="8"
+          markerHeight="14"
+          orient="auto-start-reverse"
+        >
+          <path
+            d="M1 1 L7 7 L1 13"
+            stroke="black"
+            fill="none"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </marker>
+      </defs>
+      {#each groupedByDivision.filter(([d]) => visState.config.timeArrows.includes(d)) as [division, group] (division)}
+        {#if group.length > 1}
+          <ArrowLink results={group} />
+        {/if}
       {/each}
     </Svg>
 
     <Svg>
-      <defs>
-        <marker
-          id="arrow"
-          viewBox="0 0 12 12"
-          refX="6"
-          refY="6"
-          markerWidth="6"
-          markerHeight="12"
-          orient="auto-start-reverse"
-        >
-          <path d="M0 0 L6 6 L0 12" stroke="black" fill="none" stroke-width="2" stroke-linecap="round" />
-        </marker>
-      </defs>
-      {#each groupedByDivision.filter(([d]) => visState.config.timeArrows.includes(d)) as [division, group] (division)}
-        <ArrowLink results={group} />
+      {#each filteredData as data (data.id)}
+        <Result size={'sm'} {data} />
       {/each}
     </Svg>
 
@@ -113,6 +119,7 @@
           --arrow-fill-color="url(#arrow-gradient)"
           from={ternaryToCartesian(arrow.from)}
           to={ternaryToCartesian(arrow.to)}
+          lineWidth={2}
         />
       {/each}
 
@@ -124,13 +131,13 @@
       {/each}
     </Svg>
     <Html>
-      {#each visState.config.highlights as highlight (highlight.electorate)}
+      {#each visState.config.highlights as highlight (highlight)}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
         {#if result}
           <Label
             --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
             {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-            offsetY={labelOffset}
+            offsetY={highlight.label.orientation === 'middle' ? labelOffset : -3}
             text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
             orientation={highlight.label.orientation}
           />

@@ -31,6 +31,6 @@
   path {
     fill: var(--polygon-color, transparent);
     stroke: var(--polygon-outline-color, transparent);
-    stroke-width: 1;
+    stroke-width: var(--polygon-stroke-width, 1px);
   }
 </style>
