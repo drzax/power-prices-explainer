@@ -11,10 +11,11 @@
   import { parse } from 'valibot';
   import { VisConfigSchema } from '../lib/schemas';
   import UpdateChecker from './UpdateChecker.svelte';
+  import BuilderStyleRoot from './Builder/BuilderStyleRoot.svelte';
 
   onMount(() => {
     try {
-      const urlConfig = new URL(document.location.href).searchParams.get('config');
+      const urlConfig = document.location.hash.substring(1);
       if (urlConfig) {
         visState.config = parse(VisConfigSchema, decode(urlConfig || ''));
       }
@@ -27,12 +28,14 @@
 
   $effect(() => {
     const url = new URL(document.location.href);
-    url.searchParams.set('config', encode(visState.config));
+    url.hash = encode(visState.config);
     history.replaceState(undefined, document.title, url.toString());
   });
 </script>
 
-<UpdateChecker />
+<BuilderStyleRoot>
+  <UpdateChecker /></BuilderStyleRoot
+>
 <main>
   <article>
     <figure>
