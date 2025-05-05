@@ -63,7 +63,7 @@ export const defaultVisConfig: VisConfigType = {
   arrows: [],
   nationalPolls: false,
   mrpPolls: false,
-  filters: { year: [], electorate: [], party: [], pollsters: [] },
+  filters: { year: [2025], electorate: [], party: [], pollsters: [] },
   highlights: [],
   marks: [],
   annotations: [],

@@ -18,7 +18,6 @@
 
   let innerWidth = $state(0);
 
-  let activeYear = $derived(visState.config.filters.year[0] || 2022);
   let filteredData = $derived.by(() => {
     const { year, electorate, party, pollsters } = visState.config.filters;
 
@@ -42,7 +41,13 @@
     return filtered;
   });
 
-  let defaultTitle = $derived(visState.config.mrpPolls ? visState.config.filters.pollsters[0] : activeYear);
+  let defaultTitle = $derived(
+    visState.config.mrpPolls
+      ? visState.config.filters.pollsters[0]
+      : visState.config.filters.year[0]
+        ? visState.config.filters.year[0]
+        : ''
+  );
   let title = $derived(visState.config.title || defaultTitle);
 
   let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
