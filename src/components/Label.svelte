@@ -11,7 +11,7 @@
   }: {
     x: number;
     y: number;
-    orientation?: 'middle' | 'left' | 'right';
+    orientation?: 'middle' | 'left' | 'right' | 'above' | 'below';
     text?: string;
     variant?: 'circle' | 'square' | 'diamond';
     size?: 'small' | 'large';
@@ -75,5 +75,11 @@
   }
   .right {
     left: calc(1em + var(--label-width, 0px) / 2);
+  }
+  .above {
+    bottom: calc(1em + var(--label-height, 0px) / 2);
+  }
+  .below {
+    top: calc(1em - var(--label-height, 0px) / 2);
   }
 </style>

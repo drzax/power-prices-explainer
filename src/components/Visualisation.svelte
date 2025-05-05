@@ -50,7 +50,6 @@
   );
   let title = $derived(visState.config.title || defaultTitle);
 
-  let labelOffset = $derived(innerWidth > DESKTOP_BREAKPOINT ? -18 : -15);
   let groupedByDivision = $derived(groups(filteredData, d => d.DivisionNm));
 </script>
 
@@ -138,6 +137,12 @@
     <Html>
       {#each visState.config.highlights as highlight (highlight)}
         {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
+        {@const labelOffsetMagnitude =
+          highlight.label.orientation === 'middle' ? 0 : innerWidth > DESKTOP_BREAKPOINT ? 18 : 15}
+        {@const labelOffset =
+          highlight.label.orientation === 'right' || highlight.label.orientation === 'below'
+            ? labelOffsetMagnitude
+            : -labelOffsetMagnitude}
         {#if result}
           <Label
             --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
