@@ -1,7 +1,7 @@
 import { array, boolean, number, object, optional, picklist, string, tuple } from 'valibot';
 
 export const orientations = ['left', 'right', 'middle'] as const;
-export const parties = ['OTH', 'LNP', 'ALP', 'TOOCLOSE'] as const;
+export const parties = ['OTH', 'LNP', 'ALP', 'TOOCLOSE', 'IN DOUBT'] as const;
 export const shapes = ['circle', 'diamond', 'square'] as const;
 
 export const ShapesSchema = picklist(shapes);
@@ -66,5 +66,6 @@ export const VisConfigSchema = object({
   }),
   highlights: array(HighlightSchema),
   marks: array(CustomMarkSchema),
-  annotations: array(AnnotationSchema)
+  annotations: array(AnnotationSchema),
+  timeArrows: array(string())
 });

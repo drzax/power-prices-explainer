@@ -117,7 +117,6 @@
     </AccordionItem>
 
     <AccordionItem title="Filters">
-
       <Checkbox bind:checked={visState.config.nationalPolls} labelText="Show national polls" />
       <Checkbox bind:checked={visState.config.mrpPolls} labelText="Show MRP polls" />
 
@@ -134,7 +133,7 @@
           titleText="Election year"
           filterable
           bind:selectedIds={visState.config.filters.year}
-          items={[{id: 'none', text: 'None'}, ...years.map(d => ({ id: d, text: d.toString() }))]}
+          items={[{ id: 'none', text: 'None' }, ...years.map(d => ({ id: d, text: d.toString() }))]}
           sortItem={() => {}}
         />
       {/if}
@@ -228,6 +227,15 @@
       {/each}
       <Button size="small" onclick={addCustomMark}>Add mark</Button>
     </AccordionItem>
+    <AccordionItem title="Time arrows" open>
+      <MultiSelect
+        titleText="Electorate"
+        filterable
+        bind:selectedIds={visState.config.timeArrows}
+        items={electorates.map(d => ({ id: d, text: d }))}
+        sortItem={() => {}}
+      />
+    </AccordionItem>
     <AccordionItem title="Arrows">
       {#each visState.config.arrows as arrow, i (arrow)}
         <div class="row">
@@ -298,7 +306,7 @@
       on:select={({ detail }) => {
         if (currentCustomMark) currentCustomMark.party = detail.selectedId;
       }}
-      items={[{ id: 'blk', text: 'Black'}, ...parties.map(d => ({ id: d, text: d }))]}
+      items={[{ id: 'blk', text: 'Black' }, ...parties.map(d => ({ id: d, text: d }))]}
     />
     <Dropdown
       size="sm"

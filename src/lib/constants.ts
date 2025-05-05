@@ -66,7 +66,8 @@ export const defaultVisConfig: VisConfigType = {
   filters: { year: [], electorate: [], party: [], pollsters: [] },
   highlights: [],
   marks: [],
-  annotations: []
+  annotations: [],
+  timeArrows: []
 };
 
 export const MARKERS: Marker[] = [
