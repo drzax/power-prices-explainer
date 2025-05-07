@@ -43,7 +43,7 @@ export const nationalPollsParsed = parse(
       DivisionNm: 'National Poll',
       isPoll: true,
       pollName: d.DivisionNm,
-      Year
+      Year: +Year
     };
   })
 );
