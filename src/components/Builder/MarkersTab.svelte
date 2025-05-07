@@ -3,10 +3,7 @@
 
   import { Button, CodeSnippet, InlineNotification } from 'carbon-components-svelte';
   import { visState } from '../../lib/state.svelte';
-  import { MARKER_NAME, MARKERS } from '../../lib/constants';
-
-  // import { alternatingCaseToPartialGraph, graphToAlternatingCase } from '../../lib/encode';
-  // import { generateFallback } from '../../lib/fallbacks';
+  import { MARKERS } from '../../lib/constants';
 
   const importMarker = () => {
     const input = prompt('Paste a marker here to import its configuration');

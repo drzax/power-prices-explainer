@@ -1,254 +1,27 @@
 import { array, parse } from 'valibot';
 
-import results from '../data/electorates.csv';
+import electorates from '../data/electorates.csv';
 import national from '../data/national_partyvotes_history.csv';
-import nationalPolls from '../data/national_polls_primaries.csv';
-import redbridgeMrpPoll from '../data/redbridge-accent-mrp-2025-04-17.csv';
-import yougovMrpPoll from '../data/yougov-mrp-2025-03.csv';
 
-import { NationalPollRawSchema, ResultSchema } from './schemas';
+import { ResultSchema } from './schemas';
 import { partySynonyms } from './constants';
 import type { ResultType } from './types';
 
 const rawData = parse(
   array(ResultSchema),
-  results.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}`, isPoll: false }))
+  electorates.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }))
 );
 
 const rawDataNational = parse(
   array(ResultSchema),
-  national.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}`, isPoll: false }))
-);
-
-const redbridgeMrpData = parse(
-  array(ResultSchema),
-  redbridgeMrpPoll.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}`, isPoll: true, pollName: 'Redbridge' }))
-);
-
-const yougovMrpData = parse(
-  array(ResultSchema),
-  yougovMrpPoll.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}`, isPoll: true, pollName: `YouGov` }))
-);
-
-export const nationalPollsParsed = parse(
-  array(ResultSchema),
-  parse(array(NationalPollRawSchema), nationalPolls).map(d => {
-    const Year = d.PublicationDate.split('/').pop();
-    if (!Year) {
-      throw new Error('Year not found');
-    }
-    return {
-      id: `${Year}-${d.DivisionNm}`,
-      ...d,
-      DivisionNm: 'National Poll',
-      isPoll: true,
-      pollName: d.DivisionNm,
-      Year: +Year
-    };
-  })
+  national.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }))
 );
 
 export const pollsters = ['Redbridge', 'YouGov'];
 
-export const data = $state<{ results: ResultType[] | undefined; polls: ResultType[] }>({
-  results: undefined,
-  polls: [...redbridgeMrpData, ...yougovMrpData, ...nationalPollsParsed]
+export const data = $state<{ results: ResultType[] | undefined }>({
+  results: undefined
 });
-
-export const years = [
-  1975, 1977, 1980, 1983, 1984, 1987, 1990, 1993, 1996, 1998, 2001, 2004, 2007, 2010, 2013, 2016, 2019, 2022, 2025
-];
-
-export const electorates = [
-  'ADELAIDE',
-  'ASTON',
-  'BALLARAT',
-  'BANKS',
-  'BARKER',
-  'BARTON',
-  'BASS',
-  'BEAN',
-  'BENDIGO',
-  'BENNELONG',
-  'BEROWRA',
-  'BLAIR',
-  'BLAXLAND',
-  'BONNER',
-  'BOOTHBY',
-  'BOWMAN',
-  'BRADDON',
-  'BRADFIELD',
-  'BRAND',
-  'BRISBANE',
-  'BRUCE',
-  'BULLWINKEL',
-  'BURT',
-  'CALARE',
-  'CALWELL',
-  'CANBERRA',
-  'CANNING',
-  'CAPRICORNIA',
-  'CASEY',
-  'CHIFLEY',
-  'CHISHOLM',
-  'CLARK',
-  'COOK',
-  'COOPER',
-  'CORANGAMITE',
-  'CORIO',
-  'COWAN',
-  'COWPER',
-  'CUNNINGHAM',
-  'CURTIN',
-  'DAWSON',
-  'DEAKIN',
-  'DICKSON',
-  'DOBELL',
-  'DUNKLEY',
-  'DURACK',
-  'EDEN-MONARO',
-  'FADDEN',
-  'FAIRFAX',
-  'FARRER',
-  'FENNER',
-  'FISHER',
-  'FLINDERS',
-  'FLYNN',
-  'FORDE',
-  'FORREST',
-  'FOWLER',
-  'FRANKLIN',
-  'FRASER',
-  'FREMANTLE',
-  'GELLIBRAND',
-  'GILMORE',
-  'GIPPSLAND',
-  'GOLDSTEIN',
-  'GORTON',
-  'GRAYNDLER',
-  'GREENWAY',
-  'GREY',
-  'GRIFFITH',
-  'GROOM',
-  'HASLUCK',
-  'HAWKE',
-  'HERBERT',
-  'HINDMARSH',
-  'HINKLER',
-  'HOLT',
-  'HOTHAM',
-  'HUGHES',
-  'HUME',
-  'HUNTER',
-  'INDI',
-  'ISAACS',
-  'JAGAJAGA',
-  'KENNEDY',
-  'KINGSFORD SMITH',
-  'KINGSTON',
-  'KOOYONG',
-  'LA TROBE',
-  'LALOR',
-  'LEICHHARDT',
-  'LILLEY',
-  'LINDSAY',
-  'LINGIARI',
-  'LONGMAN',
-  'LYNE',
-  'LYONS',
-  'MACARTHUR',
-  'MACKELLAR',
-  'MACNAMARA',
-  'MACQUARIE',
-  'MAKIN',
-  'MALLEE',
-  'MARANOA',
-  'MARIBYRNONG',
-  'MAYO',
-  'MCEWEN',
-  'MCMAHON',
-  'MCPHERSON',
-  'MELBOURNE',
-  'MENZIES',
-  'MITCHELL',
-  'MONASH',
-  'MONCRIEFF',
-  'MOORE',
-  'MORETON',
-  'NEW ENGLAND',
-  'NEWCASTLE',
-  'NICHOLLS',
-  "O'CONNOR",
-  'OXLEY',
-  'PAGE',
-  'PARKES',
-  'PARRAMATTA',
-  'PATERSON',
-  'PEARCE',
-  'PERTH',
-  'PETRIE',
-  'RANKIN',
-  'REID',
-  'RICHMOND',
-  'RIVERINA',
-  'ROBERTSON',
-  'RYAN',
-  'SCULLIN',
-  'SHORTLAND',
-  'SOLOMON',
-  'SPENCE',
-  'STURT',
-  'SWAN',
-  'SYDNEY',
-  'TANGNEY',
-  'WANNON',
-  'WARRINGAH',
-  'WATSON',
-  'WENTWORTH',
-  'WERRIWA',
-  'WHITLAM',
-  'WIDE BAY',
-  'WILLS',
-  'WRIGHT',
-  'BATMAN',
-  'CHARLTON',
-  'DENISON',
-  'GWYDIR',
-  'HIGGINS',
-  'KALGOORLIE',
-  'LOWE',
-  'MCMILLAN',
-  'MELBOURNE PORTS',
-  'MURRAY',
-  'NORTH SYDNEY',
-  'PORT ADELAIDE',
-  'PROSPECT',
-  'STIRLING',
-  'THROSBY',
-  'WAKEFIELD',
-  'BONYTHON',
-  'BURKE',
-  'NORTHERN TERRITORY',
-  'NAMADGI',
-  'CORINELLA',
-  'ANGAS',
-  'BALACLAVA',
-  'BALLAARAT',
-  'DARLING',
-  'DARLING DOWNS',
-  'DIAMOND VALLEY',
-  'DUNDAS',
-  'EVANS',
-  'HAWKER',
-  'HENTY',
-  'LANG',
-  'PHILLIP',
-  'RIVERINA-DARLING',
-  'ST GEORGE',
-  'STREETON',
-  'WILMOT',
-  'WIMMERA'
-];
 
 fetch('https://www.abc.net.au/news-web/api/syndicate/storylab/elections/federal/2025')
   .then(res => res.json())

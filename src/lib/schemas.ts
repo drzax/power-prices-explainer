@@ -14,20 +14,7 @@ export const ResultSchema = object({
   ALP: number(),
   LNP: number(),
   PartyAb: picklist(parties),
-  Year: number(),
-  isPoll: boolean(),
-  pollName: optional(string())
-});
-
-export const NationalPollRawSchema = object({
-  PublicationDate: string(),
-  DivisionNm: string(),
-  ALP: number(),
-  LNP: number(),
-  OTH: number(),
-  PartyAb: string(),
-  Year: number(),
-  Source: string()
+  Year: number()
 });
 
 export const AnnotationSchema = object({

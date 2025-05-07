@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
-  import { data, electorates } from '../lib/data.svelte';
+  import { data } from '../lib/data.svelte';
   import { DESKTOP_BREAKPOINT } from '../lib/constants';
 
   import Plot from './Plot.svelte';
@@ -18,23 +18,8 @@
 
   let innerWidth = $state(0);
 
-  $effect(() => {
-    console.log('data.results :>> ', data.results);
-  });
-
   let filteredData = $derived.by(() => {
-    const { year, electorate, party, pollsters } = visState.config.filters;
-
-    // Use alternate dataset if in 'national polls' mode
-    if (visState.config.nationalPolls) {
-      return data.nationalPolls2025;
-    }
-
-    if (visState.config.mrpPolls) {
-      return electorates.map(e => data.polls.find(d => d.DivisionNm === e && d.Year === pollsters[0])).filter(d => !!d);
-    }
-
-    // const filtered = data.filter(d => !!d).filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm));
+    const { year, electorate, party } = visState.config.filters;
 
     const filtered = data.results
       ?.filter(d => !!d)
@@ -54,7 +39,7 @@
   );
   let title = $derived(visState.config.title || defaultTitle);
 
-  let groupedByDivision = $derived(groups(filteredData, d => d.DivisionNm));
+  let groupedByDivision = $derived(filteredData && groups(filteredData, d => d.DivisionNm));
 </script>
 
 <svelte:window bind:innerWidth />
@@ -72,40 +57,42 @@
         <ScrollingTitle {title} />
       </Html>
 
-      <Svg>
-        <defs>
-          <marker
-            id="arrow"
-            viewBox="0 0 14 14"
-            refX="6"
-            refY="7"
-            markerWidth="8"
-            markerHeight="14"
-            orient="auto-start-reverse"
-          >
-            <path
-              d="M1 1 L7 7 L1 13"
-              stroke="black"
-              fill="none"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </marker>
-        </defs>
-        {#each groupedByDivision.filter( ([d]) => visState.config.timeArrows.includes(d) ) as [division, group] (division)}
-          {#if group.length > 1}
-            <ArrowLink results={group} />
-          {/if}
-        {/each}
-      </Svg>
-
-      <Svg>
-        {#each filteredData as data (data.id)}
-          <Result size={'sm'} {data} />
-        {/each}
-      </Svg>
-
+      {#if groupedByDivision}
+        <Svg>
+          <defs>
+            <marker
+              id="arrow"
+              viewBox="0 0 14 14"
+              refX="6"
+              refY="7"
+              markerWidth="8"
+              markerHeight="14"
+              orient="auto-start-reverse"
+            >
+              <path
+                d="M1 1 L7 7 L1 13"
+                stroke="black"
+                fill="none"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </marker>
+          </defs>
+          {#each groupedByDivision.filter( ([d]) => visState.config.timeArrows.includes(d) ) as [division, group] (division)}
+            {#if group.length > 1}
+              <ArrowLink results={group} />
+            {/if}
+          {/each}
+        </Svg>
+      {/if}
+      {#if filteredData}
+        <Svg>
+          {#each filteredData as data (data.id)}
+            <Result size={'sm'} {data} />
+          {/each}
+        </Svg>
+      {/if}
       <Svg --marker-outline-color="white">
         {#each visState.config.marks as mark (JSON.stringify(mark.location))}
           <Mark

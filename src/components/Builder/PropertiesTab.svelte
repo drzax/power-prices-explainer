@@ -115,7 +115,7 @@
   };
 </script>
 
-{#if data.results}
+{#if data.results && years && electorates && heldBy}
   <div>
     <Accordion>
       <AccordionItem title="General" open>
@@ -140,27 +140,13 @@
       </AccordionItem>
 
       <AccordionItem title="Filters">
-        <Checkbox bind:checked={visState.config.nationalPolls} labelText="Show national polls" />
-        <Checkbox bind:checked={visState.config.mrpPolls} labelText="Show MRP polls" />
-
-        {#if visState.config.mrpPolls}
-          <MultiSelect
-            titleText="Pollsters"
-            filterable
-            bind:selectedIds={visState.config.filters.pollsters}
-            items={[...pollsters.map(d => ({ id: d, text: d }))]}
-            sortItem={() => {}}
-          />
-        {:else}
-          <MultiSelect
-            titleText="Election year"
-            filterable
-            bind:selectedIds={visState.config.filters.year}
-            items={years.map(d => ({ id: d, text: d.toString() }))}
-            sortItem={() => {}}
-          />
-        {/if}
-
+        <MultiSelect
+          titleText="Election year"
+          filterable
+          bind:selectedIds={visState.config.filters.year}
+          items={years.map(d => ({ id: d, text: d.toString() }))}
+          sortItem={() => {}}
+        />
         <MultiSelect
           titleText="Party"
           bind:selectedIds={visState.config.filters.party}
