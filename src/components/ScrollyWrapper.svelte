@@ -2,7 +2,7 @@
   import { mount, onMount } from 'svelte';
   import { visState } from '../lib/state.svelte';
   import { decode } from '@abcnews/base-36-props';
-  import { electorates, data } from '../lib/data';
+  import { data, electorates } from '../lib/data.svelte';
   import { parties } from '../lib/constants';
 
   import Scrollyteller from '@abcnews/svelte-scrollyteller';
@@ -19,17 +19,17 @@
   };
 
   const SPECIAL_CASES = {
-    'red': 'alp',
-    'blue': 'lnp',
-    'grey': 'oth',
+    red: 'alp',
+    blue: 'lnp',
+    grey: 'oth'
   };
 
   //
   // Find any bolded electorate names in the panel copy, and enhance them visually
   //
   let { panels } = $props();
-  let annotatedPanels = $derived.by(() => panels.map(p =>
-    ({
+  let annotatedPanels = $derived.by(() =>
+    panels.map(p => ({
       align: p.align,
       data: p.data,
       nodes: p.nodes.map(n => {
@@ -42,14 +42,14 @@
             continue;
           }
           if (child.nodeName === 'STRONG' && electorates.indexOf(child.innerText) > -1) {
-            const seatResult = data.find(d => d.DivisionNm === child.innerText && d.Year === year);
+            const seatResult = data.results.find(d => d.DivisionNm === child.innerText && d.Year === year);
             enhanceText(child, year, seatResult.PartyAb.toLowerCase());
           }
         }
         return n;
-      }),
-    })
-  ));
+      })
+    }))
+  );
 
   //
   // Replace electorate names with the party colours of the winner for that year (based on the
@@ -87,8 +87,8 @@
         disableResponsiveSizing: true,
         variant,
         x,
-        y,
-      },
+        y
+      }
     });
   };
 </script>
@@ -102,7 +102,6 @@
 </Scrollyteller>
 
 <style>
-
   @media (max-width: 62rem) {
     :global(.viz) {
       transform: translateY(-20px) !important;
@@ -116,17 +115,17 @@
   }
 
   :global(.electorate-label) {
-    --pty-color-alp: #B91321;
-    --pty-color-lnp: #0041A3;
+    --pty-color-alp: #b91321;
+    --pty-color-lnp: #0041a3;
     --pty-color-oth: #404040;
 
-    --pty-color-icon-alp: #E11F30;
-    --pty-color-icon-lnp: #0A52BF;
+    --pty-color-icon-alp: #e11f30;
+    --pty-color-icon-lnp: #0a52bf;
     --pty-color-icon-oth: #757575;
 
-    --pty-color-bg-lnp: #CEDCF2;
-    --pty-color-bg-alp: #F9D2D6;
-    --pty-color-bg-oth: #E3E3E3;
+    --pty-color-bg-lnp: #cedcf2;
+    --pty-color-bg-alp: #f9d2d6;
+    --pty-color-bg-oth: #e3e3e3;
 
     padding-bottom: 2px;
     padding-right: 5px;
@@ -162,7 +161,6 @@
     color: var(--pty-color-oth);
     background: var(--pty-color-bg-oth);
   }
-
 
   /* Style the header */
   @media (max-width: 62rem) {

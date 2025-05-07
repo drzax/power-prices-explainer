@@ -10,3 +10,6 @@ export const getTernaryCoordinatesFromResult = (result: ResultType): [number, nu
 export const getSegmentsFromParties = () => {
   return Array.from(parties.entries()).map(([id, { gradientStops, label }]) => ({ id, gradientStops, label }));
 };
+
+export const getAllHeldBy = (data: (ResultType & { id: string })[]) =>
+  data.map(d => d.PartyAb).filter((d, i, arr) => arr.indexOf(d) === i);

@@ -8,12 +8,15 @@ export const ShapesSchema = picklist(shapes);
 
 // validate the data
 export const ResultSchema = object({
+  id: string(),
   DivisionNm: string(),
   OTH: number(),
   ALP: number(),
   LNP: number(),
   PartyAb: picklist(parties),
-  Year: number()
+  Year: number(),
+  isPoll: boolean(),
+  pollName: optional(string())
 });
 
 export const AnnotationSchema = object({

@@ -70,6 +70,14 @@ export const defaultVisConfig: VisConfigType = {
   timeArrows: []
 };
 
+export const partySynonyms = {
+  LNP: 'LNP',
+  NAT: 'LNP',
+  LIB: 'LNP',
+  CLP: 'LNP',
+  ALP: 'ALP'
+};
+
 export const MARKERS: Marker[] = [
   // { label: 'Standalone graphic marker', note: '', prefix: 'ternary' },
   {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import { parties } from '../lib/constants';
-  import { data, polls, electorates, nationalPolls2025 } from '../lib/data';
+  import { data, electorates } from '../lib/data.svelte';
   import { DESKTOP_BREAKPOINT } from '../lib/constants';
 
   import Plot from './Plot.svelte';
@@ -18,26 +18,30 @@
 
   let innerWidth = $state(0);
 
+  $effect(() => {
+    console.log('data.results :>> ', data.results);
+  });
+
   let filteredData = $derived.by(() => {
     const { year, electorate, party, pollsters } = visState.config.filters;
 
     // Use alternate dataset if in 'national polls' mode
     if (visState.config.nationalPolls) {
-      return nationalPolls2025;
+      return data.nationalPolls2025;
     }
 
     if (visState.config.mrpPolls) {
-      return electorates.map(e => polls.find(d => d.DivisionNm === e && d.Year === pollsters[0])).filter(d => !!d);
+      return electorates.map(e => data.polls.find(d => d.DivisionNm === e && d.Year === pollsters[0])).filter(d => !!d);
     }
 
     // const filtered = data.filter(d => !!d).filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm));
 
-    const filtered = data
-      .filter(d => !!d)
+    const filtered = data.results
+      ?.filter(d => !!d)
       .filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm))
       .filter(d => year.length === 0 || year.includes(d.Year))
       .filter(d => party.length === 0 || party.includes(d.PartyAb));
-    console.log('filtered :>> ', filtered);
+
     return filtered;
   });
 
@@ -56,116 +60,121 @@
 <svelte:window bind:innerWidth />
 
 <div>
-  <Plot
-    displayCentralZone={visState.config.displayCentralZone}
-    displayAxes={visState.config.displayAxes}
-    displayOutline={visState.config.displayTernaryOutline}
-    displaySegments={visState.config.displaySegments}
-    segments={getSegmentsFromParties()}
-  >
-    <Html>
-      <ScrollingTitle {title} />
-    </Html>
+  {#if data.results}
+    <Plot
+      displayCentralZone={visState.config.displayCentralZone}
+      displayAxes={visState.config.displayAxes}
+      displayOutline={visState.config.displayTernaryOutline}
+      displaySegments={visState.config.displaySegments}
+      segments={getSegmentsFromParties()}
+    >
+      <Html>
+        <ScrollingTitle {title} />
+      </Html>
 
-    <Svg>
-      <defs>
-        <marker
-          id="arrow"
-          viewBox="0 0 14 14"
-          refX="6"
-          refY="7"
-          markerWidth="8"
-          markerHeight="14"
-          orient="auto-start-reverse"
-        >
-          <path
-            d="M1 1 L7 7 L1 13"
-            stroke="black"
-            fill="none"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </marker>
-      </defs>
-      {#each groupedByDivision.filter(([d]) => visState.config.timeArrows.includes(d)) as [division, group] (division)}
-        {#if group.length > 1}
-          <ArrowLink results={group} />
-        {/if}
-      {/each}
-    </Svg>
+      <Svg>
+        <defs>
+          <marker
+            id="arrow"
+            viewBox="0 0 14 14"
+            refX="6"
+            refY="7"
+            markerWidth="8"
+            markerHeight="14"
+            orient="auto-start-reverse"
+          >
+            <path
+              d="M1 1 L7 7 L1 13"
+              stroke="black"
+              fill="none"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </marker>
+        </defs>
+        {#each groupedByDivision.filter( ([d]) => visState.config.timeArrows.includes(d) ) as [division, group] (division)}
+          {#if group.length > 1}
+            <ArrowLink results={group} />
+          {/if}
+        {/each}
+      </Svg>
 
-    <Svg>
-      {#each filteredData as data (data.id)}
-        <Result size={'sm'} {data} />
-      {/each}
-    </Svg>
+      <Svg>
+        {#each filteredData as data (data.id)}
+          <Result size={'sm'} {data} />
+        {/each}
+      </Svg>
 
-    <Svg --marker-outline-color="white">
-      {#each visState.config.marks as mark (JSON.stringify(mark.location))}
-        <Mark
-          size="md"
-          --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
-          {...ternaryToCartesian(mark.location)}
-          variant={parties.get(mark.party.toLowerCase())?.shape}
-        />
-      {/each}
-
-      <defs>
-        <linearGradient id="arrow-gradient">
-          <stop offset="60%" stop-color="rgb(255, 255, 255, 1)" />
-          <stop offset="100%" stop-color="rgb(255, 255, 255, 0)" />
-        </linearGradient>
-      </defs>
-
-      {#each visState.config.arrows as arrow}
-        <Arrow
-          --arrow-fill-color="url(#arrow-gradient)"
-          from={ternaryToCartesian(arrow.from)}
-          to={ternaryToCartesian(arrow.to)}
-          lineWidth={2}
-        />
-      {/each}
-
-      {#each visState.config.highlights as highlight (highlight)}
-        {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-        {#if result}
-          <Result size={'md'} data={result} opacity={1} />
-        {/if}
-      {/each}
-    </Svg>
-    <Html>
-      {#each visState.config.highlights as highlight (highlight)}
-        {@const result = data.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-        {@const labelOffsetMagnitude =
-          highlight.label.orientation === 'middle' ? 0 : innerWidth > DESKTOP_BREAKPOINT ? 18 : 15}
-        {@const labelOffset =
-          highlight.label.orientation === 'right' || highlight.label.orientation === 'below'
-            ? labelOffsetMagnitude
-            : -labelOffsetMagnitude}
-        {#if result}
-          <Label
-            --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
-            {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-            offsetY={highlight.label.orientation === 'middle' ? labelOffset : -3}
-            text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
-            orientation={highlight.label.orientation}
-          />
-        {/if}
-      {/each}
-      {#each visState.config.marks as mark}
-        {#if mark.label && mark.label.length}
-          <Label
+      <Svg --marker-outline-color="white">
+        {#each visState.config.marks as mark (JSON.stringify(mark.location))}
+          <Mark
+            size="md"
             --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
             {...ternaryToCartesian(mark.location)}
-            offsetY={labelOffset}
-            text={mark.label}
-            orientation={mark.orientation}
+            variant={parties.get(mark.party.toLowerCase())?.shape}
           />
-        {/if}
-      {/each}
-    </Html>
-  </Plot>
+        {/each}
+
+        <defs>
+          <linearGradient id="arrow-gradient">
+            <stop offset="60%" stop-color="rgb(255, 255, 255, 1)" />
+            <stop offset="100%" stop-color="rgb(255, 255, 255, 0)" />
+          </linearGradient>
+        </defs>
+
+        {#each visState.config.arrows as arrow}
+          <Arrow
+            --arrow-fill-color="url(#arrow-gradient)"
+            from={ternaryToCartesian(arrow.from)}
+            to={ternaryToCartesian(arrow.to)}
+            lineWidth={2}
+          />
+        {/each}
+
+        {#each visState.config.highlights as highlight (highlight)}
+          {@const result = data.results.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
+          {#if result}
+            <Result size={'md'} data={result} opacity={1} />
+          {/if}
+        {/each}
+      </Svg>
+      <Html>
+        {#each visState.config.highlights as highlight (highlight)}
+          {@const result = data.results.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
+          {@const labelOffsetMagnitude =
+            highlight.label.orientation === 'middle' ? 0 : innerWidth > DESKTOP_BREAKPOINT ? 18 : 15}
+          {@const labelOffset =
+            highlight.label.orientation === 'right' || highlight.label.orientation === 'below'
+              ? labelOffsetMagnitude
+              : -labelOffsetMagnitude}
+          {#if result}
+            <Label
+              --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
+              {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
+              offsetY={highlight.label.orientation === 'middle' ? labelOffset : -3}
+              text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
+              orientation={highlight.label.orientation}
+            />
+          {/if}
+        {/each}
+        {#each visState.config.marks as mark}
+          {@const labelOffsetMagnitude = mark.orientation === 'middle' ? 0 : innerWidth > DESKTOP_BREAKPOINT ? 18 : 15}
+          {@const labelOffset =
+            mark.orientation === 'right' || mark.orientation === 'below' ? labelOffsetMagnitude : -labelOffsetMagnitude}
+          {#if mark.label && mark.label.length}
+            <Label
+              --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
+              {...ternaryToCartesian(mark.location)}
+              offsetY={labelOffset}
+              text={mark.label}
+              orientation={mark.orientation}
+            />
+          {/if}
+        {/each}
+      </Html>
+    </Plot>
+  {/if}
 </div>
 
 <style lang="scss">
