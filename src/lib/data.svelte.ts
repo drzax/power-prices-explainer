@@ -6,7 +6,7 @@ import nationalPolls from '../data/national_polls_primaries.csv';
 import redbridgeMrpPoll from '../data/redbridge-accent-mrp-2025-04-17.csv';
 import yougovMrpPoll from '../data/yougov-mrp-2025-03.csv';
 
-import { ResultSchema } from './schemas';
+import { NationalPollRawSchema, ResultSchema } from './schemas';
 import { partySynonyms } from './constants';
 import type { ResultType } from './types';
 
@@ -32,8 +32,11 @@ const yougovMrpData = parse(
 
 export const nationalPollsParsed = parse(
   array(ResultSchema),
-  nationalPolls.map(d => {
-    const Year = +d.PublicationDate.split('/').pop();
+  parse(array(NationalPollRawSchema), nationalPolls).map(d => {
+    const Year = d.PublicationDate.split('/').pop();
+    if (!Year) {
+      throw new Error('Year not found');
+    }
     return {
       id: `${Year}-${d.DivisionNm}`,
       ...d,

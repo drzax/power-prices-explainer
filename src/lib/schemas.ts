@@ -19,6 +19,17 @@ export const ResultSchema = object({
   pollName: optional(string())
 });
 
+export const NationalPollRawSchema = object({
+  PublicationDate: string(),
+  DivisionNm: string(),
+  ALP: number(),
+  LNP: number(),
+  OTH: number(),
+  PartyAb: string(),
+  Year: number(),
+  Source: string()
+});
+
 export const AnnotationSchema = object({
   text: string(),
   orientation: picklist(orientations),
