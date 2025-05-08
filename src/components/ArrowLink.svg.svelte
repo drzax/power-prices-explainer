@@ -11,13 +11,13 @@
       .sort((a, b) => a.Year - b.Year)
       .map((result, i, arr) => {
         const coords = ternaryToCartesian(getTernaryCoordinatesFromResult(result));
-        if (i === arr.length - 1 && arr.length > 1) {
-          const previousCoords = ternaryToCartesian(getTernaryCoordinatesFromResult(arr[i - 1]));
-          const d = distance(previousCoords, coords) - 10;
-          const v = unitVector(previousCoords, coords);
+        // if (i === arr.length - 1 && arr.length > 1) {
+        //   const previousCoords = ternaryToCartesian(getTernaryCoordinatesFromResult(arr[i - 1]));
+        //   const d = distance(previousCoords, coords) - 10;
+        //   const v = unitVector(previousCoords, coords);
 
-          return `${previousCoords.x - d * v.x},${previousCoords.y - d * v.y}`;
-        }
+        //   return `${previousCoords.x - d * v.x},${previousCoords.y - d * v.y}`;
+        // }
         return `${coords.x},${coords.y}`;
       })
       .join(' ')
@@ -32,5 +32,4 @@
   stroke-width="2"
   stroke-linecap="round"
   stroke-dashoffset="-10"
-  marker-end="url(#arrow)"
 />
