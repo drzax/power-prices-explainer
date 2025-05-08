@@ -1,4 +1,4 @@
-import { array, boolean, number, object, optional, picklist, string, tuple } from 'valibot';
+import { array, boolean, literal, number, object, optional, picklist, string, tuple, union } from 'valibot';
 
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
 export const parties = ['OTH', 'LNP', 'ALP', 'TOOCLOSE', 'IN DOUBT'] as const;
@@ -57,16 +57,13 @@ export const VisConfigSchema = object({
   resultMarkerOpacity: number(),
   deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
   arrows: array(ArrowSchema),
-  nationalPolls: boolean(),
-  mrpPolls: boolean(),
   filters: object({
-    year: array(number()),
+    year: array(union([number(), literal('none')])),
     electorate: array(string()),
-    party: array(string()),
-    pollsters: array(string())
+    party: array(string())
   }),
   highlights: array(HighlightSchema),
   marks: array(CustomMarkSchema),
   annotations: array(AnnotationSchema),
-  timeArrows: array(string())
+  timeArrows: optional(array(string()))
 });
