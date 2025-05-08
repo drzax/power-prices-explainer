@@ -76,6 +76,10 @@ export const partySynonyms = {
   ALP: 'ALP'
 };
 
+export const electorateSynonyms = {
+  DENISON: 'CLARK'
+};
+
 export const MARKERS: Marker[] = [
   // { label: 'Standalone graphic marker', note: '', prefix: 'ternary' },
   {

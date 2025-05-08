@@ -1,8 +1,7 @@
 <script lang="ts">
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
-  import { parties } from '../lib/constants';
+  import { electorateSynonyms, parties } from '../lib/constants';
   import { data } from '../lib/data.svelte';
-  import { DESKTOP_BREAKPOINT } from '../lib/constants';
 
   import Plot from './Plot.svelte';
   import Svg from './Svg.svelte';
@@ -25,7 +24,13 @@
     }
     const filtered = data.results
       ?.filter(d => !!d)
-      .filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm))
+      .filter(d => {
+        return (
+          electorate.length === 0 ||
+          electorate.includes(d.DivisionNm) ||
+          electorate.includes(electorateSynonyms[d.DivisionNm])
+        );
+      })
       .filter(d => year.length === 0 || year.includes(d.Year))
       .filter(d => party.length === 0 || party.includes(d.PartyAb));
 
@@ -33,8 +38,19 @@
   });
 
   let title = $derived(visState.config.title || '');
-
-  let groupedByDivision = $derived(filteredData && groups(filteredData, d => d.DivisionNm));
+  let resultKey = $derived.by(() => {
+    const { year, electorate } = visState.config.filters;
+    if (electorate.length > 0 && year.length === 0) {
+      return 'Year';
+    }
+    if (year.length > 0 && electorate.length === 0) {
+      return 'DivisionNm';
+    }
+    return 'id';
+  });
+  let groupedByDivision = $derived(
+    filteredData && groups(filteredData, d => electorateSynonyms[d.DivisionNm] || d.DivisionNm)
+  );
 </script>
 
 <svelte:window bind:innerWidth />
@@ -83,7 +99,7 @@
       {/if}
       {#if filteredData}
         <Svg>
-          {#each filteredData as data (data.id)}
+          {#each filteredData as data (data[resultKey])}
             <Result size={'sm'} {data} />
           {/each}
         </Svg>
