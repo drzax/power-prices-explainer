@@ -20,7 +20,9 @@
 
   let filteredData = $derived.by(() => {
     const { year, electorate, party } = visState.config.filters;
-
+    if (year.length === 0 && electorate.length === 0 && party.length === 0) {
+      return [];
+    }
     const filtered = data.results
       ?.filter(d => !!d)
       .filter(d => electorate.length === 0 || electorate.includes(d.DivisionNm))
@@ -30,14 +32,7 @@
     return filtered;
   });
 
-  let defaultTitle = $derived(
-    visState.config.mrpPolls
-      ? visState.config.filters.pollsters[0]
-      : visState.config.filters.year[0]
-        ? visState.config.filters.year[0]
-        : ''
-  );
-  let title = $derived(visState.config.title || defaultTitle);
+  let title = $derived(visState.config.title || '');
 
   let groupedByDivision = $derived(filteredData && groups(filteredData, d => d.DivisionNm));
 </script>
@@ -79,7 +74,7 @@
               />
             </marker>
           </defs>
-          {#each groupedByDivision.filter( ([d]) => visState.config.timeArrows.includes(d) ) as [division, group] (division)}
+          {#each groupedByDivision.filter( ([d]) => visState.config.timeArrows?.includes(d) ) as [division, group] (division)}
             {#if group.length > 1}
               <ArrowLink results={group} />
             {/if}

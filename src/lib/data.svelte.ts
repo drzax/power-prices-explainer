@@ -17,8 +17,6 @@ const rawDataNational = parse(
   national.map(d => ({ ...d, id: `${d.Year}-${d.DivisionNm}` }))
 );
 
-export const pollsters = ['Redbridge', 'YouGov'];
-
 export const data = $state<{ results: ResultType[] | undefined }>({
   results: undefined
 });

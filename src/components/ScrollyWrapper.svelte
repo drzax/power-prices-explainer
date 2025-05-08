@@ -2,12 +2,14 @@
   import { mount, onMount } from 'svelte';
   import { visState } from '../lib/state.svelte';
   import { decode } from '@abcnews/base-36-props';
-  import { data, electorates } from '../lib/data.svelte';
+  import { data } from '../lib/data.svelte';
   import { parties } from '../lib/constants';
 
   import Scrollyteller from '@abcnews/svelte-scrollyteller';
   import Visualisation from './Visualisation.svelte';
   import Mark from './Mark.svg.svelte';
+  import { VisConfigSchema } from '../lib/schemas';
+  import { parse } from 'valibot';
 
   const updateState = detail => {
     try {
@@ -33,7 +35,7 @@
       align: p.align,
       data: p.data,
       nodes: p.nodes.map(n => {
-        const panelData = decode(p.data.config);
+        const panelData = parse(VisConfigSchema, decode(p.data.config));
         const year = panelData.filters.year[0] || '2022';
         for (let i = 0; i < n.childNodes.length; i++) {
           const child = n.childNodes[i];
@@ -42,8 +44,8 @@
             continue;
           }
           if (child.nodeName === 'STRONG' && electorates.indexOf(child.innerText) > -1) {
-            const seatResult = data.results.find(d => d.DivisionNm === child.innerText && d.Year === year);
-            enhanceText(child, year, seatResult.PartyAb.toLowerCase());
+            const seatResult = data.results?.find(d => d.DivisionNm === child.innerText && d.Year === year);
+            enhanceText(child, year, seatResult?.PartyAb.toLowerCase() || '');
           }
         }
         return n;
