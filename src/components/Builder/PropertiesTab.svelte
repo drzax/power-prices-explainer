@@ -12,7 +12,7 @@
   import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
   import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
   import { visState } from '../../lib/state.svelte';
-  import { data, pollsters } from '../../lib/data.svelte';
+  import { data } from '../../lib/data.svelte';
   import { getAllHeldBy, getTernaryCoordinatesFromResult } from '../../lib/data-accessors';
   import type { AnnotationType, ArrowType, CustomMarkType, HighlightType } from '../../lib/types';
   import { orientations, parties } from '../../lib/schemas';

@@ -26,6 +26,15 @@
     grey: 'oth'
   };
 
+  const electorates = $derived.by(() => {
+    if (!data.results) return undefined;
+    const uniqueElectorates = new Set<string>();
+    data.results.forEach(d => {
+      if (d.DivisionNm) uniqueElectorates.add(d.DivisionNm);
+    });
+    return Array.from(uniqueElectorates).sort();
+  });
+
   //
   // Find any bolded electorate names in the panel copy, and enhance them visually
   //
@@ -43,7 +52,7 @@
             enhanceText(child, year, SPECIAL_CASES[child.innerText.toLowerCase()]);
             continue;
           }
-          if (child.nodeName === 'STRONG' && electorates.indexOf(child.innerText) > -1) {
+          if (child.nodeName === 'STRONG' && electorates && electorates.indexOf(child.innerText) > -1) {
             const seatResult = data.results?.find(d => d.DivisionNm === child.innerText && d.Year === year);
             enhanceText(child, year, seatResult?.PartyAb.toLowerCase() || '');
           }
