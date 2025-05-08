@@ -124,31 +124,20 @@
       <Html>
         {#each visState.config.highlights as highlight (highlight)}
           {@const result = data.results.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-          {@const labelOffsetMagnitude =
-            highlight.label.orientation === 'middle' ? 0 : innerWidth > DESKTOP_BREAKPOINT ? 18 : 15}
-          {@const labelOffset =
-            highlight.label.orientation === 'right' || highlight.label.orientation === 'below'
-              ? labelOffsetMagnitude
-              : -labelOffsetMagnitude}
           {#if result}
             <Label
               --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
               {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-              offsetY={highlight.label.orientation === 'middle' ? labelOffset : -3}
               text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
               orientation={highlight.label.orientation}
             />
           {/if}
         {/each}
         {#each visState.config.marks as mark}
-          {@const labelOffsetMagnitude = mark.orientation === 'middle' ? 0 : innerWidth > DESKTOP_BREAKPOINT ? 18 : 15}
-          {@const labelOffset =
-            mark.orientation === 'right' || mark.orientation === 'below' ? labelOffsetMagnitude : -labelOffsetMagnitude}
           {#if mark.label && mark.label.length}
             <Label
               --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
               {...ternaryToCartesian(mark.location)}
-              offsetY={labelOffset}
               text={mark.label}
               orientation={mark.orientation}
             />

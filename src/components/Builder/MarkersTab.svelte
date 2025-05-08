@@ -16,6 +16,7 @@
 
     try {
       visState.config = decode(marker);
+      visState.loaded = true;
     } catch (e) {
       alert('Could not decode input');
       console.error(e, input);

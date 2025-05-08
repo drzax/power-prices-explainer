@@ -53,7 +53,6 @@
     color: var(--highlighter-color);
 
     position: absolute;
-    top: 0.05em;
     display: block;
     transform: translate(-50%, -50%);
     white-space: nowrap;
@@ -71,15 +70,19 @@
   }
 
   .left {
-    right: calc(1em - var(--label-width, 0px) / 2);
+    right: calc(1em);
+    transform: translate(0, calc(-1px - 50%));
   }
   .right {
-    left: calc(1em + var(--label-width, 0px) / 2);
+    left: calc(1em);
+    transform: translate(0, calc(-1px - 50%));
   }
   .above {
-    bottom: calc(1em + var(--label-height, 0px) / 2);
+    bottom: calc(2px + var(--label-height, 0px) / 2);
+    transform: translate(-50%, 0);
   }
   .below {
-    top: calc(1em - var(--label-height, 0px) / 2);
+    top: calc(2px + var(--label-height, 0px) / 2);
+    transform: translate(-50%, 0);
   }
 </style>

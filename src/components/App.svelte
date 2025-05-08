@@ -18,6 +18,7 @@
       const urlConfig = document.location.hash.substring(1);
       if (urlConfig) {
         visState.config = parse(VisConfigSchema, decode(urlConfig || ''));
+        visState.loaded = true;
       }
     } catch (e) {
       console.error(e);
