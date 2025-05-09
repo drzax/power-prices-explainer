@@ -1,6 +1,6 @@
 import { parse } from 'valibot';
 import { parties } from './constants';
-import type { ResultType } from './types';
+import type { ResultType, VisConfigType } from './types';
 import { VisConfigSchema } from './schemas';
 import { decode } from '@abcnews/base-36-props';
 import { visState } from './state.svelte';
@@ -30,10 +30,13 @@ export function toTitleCase(str: string) {
 
 export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const obj = typeof data === 'string' ? decode(data) : data;
-  const config = parse(VisConfigSchema, obj);
+  visState.config = fixElectorateNameCase(parse(VisConfigSchema, obj));
+  visState.loaded = true;
+};
+
+export const fixElectorateNameCase = (config: VisConfigType) => {
   config.filters.electorate = config.filters.electorate.map(e => toTitleCase(e));
   config.highlights = config.highlights.map(d => ({ ...d, electorate: toTitleCase(d.electorate) }));
   config.timeArrows = config.timeArrows?.map(toTitleCase);
-  visState.config = config;
-  visState.loaded = true;
+  return config;
 };

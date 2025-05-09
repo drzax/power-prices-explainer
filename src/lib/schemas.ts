@@ -5,6 +5,7 @@ export const parties = ['OTH', 'LNP', 'ALP', 'TOOCLOSE', 'IN DOUBT'] as const;
 export const shapes = ['circle', 'diamond', 'square'] as const;
 
 export const ShapesSchema = picklist(shapes);
+export const PartyAbbreviationSchema = picklist(parties);
 
 // validate the data
 export const ResultSchema = object({
@@ -13,7 +14,7 @@ export const ResultSchema = object({
   OTH: number(),
   ALP: number(),
   LNP: number(),
-  PartyAb: picklist(parties),
+  PartyAb: PartyAbbreviationSchema,
   Year: number()
 });
 
@@ -27,7 +28,7 @@ export const AnnotationSchema = object({
 
 export const CustomMarkSchema = object({
   location: tuple([number(), number(), number()]),
-  party: picklist(parties),
+  party: PartyAbbreviationSchema,
   label: optional(string()),
   orientation: picklist(orientations)
 });

@@ -4,6 +4,7 @@ import type {
   ArrowSchema,
   CustomMarkSchema,
   HighlightSchema,
+  PartyAbbreviationSchema,
   ResultSchema,
   ShapesSchema,
   VisConfigSchema
@@ -16,6 +17,7 @@ export type HighlightType = InferOutput<typeof HighlightSchema>;
 export type ArrowType = InferOutput<typeof ArrowSchema>;
 export type VisConfigType = InferOutput<typeof VisConfigSchema>;
 export type ShapesType = InferOutput<typeof ShapesSchema>;
+export type PartyAbbreviationType = InferOutput<typeof PartyAbbreviationSchema>;
 
 export type PartyConstantsType = {
   label: string;

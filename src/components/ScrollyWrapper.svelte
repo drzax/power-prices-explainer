@@ -1,15 +1,12 @@
 <script lang="ts">
   import { mount } from 'svelte';
-  import { decode } from '@abcnews/base-36-props';
   import { data } from '../lib/data.svelte';
   import { parties } from '../lib/constants';
-
   import Scrollyteller from '@abcnews/svelte-scrollyteller';
   import Visualisation from './Visualisation.svelte';
   import Mark from './Mark.svg.svelte';
-  import { VisConfigSchema } from '../lib/schemas';
-  import { parse } from 'valibot';
   import { loadMarkerConfig } from '../lib/data-accessors';
+  import { type ResultType, type PartyAbbreviationType } from '../lib/types';
 
   const updateState = (detail: { config: string }) => {
     try {
@@ -38,17 +35,17 @@
   // Find any bolded electorate names in the panel copy, and enhance them visually
   //
   let { panels } = $props();
-  let annotatedPanels = $derived.by(() =>
-    panels.map(p => ({
-      align: p.align,
-      data: p.data,
-      nodes: p.nodes.map(n => {
-        const panelData = parse(VisConfigSchema, decode(p.data.config));
-        const year = panelData.filters.year[0] || '2022';
+  $effect(() =>
+    panels.forEach(p => {
+      p.nodes.forEach(n => {
         for (let i = 0; i < n.childNodes.length; i++) {
           const child = n.childNodes[i];
-          if (child.nodeName === 'STRONG' && Object.keys(SPECIAL_CASES).indexOf(child.innerText.toLowerCase()) > -1) {
-            enhanceText(child, year, SPECIAL_CASES[child.innerText.toLowerCase()]);
+          if (
+            child.nodeName === 'STRONG' &&
+            Object.keys(SPECIAL_CASES).indexOf(child.innerText.toLowerCase()) > -1 &&
+            !child.classList.contains('electorate-label')
+          ) {
+            enhanceText(child, SPECIAL_CASES[child.innerText.toLowerCase()]);
             continue;
           }
           if (
@@ -56,35 +53,42 @@
             electorates &&
             electorates.map(d => d.toLocaleLowerCase()).indexOf(child.innerText.toLocaleLowerCase()) > -1
           ) {
-            const seatResult = data.results?.find(
-              d => d.DivisionNm.toLocaleLowerCase() === child.innerText.toLocaleLowerCase() && d.Year === year
+            const seatResults = data.results?.filter(
+              d => d.DivisionNm.toLocaleLowerCase() === child.innerText.toLocaleLowerCase()
             );
-            enhanceText(child, year, seatResult?.PartyAb.toLowerCase() || '');
+            const latestSeatResult = seatResults?.reduce<ResultType | undefined>((max, d) => {
+              if (max === undefined || d.Year > max.Year) {
+                return d;
+              }
+              return max;
+            }, undefined);
+
+            if (latestSeatResult) enhanceText(child, latestSeatResult.PartyAb);
           }
         }
         return n;
-      })
-    }))
+      });
+    })
   );
 
   //
   // Replace electorate names with the party colours of the winner for that year (based on the
   // filters in the marker data).
   //
-  const enhanceText = (child, year, party) => {
+  const enhanceText = (child: HTMLElement, party: PartyAbbreviationType) => {
     if (child.classList.contains('electorate-label')) {
       return;
     }
     child.classList.add('electorate-label');
-    child.classList.add(`electorate-label-${party}`);
-    const variant = parties.get(party)?.shape || 'none';
+    child.classList.add(`electorate-label-${party.replace(' ', '-').toLocaleLowerCase()}`);
+    const variant = parties.get(party.toLowerCase())?.shape || 'triangle';
 
     const svgEl = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgEl.setAttribute('width', '16');
     svgEl.setAttribute('height', '16');
     child.prepend(svgEl);
 
-    const colourVar = `var(--pty-color-icon-${party})`;
+    const colourVar = `var(--pty-color-icon-${party.replace(' ', '-').toLocaleLowerCase()})`;
 
     let x = 7.5;
     let y = 9;
@@ -93,6 +97,8 @@
       svgEl.setAttribute('style', `margin-right: 1px; padding-top: 2px; color: ${colourVar}`);
     } else if (variant === 'circle') {
       svgEl.setAttribute('style', `margin-right: 1px; padding-top: 1px; color: ${colourVar}`);
+    } else if (variant === 'triangle') {
+      svgEl.setAttribute('style', `margin-right: 1px; padding-top: 3px; color: ${colourVar}`);
     } else {
       svgEl.setAttribute('style', `margin-right: 0.5px; padding-top: 2px; color: ${colourVar}`);
       x -= 0.5;
@@ -113,7 +119,7 @@
 </script>
 
 <Scrollyteller
-  panels={annotatedPanels}
+  {panels}
   onMarker={updateState}
   layout={{ align: 'left', mobileVariant: 'rows', resizeInteractive: true }}
 >
@@ -137,6 +143,7 @@
     --pty-color-alp: #b91321;
     --pty-color-lnp: #0041a3;
     --pty-color-oth: #404040;
+    --pty-color-in-doubt: #404040;
 
     --pty-color-icon-alp: #e11f30;
     --pty-color-icon-lnp: #0a52bf;
@@ -145,6 +152,7 @@
     --pty-color-bg-lnp: #cedcf2;
     --pty-color-bg-alp: #f9d2d6;
     --pty-color-bg-oth: #e3e3e3;
+    --pty-color-bg-in-doubt: #fff;
 
     padding-bottom: 2px;
     padding-right: 5px;
@@ -179,6 +187,11 @@
   :global(.electorate-label-oth) {
     color: var(--pty-color-oth);
     background: var(--pty-color-bg-oth);
+  }
+  :global(.electorate-label-in-doubt) {
+    color: var(--pty-color-in-doubt);
+    background: var(--pty-color-bg-in-doubt);
+    border: 1px solid #444;
   }
 
   /* Style the header */
