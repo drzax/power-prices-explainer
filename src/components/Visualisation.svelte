@@ -154,7 +154,11 @@
                   </span>
                 {/if}
                 {#if highlight.label.year}
-                  <span class="electorate-label-plot {highlight.label.name ? 'small' : ''}">
+                  <span
+                    class="electorate-label-plot {highlight.label.name || visState.config.timeArrows?.length
+                      ? 'small'
+                      : ''}"
+                  >
                     {result.Year}
                   </span>
                 {/if}

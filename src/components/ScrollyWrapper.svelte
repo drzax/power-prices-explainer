@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { mount, onMount } from 'svelte';
-  import { visState } from '../lib/state.svelte';
+  import { mount } from 'svelte';
   import { decode } from '@abcnews/base-36-props';
   import { data } from '../lib/data.svelte';
   import { parties } from '../lib/constants';
