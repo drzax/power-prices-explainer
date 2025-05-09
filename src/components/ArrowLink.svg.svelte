@@ -1,6 +1,7 @@
 <svelte:options namespace="svg" />
 
 <script lang="ts">
+  import { fade } from 'svelte/transition';
   import { getTernaryCoordinatesFromResult } from '../lib/data-accessors';
   import { ternaryToCartesian } from '../lib/state.svelte';
   import { distance, unitVector } from '../lib/trig';
@@ -25,6 +26,8 @@
 </script>
 
 <polyline
+  in:fade|global={{ delay: 0 }}
+  out:fade|global={{ delay: 0 }}
   points={polyline}
   stroke="black"
   fill="none"

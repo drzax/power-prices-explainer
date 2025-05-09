@@ -55,7 +55,7 @@
 
 <svelte:window bind:innerWidth />
 
-<g class="mark {text}" in:fade={{ delay: 850 }} out:fade={{ delay: 0 }}>
+<g class="mark {text}" in:fade|global={{ delay: 0 }} out:fade|global={{ delay: 0 }}>
   {#if variant === 'square'}
     <rect x={x - radius} y={y - radius} width={side * 0.9} height={side * 0.9} />
   {:else if variant === 'diamond'}
