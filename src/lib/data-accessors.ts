@@ -25,7 +25,8 @@ export function toTitleCase(str: string) {
     .map((letter, i, word) =>
       i === 0 || word[i - 1] === ' ' || word[i - 1] === "'" || word[i - 1] === '-' ? letter.toUpperCase() : letter
     )
-    .join('');
+    .join('')
+    .replace(/^Mc([a-z])(.+)$/, (match, p1, p2) => `Mc${p1.toUpperCase()}${p2}`);
 }
 
 export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
