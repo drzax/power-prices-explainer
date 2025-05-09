@@ -77,7 +77,7 @@ export const partySynonyms = {
 };
 
 export const electorateSynonyms = {
-  DENISON: 'CLARK'
+  Denison: 'Clark'
 };
 
 export const MARKERS: Marker[] = [
