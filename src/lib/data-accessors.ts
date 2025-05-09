@@ -31,7 +31,7 @@ export function toTitleCase(str: string) {
 export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const obj = typeof data === 'string' ? decode(data) : data;
   const config = parse(VisConfigSchema, obj);
-  config.filters.electorate = config.filters.electorate.map(e => e.toLowerCase());
+  config.filters.electorate = config.filters.electorate.map(e => toTitleCase(e));
   config.highlights = config.highlights.map(d => ({ ...d, electorate: toTitleCase(d.electorate) }));
   config.timeArrows = config.timeArrows?.map(toTitleCase);
   visState.config = config;

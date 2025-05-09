@@ -149,12 +149,12 @@
             >
               {#snippet content()}
                 {#if highlight.label.name}
-                  <span class="electorate-label">
+                  <span class="electorate-label-plot">
                     {result.DivisionNm}
                   </span>
                 {/if}
                 {#if highlight.label.year}
-                  <span class="electorate-label {highlight.label.name ? 'small' : ''}">
+                  <span class="electorate-label-plot {highlight.label.name ? 'small' : ''}">
                     {result.Year}
                   </span>
                 {/if}
@@ -193,7 +193,7 @@
     --pty-color-text-blk: #000000;
   }
 
-  .electorate-label.small {
+  .electorate-label-plot.small {
     font-size: 0.875em;
     display: block;
   }

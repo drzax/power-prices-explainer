@@ -69,28 +69,28 @@
   }
 
   @media (min-width: 72rem) {
-    :global(.label) {
-      font-size: 16px !important;
+    .label {
+      font-size: 16px;
     }
   }
 
   .left {
-    right: calc(1em);
+    right: calc(0.875em);
     transform: translate(0, calc(-1px - 50%));
     text-align: right;
   }
   .right {
-    left: calc(1em);
+    left: calc(0.875em);
     transform: translate(0, calc(-1px - 50%));
     text-align: left;
   }
   .above {
-    bottom: calc(-3px + var(--label-height, 0px) / 2);
+    bottom: calc(2px + var(--label-height, 0px) / 2);
     transform: translate(-50%, 0);
     text-align: center;
   }
   .below {
-    top: calc(-3px + var(--label-height, 0px) / 2);
+    top: calc(2px + var(--label-height, 0px) / 2);
     transform: translate(-50%, 0);
     text-align: center;
   }
