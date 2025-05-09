@@ -51,6 +51,12 @@
   let groupedByDivision = $derived(
     filteredData && groups(filteredData, d => electorateSynonyms[d.DivisionNm] || d.DivisionNm)
   );
+  let highlights = $derived.by(() => {
+    return visState.config.highlights.flatMap(({ electorate, year, label }) => {
+      const result = data.results?.find(d => d.DivisionNm === electorate && d.Year === year);
+      return result ? [{ result, label }] : [];
+    });
+  });
 </script>
 
 <svelte:window bind:innerWidth />
@@ -130,41 +136,37 @@
           />
         {/each}
 
-        {#each visState.config.highlights as highlight (highlight)}
-          {@const result = data.results.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-          {#if result}
-            <Result size={'md'} data={result} opacity={1} />
-          {/if}
+        {#each highlights as highlight (highlight.result.DivisionNm + highlight.result.Year)}
+          <Result size={'md'} data={highlight.result} opacity={1} />
         {/each}
       </Svg>
       <Html>
-        {#each visState.config.highlights as highlight (highlight)}
-          {@const result = data.results.find(d => d.DivisionNm === highlight.electorate && d.Year === highlight.year)}
-          {#if result}
-            <Label
-              --highlighter-color="var(--pty-color-{result.PartyAb.toLocaleLowerCase()})"
-              {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
-              text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
-              orientation={highlight.label.orientation}
-            >
-              {#snippet content()}
-                {#if highlight.label.name}
-                  <span class="electorate-label-plot">
-                    {result.DivisionNm}
-                  </span>
-                {/if}
-                {#if highlight.label.year}
-                  <span
-                    class="electorate-label-plot {highlight.label.name || visState.config.timeArrows?.length
-                      ? 'small'
-                      : ''}"
-                  >
-                    {result.Year}
-                  </span>
-                {/if}
-              {/snippet}
-            </Label>
-          {/if}
+        {#each highlights as highlight (highlight.result.Year + highlight.result.DivisionNm)}
+          <Label
+            --highlighter-color="var(--pty-color-{highlight.result.PartyAb.toLocaleLowerCase()})"
+            {...ternaryToCartesian(getTernaryCoordinatesFromResult(highlight.result))}
+            text="{highlight.label.name ? highlight.result.DivisionNm : ''} {highlight.label.year
+              ? highlight.result.Year
+              : ''}"
+            orientation={highlight.label.orientation}
+          >
+            {#snippet content()}
+              {#if highlight.label.name}
+                <span class="electorate-label-plot">
+                  {highlight.result.DivisionNm}
+                </span>
+              {/if}
+              {#if highlight.label.year}
+                <span
+                  class="electorate-label-plot {highlight.label.name || visState.config.timeArrows?.length
+                    ? 'small'
+                    : ''}"
+                >
+                  {highlight.result.Year}
+                </span>
+              {/if}
+            {/snippet}
+          </Label>
         {/each}
         {#each visState.config.marks as mark}
           {#if mark.label && mark.label.length}

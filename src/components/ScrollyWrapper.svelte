@@ -8,11 +8,16 @@
   import { loadMarkerConfig } from '../lib/data-accessors';
   import { type ResultType, type PartyAbbreviationType } from '../lib/types';
 
+  let latestConfig: string = '';
+
   const updateState = (detail: { config: string }) => {
-    try {
-      loadMarkerConfig(detail.config);
-    } catch (e) {
-      console.error(e, detail);
+    if (latestConfig !== detail.config) {
+      try {
+        loadMarkerConfig(detail.config);
+        latestConfig = detail.config;
+      } catch (e) {
+        console.error(e, detail);
+      }
     }
   };
 
@@ -36,7 +41,7 @@
   // Find any bolded electorate names in the panel copy, and enhance them visually
   //
   let { panels } = $props();
-  $effect(() =>
+  $effect(() => {
     panels.forEach(p => {
       p.nodes.forEach(n => {
         for (let i = 0; i < n.childNodes.length; i++) {
@@ -69,8 +74,8 @@
         }
         return n;
       });
-    })
-  );
+    });
+  });
 
   //
   // Replace electorate names with the party colours of the winner for that year (based on the
