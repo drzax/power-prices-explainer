@@ -6,6 +6,7 @@ import national from '../data/national_partyvotes_history.csv';
 import { ResultSchema } from './schemas';
 import { partySynonyms } from './constants';
 import type { ResultType } from './types';
+import { toTitleCase } from './data-accessors';
 
 const rawData = parse(
   array(ResultSchema),
@@ -87,4 +88,10 @@ fetch('https://www.abc.net.au/news-web/api/syndicate/storylab/elections/federal/
     return [...electorates, national];
   })
   .then(data => parse(array(ResultSchema), data))
-  .then(d => (data.results = [...d, ...rawData, ...rawDataNational]));
+  .then(
+    d =>
+      (data.results = [...d, ...rawData, ...rawDataNational].map(d => ({
+        ...d,
+        DivisionNm: toTitleCase(d.DivisionNm)
+      })))
+  );

@@ -146,7 +146,20 @@
               {...ternaryToCartesian(getTernaryCoordinatesFromResult(result))}
               text="{highlight.label.name ? result.DivisionNm : ''} {highlight.label.year ? result.Year : ''}"
               orientation={highlight.label.orientation}
-            />
+            >
+              {#snippet content()}
+                {#if highlight.label.name}
+                  <span class="electorate-label">
+                    {result.DivisionNm}
+                  </span>
+                {/if}
+                {#if highlight.label.year}
+                  <span class="electorate-label {highlight.label.name ? 'small' : ''}">
+                    {result.Year}
+                  </span>
+                {/if}
+              {/snippet}
+            </Label>
           {/if}
         {/each}
         {#each visState.config.marks as mark}
@@ -178,5 +191,10 @@
     --pty-color-text-lnp: #0a52bf;
     --pty-color-text-oth: #595959;
     --pty-color-text-blk: #000000;
+  }
+
+  .electorate-label.small {
+    font-size: 0.875em;
+    display: block;
   }
 </style>

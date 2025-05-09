@@ -10,11 +10,11 @@
   import Mark from './Mark.svg.svelte';
   import { VisConfigSchema } from '../lib/schemas';
   import { parse } from 'valibot';
+  import { loadMarkerConfig } from '../lib/data-accessors';
 
-  const updateState = detail => {
+  const updateState = (detail: { config: string }) => {
     try {
-      visState.config = decode(detail.config);
-      visState.loaded = true;
+      loadMarkerConfig(detail.config);
     } catch (e) {
       console.error(e, detail);
     }
@@ -52,8 +52,14 @@
             enhanceText(child, year, SPECIAL_CASES[child.innerText.toLowerCase()]);
             continue;
           }
-          if (child.nodeName === 'STRONG' && electorates && electorates.indexOf(child.innerText) > -1) {
-            const seatResult = data.results?.find(d => d.DivisionNm === child.innerText && d.Year === year);
+          if (
+            child.nodeName === 'STRONG' &&
+            electorates &&
+            electorates.map(d => d.toLocaleLowerCase()).indexOf(child.innerText.toLocaleLowerCase()) > -1
+          ) {
+            const seatResult = data.results?.find(
+              d => d.DivisionNm.toLocaleLowerCase() === child.innerText.toLocaleLowerCase() && d.Year === year
+            );
             enhanceText(child, year, seatResult?.PartyAb.toLowerCase() || '');
           }
         }
@@ -67,6 +73,9 @@
   // filters in the marker data).
   //
   const enhanceText = (child, year, party) => {
+    if (child.classList.contains('electorate-label')) {
+      return;
+    }
     child.classList.add('electorate-label');
     child.classList.add(`electorate-label-${party}`);
     const variant = parties.get(party)?.shape || 'none';

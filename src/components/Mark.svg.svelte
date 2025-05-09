@@ -66,7 +66,7 @@
     <Polygon
       --polygon-stroke-width="1px"
       --polygon-outline-color="#444"
-      --polygon-color="transparent"
+      --polygon-color="#fff"
       rotation={30}
       {radius}
       cx={x}

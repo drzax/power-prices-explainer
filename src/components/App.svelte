@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Tabs, Tab, TabContent } from 'carbon-components-svelte';
-  import { decode, encode } from '@abcnews/base-36-props';
+  import { encode } from '@abcnews/base-36-props';
 
   import MarkersTab from './Builder/MarkersTab.svelte';
   import PropertiesTab from './Builder/PropertiesTab.svelte';
@@ -8,17 +8,15 @@
   import 'carbon-components-svelte/css/white.css';
   import { visState } from '../lib/state.svelte';
   import { onMount } from 'svelte';
-  import { parse } from 'valibot';
-  import { VisConfigSchema } from '../lib/schemas';
   import UpdateChecker from './UpdateChecker.svelte';
   import BuilderStyleRoot from './Builder/BuilderStyleRoot.svelte';
+  import { loadMarkerConfig } from '../lib/data-accessors';
 
   onMount(() => {
     try {
       const urlConfig = document.location.hash.substring(1);
       if (urlConfig) {
-        visState.config = parse(VisConfigSchema, decode(urlConfig || ''));
-        visState.loaded = true;
+        loadMarkerConfig(urlConfig);
       }
     } catch (e) {
       console.error(e);

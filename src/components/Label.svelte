@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import { fade } from 'svelte/transition';
 
   let {
@@ -7,7 +8,8 @@
     offsetX,
     offsetY,
     orientation = 'middle',
-    text
+    text,
+    content = undefined
   }: {
     x: number;
     y: number;
@@ -17,6 +19,7 @@
     size?: 'small' | 'large';
     offsetX?: number;
     offsetY?: number;
+    content?: Snippet | undefined;
   } = $props();
 
   let width = $state(0);
@@ -33,7 +36,9 @@
     style:--label-width={width + 'px'}
     style:--label-height={height + 'px'}
   >
-    <div bind:clientWidth={width} bind:clientHeight={height} class="label {orientation}">{text}</div>
+    <div bind:clientWidth={width} bind:clientHeight={height} class="label {orientation}">
+      {#if content}{@render content()}{:else}{text}{/if}
+    </div>
   </div>
 {/key}
 
@@ -72,17 +77,21 @@
   .left {
     right: calc(1em);
     transform: translate(0, calc(-1px - 50%));
+    text-align: right;
   }
   .right {
     left: calc(1em);
     transform: translate(0, calc(-1px - 50%));
+    text-align: left;
   }
   .above {
-    bottom: calc(2px + var(--label-height, 0px) / 2);
+    bottom: calc(-3px + var(--label-height, 0px) / 2);
     transform: translate(-50%, 0);
+    text-align: center;
   }
   .below {
-    top: calc(2px + var(--label-height, 0px) / 2);
+    top: calc(-3px + var(--label-height, 0px) / 2);
     transform: translate(-50%, 0);
+    text-align: center;
   }
 </style>

@@ -4,6 +4,7 @@
   import { Button, CodeSnippet, InlineNotification } from 'carbon-components-svelte';
   import { visState } from '../../lib/state.svelte';
   import { MARKERS } from '../../lib/constants';
+  import { loadMarkerConfig } from '../../lib/data-accessors';
 
   const importMarker = () => {
     const input = prompt('Paste a marker here to import its configuration');
@@ -15,8 +16,7 @@
     const marker = input.slice(input.indexOf('CONFIG') + 6);
 
     try {
-      visState.config = decode(marker);
-      visState.loaded = true;
+      loadMarkerConfig(marker);
     } catch (e) {
       alert('Could not decode input');
       console.error(e, input);
