@@ -19,7 +19,8 @@
   const SPECIAL_CASES = {
     red: 'alp',
     blue: 'lnp',
-    grey: 'oth'
+    grey: 'oth',
+    triangle: 'in-doubt'
   };
 
   const electorates = $derived.by(() => {
