@@ -2,15 +2,15 @@
   import { Tabs, Tab, TabContent } from 'carbon-components-svelte';
   import { encode } from '@abcnews/base-36-props';
 
-  import MarkersTab from './Builder/MarkersTab.svelte';
-  import PropertiesTab from './Builder/PropertiesTab.svelte';
-  import Visualisation from './Visualisation.svelte';
+  import MarkersTab from './MarkersTab.svelte';
+  import PropertiesTab from './PropertiesTab.svelte';
+  import Visualisation from '../Visualisation.svelte';
   import 'carbon-components-svelte/css/white.css';
-  import { visState } from '../lib/state.svelte';
+  import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
   import UpdateChecker from './UpdateChecker.svelte';
-  import BuilderStyleRoot from './Builder/BuilderStyleRoot.svelte';
-  import { loadMarkerConfig } from '../lib/data-accessors';
+  import BuilderStyleRoot from './BuilderStyleRoot.svelte';
+  import { loadMarkerConfig } from '../../lib/data-accessors';
 
   onMount(() => {
     try {

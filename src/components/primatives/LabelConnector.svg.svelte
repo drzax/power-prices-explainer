@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import { arcPathBetweenCircles } from '../lib/trig';
+  import { arcPathBetweenCircles } from '../../lib/trig';
 
   let {
     markerPosition,

@@ -16,7 +16,7 @@
   import { getAllHeldBy, getTernaryCoordinatesFromResult } from '../../lib/data-accessors';
   import type { AnnotationType, ArrowType, CustomMarkType, HighlightType } from '../../lib/types';
   import { orientations, parties } from '../../lib/schemas';
-  import Position from '../Position.svelte';
+  import Position from './Position.svelte';
 
   let currentAnnotation: AnnotationType | null = $state(null);
   let currentCustomMark: CustomMarkType | null = $state(null);

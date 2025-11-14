@@ -3,19 +3,21 @@
   import { electorateSynonyms, parties } from '../lib/constants';
   import { data } from '../lib/data.svelte';
 
-  import Plot from './Plot.svelte';
-  import Svg from './Svg.svelte';
+  import TernaryPlot from './TernaryPlot.svelte';
+  import Svg from './primatives/Svg.svelte';
   import Result from './Result.svg.svelte';
-  import Mark from './Mark.svg.svelte';
-  import Html from './Html.svelte';
-  import Label from './Label.svelte';
+  import Mark from './primatives/Mark.svg.svelte';
+  import Html from './primatives/Html.svelte';
+  import Label from './primatives/Label.svelte';
   import ScrollingTitle from './ScrollingTitle.svelte';
   import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
-  import Arrow from './Arrow.svg.svelte';
+  import Arrow from './primatives/Arrow.svg.svelte';
   import { groups } from 'd3-array';
   import ArrowLink from './ArrowLink.svg.svelte';
 
   let innerWidth = $state(0);
+
+  $effect(() => console.log(visState.dimensions));
 
   let filteredData = $derived.by(() => {
     const { year, electorate, party } = visState.config.filters;
@@ -63,7 +65,7 @@
 
 <div>
   {#if data.results}
-    <Plot
+    <TernaryPlot
       displayCentralZone={visState.config.displayCentralZone}
       displayAxes={visState.config.displayAxes}
       displayOutline={visState.config.displayTernaryOutline}
@@ -179,7 +181,7 @@
           {/if}
         {/each}
       </Html>
-    </Plot>
+    </TernaryPlot>
   {/if}
 </div>
 

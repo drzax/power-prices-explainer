@@ -7,7 +7,7 @@
   import { getTernaryCoordinatesFromResult } from '../lib/data-accessors';
   import { ternaryToCartesian, visState } from '../lib/state.svelte';
   import type { ResultType } from '../lib/types';
-  import Mark from './Mark.svg.svelte';
+  import Mark from './primatives/Mark.svg.svelte';
 
   let { data, size, opacity }: { data: ResultType; size: 'sm' | 'md' | 'lg'; opacity?: number } = $props();
 

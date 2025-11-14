@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import { LARGE_TABLET_BREAKPOINT, DESKTOP_BREAKPOINT } from '../lib/constants';
+  import { LARGE_TABLET_BREAKPOINT, DESKTOP_BREAKPOINT } from '../../lib/constants';
   import Polygon from './Polygon.svg.svelte';
 
   let {

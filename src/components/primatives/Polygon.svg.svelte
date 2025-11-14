@@ -2,7 +2,7 @@
 
 <script>
   import { fade } from 'svelte/transition';
-  import { calculateRoundedCorners, regularPolygonVertices, rotate, translate } from '../lib/trig';
+  import { calculateRoundedCorners, regularPolygonVertices, rotate, translate } from '../../lib/trig';
   let { radius = 100, fillet = 0, sides = 3, rotation = 0, cx = 0, cy = 0, id = null } = $props();
   let coords = $derived(
     calculateRoundedCorners(regularPolygonVertices(sides, radius), fillet).map(coords => {

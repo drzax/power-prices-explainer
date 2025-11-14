@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Polygon from './Polygon.svg.svelte';
+  import Polygon from './primatives/Polygon.svg.svelte';
   import {
     distance,
     getPolygonPositionAndSize,
@@ -11,9 +11,9 @@
   } from '../lib/trig';
   import { plotMargins } from '../lib/constants';
   import { visState } from '../lib/state.svelte';
-  import Svg from './Svg.svelte';
-  import Html from './Html.svelte';
-  import AxisLabel from './AxisLabel.svelte';
+  import Svg from './primatives/Svg.svelte';
+  import Html from './primatives/Html.svelte';
+  import AxisLabel from './VertexLabel.svelte';
   import { fade } from 'svelte/transition';
 
   const plot = visState.dimensions;
@@ -61,7 +61,7 @@
   });
 </script>
 
-<div class="plot" bind:clientWidth={plot.width} bind:clientHeight={plot.height}>
+<div class="ternary-plot" bind:clientWidth={plot.width} bind:clientHeight={plot.height}>
   <Svg>
     <defs>
       {#each segments as { id, gradientStops }, i}
@@ -151,7 +151,7 @@
 </div>
 
 <style>
-  .plot {
+  .ternary-plot {
     position: relative;
     margin: auto;
     aspect-ratio: 1;
@@ -159,7 +159,7 @@
     max-height: 45vh;
   }
   @media (min-width: 62rem) {
-    .plot {
+    .ternary-plot {
       max-height: unset !important;
       max-width: unset !important;
     }

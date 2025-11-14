@@ -4,7 +4,6 @@
   import { fade } from 'svelte/transition';
   import { getTernaryCoordinatesFromResult } from '../lib/data-accessors';
   import { ternaryToCartesian } from '../lib/state.svelte';
-  import { distance, unitVector } from '../lib/trig';
 
   let { results } = $props();
   let polyline = $derived(

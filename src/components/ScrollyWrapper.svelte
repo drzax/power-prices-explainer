@@ -4,7 +4,7 @@
   import { parties } from '../lib/constants';
   import Scrollyteller from '@abcnews/svelte-scrollyteller';
   import Visualisation from './Visualisation.svelte';
-  import Mark from './Mark.svg.svelte';
+  import Mark from './primatives/Mark.svg.svelte';
   import { loadMarkerConfig } from '../lib/data-accessors';
   import { type ResultType, type PartyAbbreviationType } from '../lib/types';
 

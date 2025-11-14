@@ -6,7 +6,7 @@ export const visState = $state({
   dimensions: { width: 100, height: 100, axisLength: 0 },
   scale: barycentric(),
   config: defaultVisConfig,
-  loaded: false,
+  loaded: false
 });
 
 export const ternaryToCartesian = (values: [number, number, number]) => {

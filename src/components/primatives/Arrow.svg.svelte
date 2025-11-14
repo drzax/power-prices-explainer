@@ -1,5 +1,5 @@
 <script>
-  import { distance, generateArrowPath, unitVector } from '../lib/trig';
+  import { distance, generateArrowPath, unitVector } from '../../lib/trig';
 
   let { from, to, lineWidth } = $props();
 
