@@ -23,7 +23,7 @@
     offsetY?: number;
     disableResponsiveSizing?: boolean;
   } = $props();
-
+  console.log('x :>> ', x);
   let innerWidth = $state(0);
 
   let sizes = $state({

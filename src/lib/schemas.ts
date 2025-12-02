@@ -1,70 +1,149 @@
-import { array, boolean, literal, number, object, optional, picklist, string, tuple, union } from 'valibot';
+import { parse } from 'date-fns';
+import {
+  array,
+  boolean,
+  date,
+  isoDate,
+  isoDateTime,
+  literal,
+  looseObject,
+  nullable,
+  number,
+  object,
+  optional,
+  picklist,
+  pipe,
+  string,
+  transform,
+  tuple,
+  union,
+  variant
+} from 'valibot';
 
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
-export const parties = ['OTH', 'LNP', 'ALP', 'TOOCLOSE', 'IN DOUBT'] as const;
+
 export const shapes = ['circle', 'diamond', 'square'] as const;
 
-export const ShapesSchema = picklist(shapes);
-export const PartyAbbreviationSchema = picklist(parties);
-
-// validate the data
-export const ResultSchema = object({
-  id: string(),
-  DivisionNm: string(),
-  OTH: number(),
-  ALP: number(),
-  LNP: number(),
-  PartyAb: PartyAbbreviationSchema,
-  Year: number()
-});
-
-export const AnnotationSchema = object({
-  text: string(),
-  orientation: picklist(orientations),
-  markLocation: tuple([number(), number(), number()]),
-  textLocation: tuple([number(), number(), number()]),
-  radius: number()
-});
-
-export const CustomMarkSchema = object({
-  location: tuple([number(), number(), number()]),
-  party: PartyAbbreviationSchema,
-  label: optional(string()),
-  orientation: picklist(orientations)
-});
-
-export const HighlightSchema = object({
-  year: number(),
-  electorate: string(),
-  label: object({
-    name: boolean(),
-    year: boolean(),
-    orientation: picklist(orientations)
+export const DataSchema = array(
+  object({
+    date: pipe(
+      string(),
+      transform(d => parse(d, 'LLL-yy', new Date()))
+    ),
+    excl: number(),
+    incl: nullable(number())
   })
+);
+
+export const ShapesSchema = picklist(shapes);
+
+// todo: use `variant` or similar to implement discriminated unions for mark types
+const GeneralMarkProperties = object({
+  x: number(),
+  y: number(),
+  x2: number(),
+  y2: number(),
+  xc: number(),
+  yc: number()
 });
 
-export const ArrowSchema = object({
-  from: tuple([number(), number(), number()]),
-  to: tuple([number(), number(), number()])
+const DataReferenceSchema = object({
+  from: string(),
+  field: string()
 });
 
-export const VisConfigSchema = object({
+/**
+ * This schema roughly follows the [Vega schema](https://vega.github.io/vega/docs/). It is a minumum viable
+ * interpretation for this specific visualisation with the idea that it might be used as a starting point for expansion
+ * in the future. The idea is to achieve a declarative JSON schema and sent of components that renders it into a visualisation.
+ * Roughly following Vega because it's a sensible and fullsome declarative spec for data vis. It might be possible to
+ * more fully adopt it at some point.
+ */
+export const VisualisationSchema = object({
   title: string(),
-  axisLabels: array(string()),
-  displayTernaryOutline: boolean(),
-  displaySegments: boolean(),
-  displayAxes: boolean(),
-  displayCentralZone: boolean(),
-  resultMarkerOpacity: number(),
-  deemphasiseSectors: tuple([boolean(), boolean(), boolean()]),
-  arrows: array(ArrowSchema),
-  filters: object({
-    year: array(union([number(), literal('none')])),
-    electorate: array(string()),
-    party: array(string())
-  }),
-  highlights: array(HighlightSchema),
-  marks: array(CustomMarkSchema),
-  annotations: array(AnnotationSchema),
-  timeArrows: optional(array(string()))
+  width: optional(number()),
+  height: optional(number()),
+  padding: union([number(), object({ top: number(), right: number(), bottom: number(), left: number() })]),
+  scales: array(
+    object({
+      name: string(),
+      type: literal('linear'),
+      domain: union([
+        DataReferenceSchema,
+        tuple([number(), number()]),
+        tuple([date(), date()]),
+        tuple([
+          pipe(
+            string(),
+            transform(d => new Date(d))
+          ),
+          pipe(
+            string(),
+            transform(d => new Date(d))
+          )
+        ])
+      ]),
+      range: union([tuple([number(), number()])])
+    })
+  ),
+  axes: array(
+    object({
+      scale: string(),
+      orient: picklist(['left', 'right', 'top', 'bottom'])
+    })
+  ),
+  annotations: array(
+    object({
+      label: string(),
+      x: union([
+        number(),
+        date(),
+        pipe(
+          string(),
+          transform(d => new Date(d))
+        )
+      ]),
+      y: number()
+    })
+  ),
+  arrows: array(
+    object({
+      from: object({
+        x: union([
+          number(),
+          date(),
+          pipe(
+            string(),
+            transform(d => new Date(d))
+          )
+        ]),
+        y: number()
+      }),
+      to: object({
+        x: union([
+          number(),
+          date(),
+          pipe(
+            string(),
+            transform(d => new Date(d))
+          )
+        ]),
+        y: number()
+      })
+    })
+  ),
+  marks: array(
+    variant('type', [
+      object({
+        type: literal('symbol'),
+        from: string(),
+        encode: object({
+          enter: object({
+            cx: object({ scale: string(), field: string() }),
+            cy: object({ scale: string(), field: string() })
+          })
+        })
+      })
+    ])
+  )
 });

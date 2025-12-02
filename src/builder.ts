@@ -4,11 +4,12 @@ import type { Mount } from '@abcnews/mount-utils';
 import App from './components/builder/BuilderApp.svelte';
 import { mount } from 'svelte';
 import { proxy } from '@abcnews/dev-proxy';
+import { MARKER_NAME } from './lib/constants';
 
 let appMountEl: Mount;
 
-Promise.all([whenDOMReady, proxy('election-ternary-plots')]).then(() => {
-  [appMountEl] = selectMounts('electionternaryplots');
+Promise.all([whenDOMReady, proxy('power-prices-explainer')]).then(() => {
+  [appMountEl] = selectMounts(MARKER_NAME);
   if (appMountEl) {
     mount(App, {
       target: appMountEl
@@ -17,5 +18,5 @@ Promise.all([whenDOMReady, proxy('election-ternary-plots')]).then(() => {
 });
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[election-ternary-plots] public path: ${__webpack_public_path__}`);
+  console.debug(`[power-prices-explainer] public path: ${__webpack_public_path__}`);
 }

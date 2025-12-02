@@ -5,8 +5,7 @@ import { loadScrollyteller } from '@abcnews/svelte-scrollyteller';
 import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import { proxy } from '@abcnews/dev-proxy';
 
-Promise.all([whenOdysseyLoaded, proxy('election-ternary-plots')]).then(() => {
-
+Promise.all([whenOdysseyLoaded, proxy('power-prices-explainer')]).then(() => {
   const mounts = selectMounts('scrollyteller', { markAsUsed: false });
   mounts.forEach(appMountNode => {
     const id = getMountValue(appMountNode, 'scrollyteller').match(/NAME([a-z0-9]+)/)?.[1];
@@ -22,10 +21,9 @@ Promise.all([whenOdysseyLoaded, proxy('election-ternary-plots')]).then(() => {
       console.error(errorMessage, e);
       appMountNode.innerHTML = `<p style="border:1px solid red;padding:1rem;">${errorMessage}</p>`;
     }
-
   });
 });
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[election-ternary-plots] public path: ${__webpack_public_path__}`);
+  console.debug(`[power-prices-explainer] public path: ${__webpack_public_path__}`);
 }

@@ -113,40 +113,63 @@ const deg2rad = deg => (deg * Math.PI) / 180;
 export function generateArrowPath(length, lineWidth, headAngle, headLength, rounding = 0) {
   const halfLineWidth = lineWidth / 2;
 
-  let current = { x: 0, y: 0, prefix: 'M' };
+  // This does not work. TODO: fix it
+  let rotation = 0;
+
+  const point = { x: 0, y: 0 };
+
+  let current = { ...point, prefix: 'M' };
 
   // Origin is the point of the arrow
   const vertices = [current];
 
+  // Head
   vertices.push(
     (current = {
-      x: Math.cos(deg2rad(headAngle)) * headLength,
-      y: Math.sin(deg2rad(headAngle)) * headLength,
+      ...rotate(
+        {
+          x: Math.cos(deg2rad(headAngle)) * headLength,
+          y: Math.sin(deg2rad(headAngle)) * headLength
+        },
+        rotation,
+        point
+      ),
       prefix: 'L'
     })
   );
 
   vertices.push(
     (current = {
-      x: current.x + Math.cos(deg2rad(headAngle - 90)) * lineWidth,
-      y: current.y + Math.sin(deg2rad(headAngle - 90)) * lineWidth,
+      ...rotate(
+        {
+          x: current.x + Math.cos(deg2rad(headAngle - 90)) * lineWidth,
+          y: current.y + Math.sin(deg2rad(headAngle - 90)) * lineWidth
+        },
+        rotation,
+        point
+      ),
       prefix: `A ${halfLineWidth * rounding} ${halfLineWidth * rounding} 0 0 0 `
     })
   );
 
   vertices.push(
     (current = {
-      x: current.x + (halfLineWidth - current.y) / Math.tan(deg2rad(headAngle - 180)),
-      y: halfLineWidth,
+      ...rotate(
+        { x: current.x + (halfLineWidth - current.y) / Math.tan(deg2rad(headAngle - 180)), y: halfLineWidth },
+        rotation,
+        point
+      ),
       prefix: 'L'
     })
   );
 
+  //  leg
   vertices.push(
     (current = {
       x: length,
       y: halfLineWidth,
       prefix: 'L'
+      // prefix: `A ${length} ${length} 0 0 1 `
     })
   );
 
@@ -163,21 +186,21 @@ export function generateArrowPath(length, lineWidth, headAngle, headLength, roun
       x: vertices[vertices.length - 3].x,
       y: -halfLineWidth,
       prefix: 'L'
+      // prefix: `A ${length} ${length} 0 0 0 `
     })
   );
 
+  // head
   vertices.push(
     (current = {
-      x: vertices[vertices.length - 5].x,
-      y: -vertices[vertices.length - 5].y,
+      ...rotate({ x: vertices[vertices.length - 5].x, y: -vertices[vertices.length - 5].y }, rotation, point),
       prefix: 'L'
     })
   );
 
   vertices.push(
     (current = {
-      x: vertices[vertices.length - 7].x,
-      y: -vertices[vertices.length - 7].y,
+      ...rotate({ x: vertices[vertices.length - 7].x, y: -vertices[vertices.length - 7].y }, rotation, point),
       prefix: `A ${halfLineWidth * rounding} ${halfLineWidth * rounding} 0 0 0 `
     })
   );

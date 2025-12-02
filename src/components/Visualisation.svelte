@@ -1,208 +1,63 @@
 <script lang="ts">
-  import { ternaryToCartesian, visState } from '../lib/state.svelte';
-  import { electorateSynonyms, parties } from '../lib/constants';
   import { data } from '../lib/data.svelte';
+  import { visState } from '../lib/state.svelte';
 
-  import TernaryPlot from './TernaryPlot.svelte';
-  import Svg from './primatives/Svg.svelte';
-  import Result from './Result.svg.svelte';
-  import Mark from './primatives/Mark.svg.svelte';
-  import Html from './primatives/Html.svelte';
-  import Label from './primatives/Label.svelte';
-  import ScrollingTitle from './ScrollingTitle.svelte';
-  import { getSegmentsFromParties, getTernaryCoordinatesFromResult } from '../lib/data-accessors';
-  import Arrow from './primatives/Arrow.svg.svelte';
-  import { groups } from 'd3-array';
-  import ArrowLink from './ArrowLink.svg.svelte';
+  import { LayerCake, Svg, Html, groupLonger, flatten } from 'layercake';
 
-  let innerWidth = $state(0);
+  import { scaleOrdinal } from 'd3-scale';
+  import { timeParse, timeFormat } from 'd3-time-format';
+  import { format } from 'd3-format';
+  import AxisX from './layercake-components/AxisX.svg.svelte';
+  import AxisY from './layercake-components/AxisY.svg.svelte';
+  import Line from './layercake-components/Line.svg.svelte';
+  import { plotMargins } from '../lib/constants';
+  import Annotations from './layercake-components/Annotations.svelte';
+  import Arrows from './layercake-components/Arrows.svelte';
 
-  $effect(() => console.log(visState.dimensions));
+  const xKey = 'date';
+  const yKey = 'value';
+  const zKey = 'series';
 
-  let filteredData = $derived.by(() => {
-    const { year, electorate, party } = visState.config.filters;
-    if (year.length === 0 && electorate.length === 0 && party.length === 0) {
-      return [];
-    }
-    const filtered = data.results
-      ?.filter(d => !!d)
-      .filter(d => {
-        return (
-          electorate.length === 0 ||
-          electorate.includes(d.DivisionNm) ||
-          electorate.includes(electorateSynonyms[d.DivisionNm])
-        );
-      })
-      .filter(d => year.length === 0 || year.includes(d.Year))
-      .filter(d => party.length === 0 || party.includes(d.PartyAb));
+  const seriesColors = ['#007BC7', '#00297E'];
 
-    return filtered;
-  });
+  const seriesNames = Object.keys(data[0]).filter(d => d !== xKey);
 
-  let title = $derived(visState.config.title || '');
-  let resultKey = $derived.by(() => {
-    const { year, electorate } = visState.config.filters;
-    if (electorate.length > 0 && year.length === 0) {
-      return 'Year';
-    }
-    if (year.length > 0 && electorate.length === 0) {
-      return 'DivisionNm';
-    }
-    return 'id';
-  });
-  let groupedByDivision = $derived(
-    filteredData && groups(filteredData, d => electorateSynonyms[d.DivisionNm] || d.DivisionNm)
+  const groupedData = $derived(
+    groupLonger(data, seriesNames, {
+      groupTo: zKey,
+      valueTo: yKey
+    })
   );
-  let highlights = $derived.by(() => {
-    return visState.config.highlights.flatMap(({ electorate, year, label }) => {
-      const result = data.results?.find(d => d.DivisionNm === electorate && d.Year === year);
-      return result ? [{ result, label }] : [];
-    });
-  });
+
+  const formatLabelX = timeFormat('%b. %Y');
+  const formatLabelY = (d: number) => format(`~s`)(d);
 </script>
 
-<svelte:window bind:innerWidth />
-
 <div>
-  {#if data.results}
-    <TernaryPlot
-      displayCentralZone={visState.config.displayCentralZone}
-      displayAxes={visState.config.displayAxes}
-      displayOutline={visState.config.displayTernaryOutline}
-      displaySegments={visState.config.displaySegments}
-      segments={getSegmentsFromParties()}
-    >
-      <Html>
-        <ScrollingTitle {title} />
-      </Html>
-
-      {#if groupedByDivision}
-        <Svg>
-          <defs>
-            <marker
-              id="arrow"
-              viewBox="0 0 14 14"
-              refX="6"
-              refY="7"
-              markerWidth="8"
-              markerHeight="14"
-              orient="auto-start-reverse"
-            >
-              <path
-                d="M1 1 L7 7 L1 13"
-                stroke="black"
-                fill="none"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </marker>
-          </defs>
-          {#each groupedByDivision.filter( ([d]) => visState.config.timeArrows?.includes(d) ) as [division, group] (division)}
-            {#if group.length > 1}
-              <ArrowLink results={group} />
-            {/if}
-          {/each}
-        </Svg>
-      {/if}
-      {#if filteredData}
-        <Svg>
-          {#each filteredData as data (data[resultKey])}
-            <Result size={'sm'} {data} />
-          {/each}
-        </Svg>
-      {/if}
-      <Svg --marker-outline-color="white">
-        {#each visState.config.marks as mark (JSON.stringify(mark.location))}
-          <Mark
-            size="md"
-            --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
-            {...ternaryToCartesian(mark.location)}
-            variant={parties.get(mark.party.toLowerCase())?.shape}
-          />
-        {/each}
-
-        <defs>
-          <linearGradient id="arrow-gradient">
-            <stop offset="60%" stop-color="rgb(255, 255, 255, 1)" />
-            <stop offset="100%" stop-color="rgb(255, 255, 255, 0)" />
-          </linearGradient>
-        </defs>
-
-        {#each visState.config.arrows as arrow}
-          <Arrow
-            --arrow-fill-color="url(#arrow-gradient)"
-            from={ternaryToCartesian(arrow.from)}
-            to={ternaryToCartesian(arrow.to)}
-            lineWidth={2}
-          />
-        {/each}
-
-        {#each highlights as highlight (highlight.result.DivisionNm + highlight.result.Year)}
-          <Result size={'md'} data={highlight.result} opacity={1} />
-        {/each}
-      </Svg>
-      <Html>
-        {#each highlights as highlight (highlight.result.Year + highlight.result.DivisionNm)}
-          <Label
-            --highlighter-color="var(--pty-color-{highlight.result.PartyAb.toLocaleLowerCase()})"
-            {...ternaryToCartesian(getTernaryCoordinatesFromResult(highlight.result))}
-            text="{highlight.label.name ? highlight.result.DivisionNm : ''} {highlight.label.year
-              ? highlight.result.Year
-              : ''}"
-            orientation={highlight.label.orientation}
-          >
-            {#snippet content()}
-              {#if highlight.label.name}
-                <span class="electorate-label-plot">
-                  {highlight.result.DivisionNm}
-                </span>
-              {/if}
-              {#if highlight.label.year}
-                <span
-                  class="electorate-label-plot {highlight.label.name || visState.config.timeArrows?.length
-                    ? 'small'
-                    : ''}"
-                >
-                  {highlight.result.Year}
-                </span>
-              {/if}
-            {/snippet}
-          </Label>
-        {/each}
-        {#each visState.config.marks as mark}
-          {#if mark.label && mark.label.length}
-            <Label
-              --marker-color="var(--pty-color-{mark.party.toLowerCase()})"
-              {...ternaryToCartesian(mark.location)}
-              text={mark.label}
-              orientation={mark.orientation}
-            />
-          {/if}
-        {/each}
-      </Html>
-    </TernaryPlot>
-  {/if}
+  <LayerCake
+    padding={plotMargins}
+    x={xKey}
+    y={yKey}
+    z={zKey}
+    zScale={scaleOrdinal()}
+    zRange={seriesColors}
+    flatData={flatten(groupedData, 'values')}
+    data={groupedData}
+  >
+    <h2 class="chart-title">{visState.config.title}</h2>
+    <Svg>
+      <AxisX gridlines={false} ticks={5} format={formatLabelX} snapLabels tickMarks />
+      <AxisY ticks={4} format={formatLabelY} />
+      <Line />
+    </Svg>
+    <Annotations />
+    <Arrows />
+  </LayerCake>
 </div>
 
 <style lang="scss">
   div {
     width: 100%;
     height: 100%;
-    --pty-color-alp: #e11f30;
-    --pty-color-lnp: #0a52bf;
-    --pty-color-oth: #757575;
-    --pty-color-blk: #000000;
-    --pty-color-tooclose: #aaaaaa;
-
-    --pty-color-text-alp: #e11f30;
-    --pty-color-text-lnp: #0a52bf;
-    --pty-color-text-oth: #595959;
-    --pty-color-text-blk: #000000;
-  }
-
-  .electorate-label-plot.small {
-    font-size: 0.875em;
-    display: block;
   }
 </style>

@@ -11,6 +11,7 @@
   import UpdateChecker from './UpdateChecker.svelte';
   import BuilderStyleRoot from './BuilderStyleRoot.svelte';
   import { loadMarkerConfig } from '../../lib/data-accessors';
+  import { isValiError } from 'valibot';
 
   onMount(() => {
     try {
@@ -20,21 +21,21 @@
       }
     } catch (e) {
       console.error(e);
+      console.error(isValiError(e));
     }
   });
 
-  // import { graphToUrlQuery, urlQueryToPartialGraph } from '../../lib/encode';
-
   $effect(() => {
     const url = new URL(document.location.href);
+
     url.hash = encode(visState.config);
     history.replaceState(undefined, document.title, url.toString());
   });
 </script>
 
 <BuilderStyleRoot>
-  <UpdateChecker /></BuilderStyleRoot
->
+  <UpdateChecker />
+</BuilderStyleRoot>
 <main>
   <article>
     <figure>
@@ -75,6 +76,7 @@
     margin: auto;
     width: 100%;
     height: 100%;
+    position: relative;
   }
 
   aside {
@@ -113,6 +115,7 @@
 
   aside :global(.bx--accordion) {
     margin: -1rem;
+    margin-bottom: 1rem;
     width: calc(100% + 2rem);
   }
 

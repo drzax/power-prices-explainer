@@ -1,22 +1,43 @@
-import { barycentric } from 'd3-ternary';
-import { defaultVisConfig, plotMargins } from './constants';
-import { getPolygonPositionAndSize } from './trig';
+import { scaleLinear } from 'd3-scale';
 
-export const visState = $state({
-  dimensions: { width: 100, height: 100, axisLength: 0 },
-  scale: barycentric(),
-  config: defaultVisConfig,
+import type { VisualisationType } from './types';
+import { extent } from 'd3-array';
+import { data } from './data.svelte';
+import { symbol } from 'valibot';
+
+export const visState: { config: VisualisationType; loaded: boolean } = $state({
+  config: {
+    title: 'arbitrary',
+    padding: 5,
+    scales: [
+      {
+        name: 'x',
+        type: 'linear',
+        domain: [0, 1], // extent(data.map(d => d.date)),
+        range: [0, 500]
+      },
+      {
+        name: 'y',
+        type: 'linear',
+        domain: [0, 1], //extent(data.flatMap(d => (d.incl ? [d.excl, d.incl] : [d.excl]))),
+        range: [300, 0]
+      }
+    ],
+    annotations: [],
+    arrows: [],
+    marks: [
+      {
+        type: 'symbol',
+        from: 'table',
+        encode: {
+          enter: {
+            cx: { scale: 'x', field: 'date' },
+            cy: { scale: 'y', field: 'excl' }
+          }
+        }
+      }
+    ],
+    axes: []
+  },
   loaded: false
 });
-
-export const ternaryToCartesian = (values: [number, number, number]) => {
-  const [x, y] = visState.scale(values);
-  let width = visState.dimensions.width - plotMargins.left - plotMargins.right;
-  let height = visState.dimensions.height - plotMargins.top - plotMargins.bottom;
-
-  const { radius, center } = getPolygonPositionAndSize(width, height, 30, 3);
-  return {
-    x: x * (radius - 5) + center.x + plotMargins.left,
-    y: y * (radius - 5) + center.y + plotMargins.top
-  };
-};
