@@ -15,18 +15,23 @@
    * @property {CurveFactory} [curve] - An optional D3 interpolation function. See [d3-shape](https://github.com/d3/d3-shape#curves) for options. Pass this function in uncalled, i.e. without the open-close parentheses.
    */
 
-  const getSeries = name => $data.find(d => d.series === name);
+  const getSeries = name => {
+    return $data.find(d => d.series === name);
+  };
 
   /** @type {Props} */
   let { curve = curveLinear } = $props();
 
   let path = $derived(line().x($xGet).y($yGet).curve(curve));
-  console.log($data);
+  $effect(() => {
+    console.log('visState.config.lines :>> ', visState.config.lines);
+  });
 </script>
 
 <g class="line-group">
-  {#each visState.config.series as series}
-    <path class="path-line" d={path(getSeries(series.id).values)} stroke={$zGet(getSeries(series.id))}></path>
+  {#each visState.config.lines as line}
+    <path key={line.id} class="path-line" d={path(getSeries(line.series).values)} stroke={$zGet(getSeries(line.series))}
+    ></path>
   {/each}
 </g>
 
@@ -36,5 +41,6 @@
     stroke-linejoin: round;
     stroke-linecap: round;
     stroke-width: 3px;
+    transition: d 0.5s ease;
   }
 </style>

@@ -61,37 +61,6 @@ const DataReferenceSchema = object({
  */
 export const VisualisationSchema = object({
   title: string(),
-  width: optional(number()),
-  height: optional(number()),
-  padding: union([number(), object({ top: number(), right: number(), bottom: number(), left: number() })]),
-  scales: array(
-    object({
-      name: string(),
-      type: literal('linear'),
-      domain: union([
-        DataReferenceSchema,
-        tuple([number(), number()]),
-        tuple([date(), date()]),
-        tuple([
-          pipe(
-            string(),
-            transform(d => new Date(d))
-          ),
-          pipe(
-            string(),
-            transform(d => new Date(d))
-          )
-        ])
-      ]),
-      range: union([tuple([number(), number()])])
-    })
-  ),
-  axes: array(
-    object({
-      scale: string(),
-      orient: picklist(['left', 'right', 'top', 'bottom'])
-    })
-  ),
   annotations: array(
     object({
       label: string(),
@@ -132,18 +101,10 @@ export const VisualisationSchema = object({
       })
     })
   ),
-  marks: array(
-    variant('type', [
-      object({
-        type: literal('symbol'),
-        from: string(),
-        encode: object({
-          enter: object({
-            cx: object({ scale: string(), field: string() }),
-            cy: object({ scale: string(), field: string() })
-          })
-        })
-      })
-    ])
+  lines: array(
+    object({
+      id: string(),
+      series: string()
+    })
   )
 });

@@ -7,7 +7,7 @@
 
   // let { length = 10, width = 3, headAngle = 30, headLength = 4, rounding = 1, px = 100, py = 100 } = $props();
 
-  const HEAD_LENGTH = 20;
+  const HEAD_LENGTH = 7;
   const HEAD_ANGLE = 45;
   const ROUNDING = 1;
 

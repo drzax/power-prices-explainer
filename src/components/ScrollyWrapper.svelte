@@ -5,13 +5,16 @@
   import Visualisation from './Visualisation.svelte';
   import Mark from './primatives/Mark.svg.svelte';
   import { loadMarkerConfig } from '../lib/data-accessors';
+  import configs from '../data/configs.json';
 
   let latestConfig: string = '';
 
   const updateState = (detail: { config: string }) => {
-    if (latestConfig !== detail.config) {
+    const config = detail.config ? detail.config : configs[detail.view];
+
+    if (latestConfig !== config) {
       try {
-        loadMarkerConfig(detail.config);
+        loadMarkerConfig(config);
         latestConfig = detail.config;
       } catch (e) {
         console.error(e, detail);

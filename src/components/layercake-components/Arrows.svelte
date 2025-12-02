@@ -5,10 +5,6 @@
   import Arrow from '../primatives/Arrow.svg.svelte';
   import { Svg } from 'layercake';
 
-  $effect(() => {
-    console.log('visState.config.annotations :>> ', visState.config.annotations);
-  });
-
   const { width, height, xScale, yScale } = getContext('LayerCake');
 </script>
 
