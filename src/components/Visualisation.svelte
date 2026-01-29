@@ -13,6 +13,7 @@
   import { plotMargins } from '../lib/constants';
   import Annotations from './layercake-components/Annotations.svelte';
   import Arrows from './layercake-components/Arrows.svelte';
+  import Highlight from './layercake-components/Highlight.svelte';
 
   const xKey = 'date';
   const yKey = 'value';
@@ -50,6 +51,7 @@
       <AxisY ticks={4} format={formatLabelY} />
       <Line />
     </Svg>
+    <Highlight />
     <Annotations />
     <Arrows />
   </LayerCake>

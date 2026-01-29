@@ -3,6 +3,7 @@ const includedDependencies = [
   'carbon-icons-svelte',
   'layercake',
   /@abcnews\/svelte-scrollyteller/,
+  /@abcnews\/components-builder/,
   '@benzara/svelte-animated-counter'
 ];
 const getLoaderDefinition = (config, testSourceMatch, loaderMatch) =>

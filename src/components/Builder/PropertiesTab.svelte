@@ -2,34 +2,15 @@
   import {
     Accordion,
     AccordionItem,
-    MultiSelect,
-    Checkbox,
     TextInput,
     Button,
-    Dropdown,
-    NumberInput,
     DataTable,
-    Grid,
-    Row,
-    Column,
     Toolbar,
-    ToolbarContent,
-    ToolbarSearch,
-    ToolbarMenu,
-    ToolbarMenuItem,
-    Slider,
-    DatePickerInput,
-    DatePicker
+    ToolbarContent
   } from 'carbon-components-svelte';
   import TrashCan from 'carbon-icons-svelte/lib/TrashCan.svelte';
-  import Settings from 'carbon-icons-svelte/lib/Settings.svelte';
   import { visState } from '../../lib/state.svelte';
-  import { data } from '../../lib/data.svelte';
-
-  import { orientations } from '../../lib/schemas';
-  import Position from './Position.svelte';
-  import { Add, Delete, Edit } from 'carbon-icons-svelte';
-  import { format, parse } from 'date-fns';
+  import { Edit } from 'carbon-icons-svelte';
   import AnnotationEditForm from './AnnotationEditForm.svelte';
   import ArrowEditForm from './ArrowEditForm.svelte';
 

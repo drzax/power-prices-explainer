@@ -1,19 +1,13 @@
 <script lang="ts">
-  import { Tabs, Tab, TabContent } from 'carbon-components-svelte';
   import { encode } from '@abcnews/base-36-props';
-
-  import MarkersTab from './MarkersTab.svelte';
-  import PropertiesTab from './PropertiesTab.svelte';
+  import { BuilderStyleRoot, BuilderFrame, ScreenshotTool, MarkerAdmin } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
-  import 'carbon-components-svelte/css/white.css';
   import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
-  import UpdateChecker from './UpdateChecker.svelte';
-  import BuilderStyleRoot from './BuilderStyleRoot.svelte';
   import { loadMarkerConfig } from '../../lib/data-accessors';
   import { isValiError } from 'valibot';
 
-  onMount(() => {
+  const loadConfigFromUrl = () => {
     try {
       const urlConfig = document.location.hash.substring(1);
       if (urlConfig) {
@@ -23,7 +17,56 @@
       console.error(e);
       console.error(isValiError(e));
     }
+  };
+
+  onMount(() => {
+    loadConfigFromUrl();
+
+    window.addEventListener('hashchange', loadConfigFromUrl);
+    return () => {
+      window.removeEventListener('hashchange', loadConfigFromUrl);
+    };
   });
+
+  const defaultAnnotation = { label: '', x: '', y: 0 };
+  const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
+  const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
+  const defaultLine = { id: '', series: 'excl' };
+
+  const currentAnnotationExists = $derived(visState.config.annotations.includes(currentAnnotation));
+  const currentArrowExists = $derived(visState.config.arrows.includes(currentArrow));
+  const currentHighlightExists = $derived(visState.config.highlights.includes(currentHighlight));
+  const currentLineExists = $derived(visState.config.lines.includes(currentLine));
+
+  let currentAnnotation = $state();
+  let currentArrow = $state();
+  let currentHighlight = $state();
+  let currentLine = $state();
+
+  const saveAnnotation = () => {
+    if (!currentAnnotationExists) {
+      visState.config.annotations.push(currentAnnotation);
+    }
+    currentAnnotation = undefined;
+  };
+  const saveLine = () => {
+    if (!currentLineExists) {
+      visState.config.lines.push(currentLine);
+    }
+    currentLine = undefined;
+  };
+  const saveArrow = () => {
+    if (!currentArrowExists) {
+      visState.config.arrows.push(currentArrow);
+    }
+    currentArrow = undefined;
+  };
+  const saveHighlight = () => {
+    if (!currentHighlightExists) {
+      visState.config.highlights.push(currentHighlight);
+    }
+    currentHighlight = undefined;
+  };
 
   $effect(() => {
     const url = new URL(document.location.href);
@@ -33,104 +76,161 @@
   });
 </script>
 
+{#snippet Viz()}
+  <Visualisation />
+{/snippet}
+
+{#snippet Sidebar()}
+  <fieldset>
+    <legend>Chart options</legend>
+    <label class="item" for="chart-title">Title</label>
+    <input id="chart-title" type="text" bind:value={visState.config.title} />
+  </fieldset>
+  <fieldset>
+    <legend>Lines</legend>
+    {#if currentLine}
+      <label for="line-id">ID</label>
+      <input id="line-id" type="text" bind:value={currentLine.id} />
+      <label for="line-series">Series</label>
+      <select bind:value={currentLine.series}>
+        <option value="excl">Excluding subsidies</option>
+        <option value="incl">Including subsidies</option>
+      </select>
+      {#if !currentLineExists}
+        <button onclick={() => (currentLine = undefined)}>Cancel</button>
+      {/if}
+      <button onclick={saveLine}
+        >{#if currentLineExists}Done{:else}Save{/if}</button
+      >
+    {:else}
+      <button onclick={() => (currentLine = { ...defaultLine })}>New line</button>
+    {/if}
+    {#if visState.config.lines.length > 0}
+      <table>
+        <tbody>
+          {#each visState.config.lines as line}
+            <tr>
+              <td>{line.id}</td>
+              <td class="button"><button onclick={() => (currentLine = line)}>Edit</button></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  </fieldset>
+  <fieldset>
+    <legend>Annotations</legend>
+    {#if currentAnnotation}
+      <label for="annotation-text">Label</label>
+      <input type="text" bind:value={currentAnnotation.label} />
+      <label for="annotation-text">x</label>
+      <input type="date" bind:value={currentAnnotation.x} />
+      <label for="annotation-text">Label</label>
+      <input type="number" bind:value={currentAnnotation.y} />
+      {#if !currentAnnotationExists}
+        <button onclick={() => (currentAnnotation = undefined)}>Cancel</button>
+      {/if}
+      <button onclick={saveAnnotation}
+        >{#if currentAnnotationExists}Done{:else}Save{/if}</button
+      >
+    {:else}
+      <button onclick={() => (currentAnnotation = { ...defaultAnnotation })}>New annotation</button>
+    {/if}
+    {#if visState.config.annotations.length > 0}
+      <table>
+        <tbody>
+          {#each visState.config.annotations as annotation}
+            <tr>
+              <td>{annotation.label}</td>
+              <td class="button"><button onclick={() => (currentAnnotation = annotation)}>Edit</button></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  </fieldset>
+  <fieldset>
+    <legend>Arrows</legend>
+    {#if currentArrow}
+      <label for="annotation-text">from x</label>
+      <input type="date" bind:value={currentArrow.from.x} />
+      <label for="annotation-text">from y</label>
+      <input type="number" bind:value={currentArrow.from.y} />
+      <label for="annotation-text">to x</label>
+      <input type="date" bind:value={currentArrow.to.x} />
+      <label for="annotation-text">to y</label>
+      <input type="number" bind:value={currentArrow.to.y} />
+      {#if !currentArrowExists}
+        <button onclick={() => (currentArrow = undefined)}>Cancel</button>
+      {/if}
+      <button onclick={saveArrow}
+        >{#if currentArrowExists}Done{:else}Save{/if}</button
+      >
+    {:else}
+      <button onclick={() => (currentArrow = { ...defaultArrow })}>New arrow</button>
+    {/if}
+    {#if visState.config.arrows.length > 0}
+      <table>
+        <tbody>
+          {#each visState.config.arrows as arrow}
+            <tr>
+              <td>{Object.values(arrow.from).join(', ')} → {Object.values(arrow.to).join(', ')}</td>
+              <td class="button"><button onclick={() => (currentArrow = arrow)}>Edit</button></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  </fieldset>
+  <fieldset>
+    <legend>Highlights</legend>
+    {#if currentHighlight}
+      <label for="annotation-text">from x</label>
+      <input type="date" bind:value={currentHighlight.tl.x} />
+      <label for="annotation-text">from y</label>
+      <input type="number" bind:value={currentHighlight.tl.y} />
+      <label for="annotation-text">to x</label>
+      <input type="date" bind:value={currentHighlight.br.x} />
+      <label for="annotation-text">to y</label>
+      <input type="number" bind:value={currentHighlight.br.y} />
+      {#if !currentHighlightExists}
+        <button onclick={() => (currentHighlight = undefined)}>Cancel</button>
+      {/if}
+      <button onclick={saveHighlight}
+        >{#if currentHighlightExists}Done{:else}Save{/if}</button
+      >
+    {:else}
+      <button onclick={() => (currentHighlight = { ...defaultHighlight })}>New Highlight</button>
+    {/if}
+    {#if visState.config.highlights.length > 0}
+      <table>
+        <tbody>
+          {#each visState.config.highlights as highlight}
+            <tr>
+              <td>{Object.values(highlight.tl).join(', ')} → {Object.values(highlight.br).join(', ')}</td>
+              <td class="button"><button onclick={() => (currentHighlight = highlight)}>Edit</button></td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  </fieldset>
+  <fieldset>
+    <legend>Markers</legend>
+    <MarkerAdmin projectName="power-prices-explainer" />
+  </fieldset>
+  <fieldset>
+    <legend>Fallbacks</legend>
+    <ScreenshotTool />
+  </fieldset>
+{/snippet}
+
 <BuilderStyleRoot>
-  <UpdateChecker />
+  <BuilderFrame {Viz} {Sidebar} />
 </BuilderStyleRoot>
-<main>
-  <article>
-    <figure>
-      <Visualisation />
-    </figure>
-  </article>
-  <aside>
-    <Tabs autoWidth>
-      <Tab label="Properties" />
-      <Tab label="Markers" />
-      <svelte:fragment slot="content">
-        <TabContent><PropertiesTab /></TabContent>
-        <TabContent><MarkersTab /></TabContent>
-      </svelte:fragment>
-    </Tabs>
-  </aside>
-</main>
 
 <style>
-  main {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    min-height: 100vh;
-  }
-
-  article {
-    flex: 0 0 auto;
-    margin: auto;
-    width: 100%;
-    height: 100vh;
-    max-width: 52rem;
-    padding: 3rem;
-  }
-
-  figure {
-    margin: auto;
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-
-  aside {
-    flex: 1 1 100%;
-    border-top: 2px solid #e0e0e0;
-    width: 100%;
-  }
-
-  @media (min-width: 72rem) {
-    aside {
-      align-self: stretch;
-      margin: 0;
-      border-top: 0;
-      border-left: 2px solid #e0e0e0;
-      max-width: 32rem;
-      max-height: 100vh;
-      overflow-x: hidden;
-      overflow-y: scroll;
-    }
-  }
-
-  aside :global(.bx--tabs) {
-    position: relative;
-  }
-
-  aside :global(.bx--tabs)::before {
-    content: '';
-    z-index: 0;
-    position: absolute;
-    top: calc(2.5rem - 2px);
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #e0e0e0;
-  }
-
-  aside :global(.bx--accordion) {
-    margin: -1rem;
-    margin-bottom: 1rem;
-    width: calc(100% + 2rem);
-  }
-
-  aside :global(.bx--accordion__item):first-child {
-    border-top: 0;
-  }
-
-  aside :global(.bx--accordion__content) {
-    padding-right: 1rem !important;
-  }
-
-  :global(h1:not(:first-child), h2, h3:not(:first-child), h4:not(:first-child), p:not(:first-child)) {
-    margin-top: 0.5em;
-  }
-  :global(h1:not(:last-child), h2, h3:not(:last-child), h4:not(:last-child), p:not(:last-child)) {
-    margin-bottom: 0.5em;
+  .button {
+    text-align: right;
   }
 </style>

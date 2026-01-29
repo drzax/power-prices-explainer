@@ -64,39 +64,30 @@ export const VisualisationSchema = object({
   annotations: array(
     object({
       label: string(),
-      x: union([
-        number(),
-        date(),
-        pipe(
-          string(),
-          transform(d => new Date(d))
-        )
-      ]),
+      x: union([number(), string()]),
       y: number()
     })
   ),
   arrows: array(
     object({
       from: object({
-        x: union([
-          number(),
-          date(),
-          pipe(
-            string(),
-            transform(d => new Date(d))
-          )
-        ]),
+        x: union([number(), string()]),
         y: number()
       }),
       to: object({
-        x: union([
-          number(),
-          date(),
-          pipe(
-            string(),
-            transform(d => new Date(d))
-          )
-        ]),
+        x: union([number(), string()]),
+        y: number()
+      })
+    })
+  ),
+  highlights: array(
+    object({
+      tl: object({
+        x: union([number(), string()]),
+        y: number()
+      }),
+      br: object({
+        x: union([number(), string()]),
         y: number()
       })
     })

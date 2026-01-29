@@ -2,10 +2,11 @@ import type { VisualisationType } from './types';
 
 export const visState: { config: VisualisationType; loaded: boolean } = $state({
   config: {
-    title: 'arbitrary',
+    title: 'Power prices',
     annotations: [],
     arrows: [],
-    lines: []
+    lines: [],
+    highlights: []
   },
   loaded: false
 });

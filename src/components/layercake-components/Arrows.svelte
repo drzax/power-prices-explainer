@@ -6,13 +6,16 @@
   import { Svg } from 'layercake';
 
   const { width, height, xScale, yScale } = getContext('LayerCake');
+  $effect(() => {
+    visState.config.arrows.forEach(arrow => {});
+  });
 </script>
 
 <Svg>
   {#each visState.config.arrows as arrow}
     <Arrow
-      from={{ x: $xScale(arrow.from.x), y: $yScale(arrow.from.y) }}
-      to={{ x: $xScale(arrow.to.x), y: $yScale(arrow.to.y) }}
+      from={{ x: $xScale(new Date(arrow.from.x)), y: $yScale(arrow.from.y) }}
+      to={{ x: $xScale(new Date(arrow.to.x)), y: $yScale(arrow.to.y) }}
     />
   {/each}
 </Svg>
