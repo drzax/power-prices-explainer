@@ -1,9 +1,7 @@
 <script lang="ts">
-  import { mount } from 'svelte';
-  import { data } from '../lib/data.svelte';
   import Scrollyteller from '@abcnews/svelte-scrollyteller';
   import Visualisation from './Visualisation.svelte';
-  import Mark from './primatives/Mark.svg.svelte';
+
   import { loadMarkerConfig } from '../lib/data-accessors';
   import configs from '../data/configs.json';
 
@@ -42,5 +40,8 @@
       transform: translateY(-20px) !important;
       max-height: calc(42dvh + 50px) !important;
     }
+  }
+  :global(body) {
+    overflow: initial !important;
   }
 </style>

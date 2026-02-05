@@ -1,24 +1,6 @@
 import { parse } from 'date-fns';
-import {
-  array,
-  boolean,
-  date,
-  isoDate,
-  isoDateTime,
-  literal,
-  looseObject,
-  nullable,
-  number,
-  object,
-  optional,
-  picklist,
-  pipe,
-  string,
-  transform,
-  tuple,
-  union,
-  variant
-} from 'valibot';
+import { array, enum_, nullable, number, object, optional, picklist, pipe, string, transform, union } from 'valibot';
+import { AnnotationAnchorType } from './types';
 
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
 
@@ -37,19 +19,41 @@ export const DataSchema = array(
 
 export const ShapesSchema = picklist(shapes);
 
-// todo: use `variant` or similar to implement discriminated unions for mark types
-const GeneralMarkProperties = object({
-  x: number(),
+export const AnnotationAnchorSchema = enum_(AnnotationAnchorType);
+
+export const AnnotationSchema = object({
+  label: string(),
+  x: union([number(), string()]),
   y: number(),
-  x2: number(),
-  y2: number(),
-  xc: number(),
-  yc: number()
+  anchor: optional(AnnotationAnchorSchema, AnnotationAnchorType.Top),
+  width: optional(number(), 10) // Width in em units
 });
 
-const DataReferenceSchema = object({
-  from: string(),
-  field: string()
+export const ArrowSchema = object({
+  from: object({
+    x: union([number(), string()]),
+    y: number()
+  }),
+  to: object({
+    x: union([number(), string()]),
+    y: number()
+  })
+});
+
+export const HighlightSchema = object({
+  tl: object({
+    x: union([number(), string()]),
+    y: number()
+  }),
+  br: object({
+    x: union([number(), string()]),
+    y: number()
+  })
+});
+
+export const SeriesSchema = object({
+  id: string(),
+  series: string()
 });
 
 /**
@@ -61,41 +65,8 @@ const DataReferenceSchema = object({
  */
 export const VisualisationSchema = object({
   title: string(),
-  annotations: array(
-    object({
-      label: string(),
-      x: union([number(), string()]),
-      y: number()
-    })
-  ),
-  arrows: array(
-    object({
-      from: object({
-        x: union([number(), string()]),
-        y: number()
-      }),
-      to: object({
-        x: union([number(), string()]),
-        y: number()
-      })
-    })
-  ),
-  highlights: array(
-    object({
-      tl: object({
-        x: union([number(), string()]),
-        y: number()
-      }),
-      br: object({
-        x: union([number(), string()]),
-        y: number()
-      })
-    })
-  ),
-  lines: array(
-    object({
-      id: string(),
-      series: string()
-    })
-  )
+  annotations: array(AnnotationSchema),
+  arrows: array(ArrowSchema),
+  highlights: array(HighlightSchema),
+  lines: array(SeriesSchema)
 });

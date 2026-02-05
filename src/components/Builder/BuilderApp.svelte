@@ -6,10 +6,22 @@
   import { onMount } from 'svelte';
   import { loadMarkerConfig } from '../../lib/data-accessors';
   import { isValiError } from 'valibot';
+  import {
+    AnnotationAnchorType,
+    type AnnotationType,
+    type ArrowType,
+    type HighlightType,
+    type SeriesType
+  } from '../../lib/types';
+  import { PROJECT_NAME, SCROLLY_MARK_PREFIX, SCROLLY_OPENER_PREFIX } from '../../lib/constants';
+  import AnchorPointSelector from './AnchorPointSelector.svelte';
 
   const loadConfigFromUrl = () => {
     try {
-      const urlConfig = document.location.hash.substring(1);
+      const urlConfig = document.location.hash
+        .substring(1)
+        .replace(SCROLLY_OPENER_PREFIX.substring(1), '')
+        .replace(SCROLLY_MARK_PREFIX.substring(1), '');
       if (urlConfig) {
         loadMarkerConfig(urlConfig);
       }
@@ -28,41 +40,52 @@
     };
   });
 
-  const defaultAnnotation = { label: '', x: '', y: 0 };
+  const defaultAnnotation = { label: '', x: '', y: 0, anchor: AnnotationAnchorType.TopLeft, width: 10 };
   const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
   const defaultLine = { id: '', series: 'excl' };
 
-  const currentAnnotationExists = $derived(visState.config.annotations.includes(currentAnnotation));
-  const currentArrowExists = $derived(visState.config.arrows.includes(currentArrow));
-  const currentHighlightExists = $derived(visState.config.highlights.includes(currentHighlight));
-  const currentLineExists = $derived(visState.config.lines.includes(currentLine));
+  let currentAnnotation: AnnotationType | undefined = $state();
+  let currentArrow: ArrowType | undefined = $state();
+  let currentHighlight: HighlightType | undefined = $state();
+  let currentLine: SeriesType | undefined = $state();
+  let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
 
-  let currentAnnotation = $state();
-  let currentArrow = $state();
-  let currentHighlight = $state();
-  let currentLine = $state();
+  $effect(() => {
+    if (showConstructionMarks) {
+      localStorage.setItem('showConstructionMarks', 'true');
+    } else {
+      localStorage.removeItem('showConstructionMarks');
+    }
+  });
+
+  const currentAnnotationExists = $derived(
+    currentAnnotation && visState.config.annotations.includes(currentAnnotation)
+  );
+  const currentArrowExists = $derived(currentArrow && visState.config.arrows.includes(currentArrow));
+  const currentHighlightExists = $derived(currentHighlight && visState.config.highlights.includes(currentHighlight));
+  const currentLineExists = $derived(currentLine && visState.config.lines.includes(currentLine));
 
   const saveAnnotation = () => {
-    if (!currentAnnotationExists) {
+    if (!currentAnnotationExists && currentAnnotation) {
       visState.config.annotations.push(currentAnnotation);
     }
     currentAnnotation = undefined;
   };
   const saveLine = () => {
-    if (!currentLineExists) {
+    if (!currentLineExists && currentLine) {
       visState.config.lines.push(currentLine);
     }
     currentLine = undefined;
   };
   const saveArrow = () => {
-    if (!currentArrowExists) {
+    if (!currentArrowExists && currentArrow) {
       visState.config.arrows.push(currentArrow);
     }
     currentArrow = undefined;
   };
   const saveHighlight = () => {
-    if (!currentHighlightExists) {
+    if (!currentHighlightExists && currentHighlight) {
       visState.config.highlights.push(currentHighlight);
     }
     currentHighlight = undefined;
@@ -77,7 +100,7 @@
 </script>
 
 {#snippet Viz()}
-  <Visualisation />
+  <Visualisation {showConstructionMarks} />
 {/snippet}
 
 {#snippet Sidebar()}
@@ -122,11 +145,15 @@
     <legend>Annotations</legend>
     {#if currentAnnotation}
       <label for="annotation-text">Label</label>
-      <input type="text" bind:value={currentAnnotation.label} />
-      <label for="annotation-text">x</label>
-      <input type="date" bind:value={currentAnnotation.x} />
-      <label for="annotation-text">Label</label>
-      <input type="number" bind:value={currentAnnotation.y} />
+      <input id="annotation-text" type="text" bind:value={currentAnnotation.label} />
+      <label for="x-position">x</label>
+      <input id="x-position" type="date" bind:value={currentAnnotation.x} />
+      <label for="y-position">y</label>
+      <input id="y-position" type="number" bind:value={currentAnnotation.y} />
+      <span>Anchor position</span>
+      <AnchorPointSelector bind:value={currentAnnotation.anchor} />
+      <label for="label-width">Width</label>
+      <input id="label-width" type="number" min="5" max="100" bind:value={currentAnnotation.width} />em
       {#if !currentAnnotationExists}
         <button onclick={() => (currentAnnotation = undefined)}>Cancel</button>
       {/if}
@@ -217,12 +244,32 @@
   </fieldset>
   <fieldset>
     <legend>Markers</legend>
-    <MarkerAdmin projectName="power-prices-explainer" />
+    <MarkerAdmin
+      projectName={PROJECT_NAME}
+      prefixes={{
+        'Scrolly mark': '#markCONFIG',
+        'Scrolly opener': SCROLLY_OPENER_PREFIX
+      }}
+    />
   </fieldset>
   <fieldset>
     <legend>Fallbacks</legend>
-    <ScreenshotTool />
+    <ScreenshotTool
+      prefixes={{
+        'Scrolly mark': '#markCONFIG',
+        'Scrolly opener': SCROLLY_OPENER_PREFIX
+      }}
+      iframeUrl={window.location.origin + window.location.pathname.replace('/builder/', '/')}
+    />
   </fieldset>
+  <details>
+    <summary>Developer tools</summary>
+    <fieldset>
+      <label for="show-construction-marks"
+        ><input id="show-construction-marks" type="checkbox" bind:checked={showConstructionMarks} /> Show construction marks</label
+      >
+    </fieldset>
+  </details>
 {/snippet}
 
 <BuilderStyleRoot>

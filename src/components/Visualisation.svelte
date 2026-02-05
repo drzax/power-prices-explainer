@@ -32,9 +32,12 @@
 
   const formatLabelX = timeFormat('%b. %Y');
   const formatLabelY = (d: number) => format(`~s`)(d);
+  let chartWidth: number = $state(0);
+  let { showConstructionMarks = false } = $props();
 </script>
 
-<div>
+<div bind:clientWidth={chartWidth}>
+  <h2 class="chart-title">{visState.config.title}</h2>
   <LayerCake
     padding={plotMargins}
     x={xKey}
@@ -44,10 +47,10 @@
     zRange={seriesColors}
     flatData={flatten(groupedData, 'values')}
     data={groupedData}
+    custom={{ showConstructionMarks }}
   >
-    <h2 class="chart-title">{visState.config.title}</h2>
     <Svg>
-      <AxisX gridlines={false} ticks={5} format={formatLabelX} snapLabels tickMarks />
+      <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
       <AxisY ticks={4} format={formatLabelY} />
       <Line />
     </Svg>
@@ -61,5 +64,12 @@
   div {
     width: 100%;
     height: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
+    display: flex;
+    flex-direction: column;
+  }
+  h2 {
+    margin-bottom: 0;
   }
 </style>

@@ -4,8 +4,9 @@ import { mount } from 'svelte';
 import { loadScrollyteller } from '@abcnews/svelte-scrollyteller';
 import ScrollyWrapper from './components/ScrollyWrapper.svelte';
 import { proxy } from '@abcnews/dev-proxy';
+import { PROJECT_NAME } from './lib/constants';
 
-Promise.all([whenOdysseyLoaded, proxy('power-prices-explainer')]).then(() => {
+Promise.all([whenOdysseyLoaded, proxy(PROJECT_NAME)]).then(() => {
   const mounts = selectMounts('scrollyteller', { markAsUsed: false });
   mounts.forEach(appMountNode => {
     const id = getMountValue(appMountNode, 'scrollyteller').match(/NAME([a-z0-9]+)/)?.[1];
@@ -25,5 +26,5 @@ Promise.all([whenOdysseyLoaded, proxy('power-prices-explainer')]).then(() => {
 });
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[power-prices-explainer] public path: ${__webpack_public_path__}`);
+  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
 }

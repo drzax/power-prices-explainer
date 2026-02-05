@@ -4,11 +4,11 @@ import type { Mount } from '@abcnews/mount-utils';
 import BuilderApp from './components/builder/BuilderApp.svelte';
 import { mount } from 'svelte';
 import { proxy } from '@abcnews/dev-proxy';
-import { MARKER_NAME } from './lib/constants';
+import { MARKER_NAME, PROJECT_NAME } from './lib/constants';
 
 let appMountEl: Mount;
 
-Promise.all([whenDOMReady, proxy('power-prices-explainer')]).then(() => {
+Promise.all([whenDOMReady, proxy(PROJECT_NAME)]).then(() => {
   [appMountEl] = selectMounts(MARKER_NAME);
   if (appMountEl) {
     mount(BuilderApp, {
@@ -18,5 +18,5 @@ Promise.all([whenDOMReady, proxy('power-prices-explainer')]).then(() => {
 });
 
 if (process.env.NODE_ENV === 'development') {
-  console.debug(`[power-prices-explainer] public path: ${__webpack_public_path__}`);
+  console.debug(`[${PROJECT_NAME}] public path: ${__webpack_public_path__}`);
 }
