@@ -1,6 +1,14 @@
 import type { InferInput, InferOutput } from 'valibot';
-import type { AnnotationSchema, ArrowSchema, HighlightSchema, SeriesSchema, VisualisationSchema } from './schemas';
+import type {
+  AnnotationSchema,
+  ArrowSchema,
+  DeletableSchema,
+  HighlightSchema,
+  SeriesSchema,
+  VisualisationSchema
+} from './schemas';
 
+export type DeletableType = InferOutput<typeof DeletableSchema>;
 export type VisualisationType = InferInput<typeof VisualisationSchema>;
 export type AnnotationType = InferInput<typeof AnnotationSchema>;
 export type ArrowType = InferOutput<typeof ArrowSchema>;

@@ -14,6 +14,7 @@
   import Annotations from './layercake-components/Annotations.svelte';
   import Arrows from './layercake-components/Arrows.svelte';
   import Highlight from './layercake-components/Highlight.svelte';
+  import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
 
   const xKey = 'date';
   const yKey = 'value';
@@ -49,12 +50,12 @@
     data={groupedData}
     custom={{ showConstructionMarks }}
   >
+    <BackgroundHighlight />
     <Svg>
       <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
       <AxisY ticks={4} format={formatLabelY} />
       <Line />
     </Svg>
-    <Highlight />
     <Annotations />
     <Arrows />
   </LayerCake>

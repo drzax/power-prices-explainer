@@ -30,8 +30,14 @@
 
 <g class="line-group">
   {#each visState.config.lines as line}
-    <path key={line.id} class="path-line" d={path(getSeries(line.series).values)} stroke={$zGet(getSeries(line.series))}
-    ></path>
+    {#if !line.deleted}
+      <path
+        key={line.id}
+        class="path-line"
+        d={path(getSeries(line.series).values)}
+        stroke={$zGet(getSeries(line.series))}
+      ></path>
+    {/if}
   {/each}
 </g>
 

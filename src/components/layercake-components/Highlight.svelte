@@ -9,6 +9,7 @@
   const offset = 2;
   const clipPath = $derived.by(() => {
     return `M-${offset},-${offset} h${$width + offset * 2} v${$height + offset * 2} h-${$width + offset * 2} Z ${visState.config.highlights
+      .filter(h => !h.deleted)
       .map(h => {
         const coords = [
           [Math.max(0, $xScale(new Date(h.tl.x))), Math.max(0, $yScale(h.tl.y))],

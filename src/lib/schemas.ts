@@ -1,6 +1,24 @@
 import { parse } from 'date-fns';
-import { array, enum_, nullable, number, object, optional, picklist, pipe, string, transform, union } from 'valibot';
+import {
+  array,
+  date,
+  enum_,
+  intersect,
+  nullable,
+  number,
+  object,
+  optional,
+  picklist,
+  pipe,
+  string,
+  transform,
+  union
+} from 'valibot';
 import { AnnotationAnchorType } from './types';
+
+export const DeletableSchema = object({
+  deleted: optional(number())
+});
 
 export const orientations = ['left', 'right', 'above', 'below', 'middle'] as const;
 
@@ -57,7 +75,7 @@ export const SeriesSchema = object({
 });
 
 /**
- * This schema roughly follows the [Vega schema](https://vega.github.io/vega/docs/). It is a minumum viable
+ * Over time, the goal is to move toward following the [Vega schema](https://vega.github.io/vega/docs/). It is a minumum viable
  * interpretation for this specific visualisation with the idea that it might be used as a starting point for expansion
  * in the future. The idea is to achieve a declarative JSON schema and sent of components that renders it into a visualisation.
  * Roughly following Vega because it's a sensible and fullsome declarative spec for data vis. It might be possible to
@@ -65,8 +83,8 @@ export const SeriesSchema = object({
  */
 export const VisualisationSchema = object({
   title: string(),
-  annotations: array(AnnotationSchema),
-  arrows: array(ArrowSchema),
-  highlights: array(HighlightSchema),
-  lines: array(SeriesSchema)
+  annotations: array(intersect([AnnotationSchema, DeletableSchema])),
+  arrows: array(intersect([ArrowSchema, DeletableSchema])),
+  highlights: array(intersect([HighlightSchema, DeletableSchema])),
+  lines: array(intersect([SeriesSchema, DeletableSchema]))
 });
