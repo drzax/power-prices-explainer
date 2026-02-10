@@ -5,16 +5,21 @@
   import { LayerCake, Svg, Html, groupLonger, flatten } from 'layercake';
 
   import { scaleOrdinal } from 'd3-scale';
-  import { timeParse, timeFormat } from 'd3-time-format';
+  import { timeFormat } from 'd3-time-format';
   import { format } from 'd3-format';
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
-  import Line from './layercake-components/Line.svg.svelte';
   import { plotMargins } from '../lib/constants';
-  import Annotations from './layercake-components/Annotations.svelte';
-  import Arrows from './layercake-components/Arrows.svelte';
+  import Annotations from './layercake-components/Annotations.html.svelte';
+  import Arrows from './layercake-components/Arrows.svg.svelte';
   import Highlight from './layercake-components/Highlight.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
+  import type { CustomLayerCakeContextType } from '../lib/types';
+  import Lines from './layercake-components/Lines.svg.svelte';
+
+  interface Props {
+    showConstructionMarks?: boolean;
+  }
 
   const xKey = 'date';
   const yKey = 'value';
@@ -31,10 +36,18 @@
     })
   );
 
+  const flatData = $derived(flatten(groupedData, 'values')); // This is apparently equivalent to Array.prototype.flat TODO: swap it out when understood
+
+  let annotations = $derived(visState.config.annotations.filter(d => !d.deleted));
+  let arrows = $derived(visState.config.arrows.filter(d => !d.deleted));
+  let lines = $derived(visState.config.lines.filter(d => !d.deleted));
+
   const formatLabelX = timeFormat('%b. %Y');
   const formatLabelY = (d: number) => format(`~s`)(d);
   let chartWidth: number = $state(0);
-  let { showConstructionMarks = false } = $props();
+  let { showConstructionMarks = false }: Props = $props();
+
+  let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
 </script>
 
 <div bind:clientWidth={chartWidth}>
@@ -46,18 +59,24 @@
     z={zKey}
     zScale={scaleOrdinal()}
     zRange={seriesColors}
-    flatData={flatten(groupedData, 'values')}
+    {flatData}
     data={groupedData}
-    custom={{ showConstructionMarks }}
+    custom={customLayerCakeContext}
   >
-    <BackgroundHighlight />
+    <Html>
+      <BackgroundHighlight />
+    </Html>
     <Svg>
       <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
       <AxisY ticks={4} format={formatLabelY} />
-      <Line />
+      <Lines {lines} />
     </Svg>
-    <Annotations />
-    <Arrows />
+    <Html>
+      <Annotations {annotations} />
+    </Html>
+    <Svg>
+      <Arrows {arrows} />
+    </Svg>
   </LayerCake>
 </div>
 

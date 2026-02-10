@@ -24,16 +24,16 @@ export const orientations = ['left', 'right', 'above', 'below', 'middle'] as con
 
 export const shapes = ['circle', 'diamond', 'square'] as const;
 
-export const DataSchema = array(
-  object({
-    date: pipe(
-      string(),
-      transform(d => parse(d, 'LLL-yy', new Date()))
-    ),
-    excl: number(),
-    incl: nullable(number())
-  })
-);
+export const DataRowSchema = object({
+  date: pipe(
+    string(),
+    transform(d => parse(d, 'LLL-yy', new Date()))
+  ),
+  excl: number(),
+  incl: nullable(number())
+});
+
+export const DataSchema = array(DataRowSchema);
 
 export const ShapesSchema = picklist(shapes);
 

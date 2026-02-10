@@ -1,0 +1,52 @@
+<script lang="ts">
+  import { getContext } from 'svelte';
+  import { line, curveLinear, type CurveFactory } from 'd3-shape';
+  import { fade } from 'svelte/transition';
+  import {
+    type DataRowSchemaType,
+    type LayerCakeContextType,
+    type LayerCakeGroupedDataGroupType,
+    type LayerCakeGroupedDataGroupValuesType,
+    type SeriesType
+  } from '../../lib/types';
+
+  interface Props {
+    lines: SeriesType[];
+    curve?: CurveFactory;
+  }
+  const { data, xGet, yGet, zGet } = getContext<LayerCakeContextType>('LayerCake');
+
+  const getSeries = (name: string) => {
+    return $data.find(d => d.series === name);
+  };
+
+  let { curve = curveLinear, lines }: Props = $props();
+  let lineGenerator = $derived(line<LayerCakeGroupedDataGroupValuesType>($xGet, $yGet).curve(curve));
+  const renderedLines = $derived(
+    lines.flatMap(line => {
+      const series = getSeries(line.series);
+      if (!series) return [];
+      return {
+        id: line.id,
+        d: lineGenerator(series.values),
+        stroke: $zGet(series.values[0])
+      };
+    })
+  );
+</script>
+
+<g class="line-group">
+  {#each renderedLines as { d, stroke, id } (id)}
+    <path transition:fade class="path-line" {d} {stroke}></path>
+  {/each}
+</g>
+
+<style>
+  .path-line {
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-width: 3px;
+    transition: d 0.5s ease;
+  }
+</style>

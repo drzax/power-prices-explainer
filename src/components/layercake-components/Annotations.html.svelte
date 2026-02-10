@@ -1,35 +1,42 @@
-<script>
+<script lang="ts">
   import { getContext } from 'svelte';
-  import { visState } from '../../lib/state.svelte';
-  import Html from '../primatives/Html.svelte';
-  import { AnnotationAnchorType } from '../../lib/types';
 
-  const { width, height, xScale, yScale, custom } = getContext('LayerCake');
+  import {
+    AnnotationAnchorType,
+    type AnnotationType,
+    type DeletableType,
+    type LayerCakeContextType
+  } from '../../lib/types';
+  import { fade } from 'svelte/transition';
 
-  $effect(() => console.log('visState.config.annotations :>> ', visState.config.annotations));
+  interface Props {
+    annotations: (AnnotationType & DeletableType)[];
+  }
+
+  const { annotations }: Props = $props();
+  const { xScale, yScale, custom } = getContext<LayerCakeContextType>('LayerCake');
 </script>
 
-<Html>
-  {#each visState.config.annotations as annotation}
-    <span
-      class:show-construction-marks={$custom.showConstructionMarks}
-      style:left={`${$xScale(new Date(annotation.x))}px`}
-      style:top={`${$yScale(annotation.y)}px`}
-      style:width={`${annotation.width}em`}
-      class:middle={annotation.anchor === AnnotationAnchorType.Middle}
-      class:top-left={annotation.anchor === AnnotationAnchorType.TopLeft}
-      class:top={annotation.anchor === AnnotationAnchorType.Top}
-      class:top-right={annotation.anchor === AnnotationAnchorType.TopRight}
-      class:right={annotation.anchor === AnnotationAnchorType.Right}
-      class:bottom-right={annotation.anchor === AnnotationAnchorType.BottomRight}
-      class:bottom={annotation.anchor === AnnotationAnchorType.Bottom}
-      class:bottom-left={annotation.anchor === AnnotationAnchorType.BottomLeft}
-      class:left={annotation.anchor === AnnotationAnchorType.Left}
-    >
-      {annotation.label}
-    </span>
-  {/each}
-</Html>
+{#each annotations.filter(d => !d.deleted) as annotation}
+  <span
+    transition:fade
+    class:show-construction-marks={$custom.showConstructionMarks}
+    style:left={`${$xScale(new Date(annotation.x))}px`}
+    style:top={`${$yScale(annotation.y)}px`}
+    style:width={`${annotation.width}em`}
+    class:middle={annotation.anchor === AnnotationAnchorType.Middle}
+    class:top-left={annotation.anchor === AnnotationAnchorType.TopLeft}
+    class:top={annotation.anchor === AnnotationAnchorType.Top}
+    class:top-right={annotation.anchor === AnnotationAnchorType.TopRight}
+    class:right={annotation.anchor === AnnotationAnchorType.Right}
+    class:bottom-right={annotation.anchor === AnnotationAnchorType.BottomRight}
+    class:bottom={annotation.anchor === AnnotationAnchorType.Bottom}
+    class:bottom-left={annotation.anchor === AnnotationAnchorType.BottomLeft}
+    class:left={annotation.anchor === AnnotationAnchorType.Left}
+  >
+    {annotation.label}
+  </span>
+{/each}
 
 <style>
   span {
