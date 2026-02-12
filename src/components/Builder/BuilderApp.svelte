@@ -23,6 +23,11 @@
   import HighlightEditForm from './edit-forms/HighlightEditForm.svelte';
   import ItemCollection from './ItemCollection.svelte';
 
+  const prefixes = {
+    'Scrolly mark': '#markCONFIG',
+    'Scrolly opener': SCROLLY_OPENER_PREFIX
+  };
+
   const loadConfigFromUrl = () => {
     try {
       const urlConfig = document.location.hash
@@ -84,7 +89,9 @@
     <legend>Chart options</legend>
     <label class="item" for="chart-title">Title</label>
     <input id="chart-title" type="text" bind:value={visState.config.title} />
-
+    <label class="item" for="chart-description">Description</label>
+    <textarea id="chart-description" bind:value={visState.config.description}></textarea>
+    <hr />
     <ItemCollection
       legend="Lines"
       bind:current={currentLine}
@@ -136,22 +143,13 @@
   </fieldset>
   <fieldset>
     <legend>Markers</legend>
-    <MarkerAdmin
-      projectName={PROJECT_NAME}
-      prefixes={{
-        'Scrolly mark': '#markCONFIG',
-        'Scrolly opener': SCROLLY_OPENER_PREFIX
-      }}
-    />
+    <MarkerAdmin projectName={PROJECT_NAME} {prefixes} />
   </fieldset>
   <fieldset>
     <legend>Fallbacks</legend>
     <ScreenshotTool
-      prefixes={{
-        'Scrolly mark': '#markCONFIG',
-        'Scrolly opener': SCROLLY_OPENER_PREFIX
-      }}
-      iframeUrl={window.location.origin + window.location.pathname.replace('/builder/', '/')}
+      {prefixes}
+      iframeUrl={window.location.origin + window.location.pathname.replace(/\/$/, '/iframe/')}
     />
   </fieldset>
   <details>

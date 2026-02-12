@@ -9,13 +9,14 @@
   import { format } from 'd3-format';
   import AxisX from './layercake-components/AxisX.svg.svelte';
   import AxisY from './layercake-components/AxisY.svg.svelte';
-  import { plotMargins } from '../lib/constants';
+  import { plotPadding } from '../lib/constants';
   import Annotations from './layercake-components/Annotations.html.svelte';
   import Arrows from './layercake-components/Arrows.svg.svelte';
   import Highlight from './layercake-components/Highlight.svelte';
   import BackgroundHighlight from './layercake-components/BackgroundHighlight.svelte';
   import type { CustomLayerCakeContextType } from '../lib/types';
   import Lines from './layercake-components/Lines.svg.svelte';
+  import FontProvider from './FontProvider.svelte';
 
   interface Props {
     showConstructionMarks?: boolean;
@@ -50,46 +51,73 @@
   let customLayerCakeContext: CustomLayerCakeContextType = $derived({ showConstructionMarks });
 </script>
 
-<div bind:clientWidth={chartWidth}>
-  <h2 class="chart-title">{visState.config.title}</h2>
-  <LayerCake
-    padding={plotMargins}
-    x={xKey}
-    y={yKey}
-    z={zKey}
-    zScale={scaleOrdinal()}
-    zRange={seriesColors}
-    {flatData}
-    data={groupedData}
-    custom={customLayerCakeContext}
-  >
-    <Html>
-      <BackgroundHighlight />
-    </Html>
-    <Svg>
-      <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
-      <AxisY ticks={4} format={formatLabelY} />
-      <Lines {lines} />
-    </Svg>
-    <Html>
-      <Annotations {annotations} />
-    </Html>
-    <Svg>
-      <Arrows {arrows} />
-    </Svg>
-  </LayerCake>
-</div>
+<FontProvider>
+  <div bind:clientWidth={chartWidth} style:--plot-padding-left={`${plotPadding.left}px`}>
+    <header>
+      {#if visState.config.title && visState.config.title.length > 0}
+        <h2 class="chart-title">{visState.config.title}</h2>
+      {/if}
+      {#if visState.config.subtitle && visState.config.subtitle.length > 0}
+        <h3 class="chart-subtitle">{visState.config.subtitle}</h3>
+      {/if}
+    </header>
+    <LayerCake
+      padding={plotPadding}
+      x={xKey}
+      y={yKey}
+      z={zKey}
+      zScale={scaleOrdinal()}
+      zRange={seriesColors}
+      {flatData}
+      data={groupedData}
+      custom={customLayerCakeContext}
+    >
+      <Html>
+        <BackgroundHighlight />
+      </Html>
+      <Svg>
+        <AxisX gridlines={false} ticks={Math.floor(chartWidth / 130)} format={formatLabelX} tickMarks />
+        <AxisY ticks={4} format={formatLabelY} />
+        <Lines {lines} />
+      </Svg>
+      <Html>
+        <Annotations {annotations} />
+      </Html>
+      <Svg>
+        <Arrows {arrows} />
+      </Svg>
+    </LayerCake>
+    {#if visState.config.description || visState.config.source}
+      <footer>
+        {#if visState.config.description}<p>{visState.config.description}</p>{/if}
+      </footer>
+    {/if}
+  </div>
+</FontProvider>
 
 <style lang="scss">
   div {
     width: 100%;
     height: 100%;
-    padding-left: 30px;
-    padding-right: 30px;
+    // padding: 1em 10px 35px 30px;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
   }
-  h2 {
-    margin-bottom: 0;
+
+  header,
+  footer {
+    margin: 1.25em var(--plot-padding-right, 1em) 1em var(--plot-padding-left, 0);
+
+    > :first-child {
+      margin-top: 0;
+    }
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .chart-title {
+    font-family: var(--sl-font-stack-serif);
   }
 </style>

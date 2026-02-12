@@ -83,6 +83,14 @@ export const SeriesSchema = object({
  */
 export const VisualisationSchema = object({
   title: string(),
+  subtitle: optional(string()),
+  description: optional(string()),
+  source: optional(
+    object({
+      text: string(),
+      href: string()
+    })
+  ),
   annotations: array(intersect([AnnotationSchema, DeletableSchema])),
   arrows: array(intersect([ArrowSchema, DeletableSchema])),
   highlights: array(intersect([HighlightSchema, DeletableSchema])),

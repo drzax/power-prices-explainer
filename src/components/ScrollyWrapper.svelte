@@ -3,16 +3,13 @@
   import Visualisation from './Visualisation.svelte';
 
   import { loadMarkerConfig } from '../lib/data-accessors';
-  import configs from '../data/configs.json';
 
   let latestConfig: string = '';
 
   const updateState = (detail: { config: string }) => {
-    const config = detail.config ? detail.config : configs[detail.view];
-
-    if (latestConfig !== config) {
+    if (latestConfig !== detail.config) {
       try {
-        loadMarkerConfig(config);
+        loadMarkerConfig(detail.config);
         latestConfig = detail.config;
       } catch (e) {
         console.error(e, detail);

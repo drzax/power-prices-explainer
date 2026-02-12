@@ -44,6 +44,7 @@
     text-align: center;
     vertical-align: middle;
     text-wrap: balance;
+    line-height: 1.1;
   }
 
   .middle {

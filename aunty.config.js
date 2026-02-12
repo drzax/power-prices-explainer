@@ -4,7 +4,7 @@ const includedDependencies = [
   'layercake',
   /@abcnews\/svelte-scrollyteller/,
   /@abcnews\/components-builder/,
-  '@benzara/svelte-animated-counter'
+  /@abcnews\/components-storylab/
 ];
 const getLoaderDefinition = (config, testSourceMatch, loaderMatch) =>
   config.module.rules
@@ -15,7 +15,7 @@ module.exports = {
   type: 'svelte',
   build: {
     includedDependencies,
-    entry: ['index', 'builder']
+    entry: ['index', 'builder', 'iframe']
   },
   webpack: config => {
     // Disable dart-sass warnings
