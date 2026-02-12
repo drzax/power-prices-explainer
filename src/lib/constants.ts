@@ -10,5 +10,6 @@ export const DESKTOP_BREAKPOINT = 1500;
 
 export const plotPadding = {
   bottom: 30,
-  left: 30
+  left: 30,
+  right: 10
 };

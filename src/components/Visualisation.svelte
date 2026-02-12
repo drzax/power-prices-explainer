@@ -52,7 +52,11 @@
 </script>
 
 <FontProvider>
-  <div bind:clientWidth={chartWidth} style:--plot-padding-left={`${plotPadding.left}px`}>
+  <div
+    bind:clientWidth={chartWidth}
+    style:--plot-padding-left={`${plotPadding.left}px`}
+    style:--plot-padding-right={`${plotPadding.right}px`}
+  >
     <header>
       {#if visState.config.title && visState.config.title.length > 0}
         <h2 class="chart-title">{visState.config.title}</h2>
