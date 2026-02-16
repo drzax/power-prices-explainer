@@ -91,10 +91,10 @@
         <Arrows {arrows} />
       </Svg>
     </LayerCake>
-    {#if visState.config.description || visState.config.sources}
+    {#if (visState.config.description && visState.config.description.length > 0) || visState.config.sources.length}
       <footer>
         {#if visState.config.description}<p>{visState.config.description}</p>{/if}
-        {#if visState.config.sources}
+        {#if visState.config.sources.length > 0}
           <p>
             Sources:
             {#each visState.config.sources as source, i}
