@@ -1,12 +1,9 @@
-import type { VisualisationType } from './types';
+import type { VisualisationInputType } from './types';
 
-export const visState: { config: VisualisationType; loaded: boolean } = $state({
+export const visState: { config: VisualisationInputType; loaded: boolean } = $state({
+  data: [],
   config: {
-    title: 'Power prices',
-    annotations: [],
-    arrows: [],
-    lines: [],
-    highlights: []
+    title: 'Chart title'
   },
   loaded: false
 });

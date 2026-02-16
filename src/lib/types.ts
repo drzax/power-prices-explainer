@@ -15,7 +15,7 @@ import type { Readable } from 'svelte/store';
 export type DataSchemaType = InferOutput<typeof DataSchema>;
 export type DataRowSchemaType = InferOutput<typeof DataRowSchema>;
 export type DeletableType = InferOutput<typeof DeletableSchema>;
-export type VisualisationType = InferInput<typeof VisualisationSchema>;
+export type VisualisationType = InferOutput<typeof VisualisationSchema>;
 export type AnnotationType = InferInput<typeof AnnotationSchema>;
 export type ArrowType = InferOutput<typeof ArrowSchema>;
 export type HighlightType = InferOutput<typeof HighlightSchema>;
