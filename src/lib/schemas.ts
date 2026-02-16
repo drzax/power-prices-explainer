@@ -90,9 +90,9 @@ export const VisualisationSchema = object({
   title: string(),
   subtitle: optional(string()),
   description: optional(string()),
-  annotations: array(intersect([AnnotationSchema, DeletableSchema])),
-  arrows: array(intersect([ArrowSchema, DeletableSchema])),
-  highlights: array(intersect([HighlightSchema, DeletableSchema])),
-  lines: array(intersect([SeriesSchema, DeletableSchema])),
-  sources: array(intersect([DataSourceSchema, DeletableSchema]))
+  annotations: optional(array(intersect([AnnotationSchema, DeletableSchema])), []),
+  arrows: optional(array(intersect([ArrowSchema, DeletableSchema])), []),
+  highlights: optional(array(intersect([HighlightSchema, DeletableSchema])), []),
+  lines: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
+  sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), [])
 });
