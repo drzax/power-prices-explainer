@@ -1,9 +1,10 @@
-import type { VisualisationInputType } from './types';
+import { parse } from 'valibot';
+import { VisualisationStateSchema } from './schemas';
 
-export const visState: { config: VisualisationInputType; loaded: boolean } = $state({
-  data: [],
-  config: {
-    title: 'Chart title'
-  },
-  loaded: false
-});
+const validateState = (data: unknown) => parse(VisualisationStateSchema, data);
+
+export const visState = $state(
+  validateState({
+    config: {} // Defaults are provided by the validation library
+  })
+);

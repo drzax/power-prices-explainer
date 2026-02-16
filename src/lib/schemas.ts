@@ -1,7 +1,6 @@
 import { parse } from 'date-fns';
 import {
   array,
-  date,
   enum_,
   intersect,
   nullable,
@@ -87,7 +86,7 @@ export const DataSourceSchema = object({
  * more fully adopt it at some point.
  */
 export const VisualisationSchema = object({
-  title: string(),
+  title: optional(string(), 'Chart title'),
   subtitle: optional(string()),
   description: optional(string()),
   annotations: optional(array(intersect([AnnotationSchema, DeletableSchema])), []),
@@ -95,4 +94,8 @@ export const VisualisationSchema = object({
   highlights: optional(array(intersect([HighlightSchema, DeletableSchema])), []),
   lines: optional(array(intersect([SeriesSchema, DeletableSchema])), []),
   sources: optional(array(intersect([DataSourceSchema, DeletableSchema])), [])
+});
+
+export const VisualisationStateSchema = object({
+  config: VisualisationSchema
 });

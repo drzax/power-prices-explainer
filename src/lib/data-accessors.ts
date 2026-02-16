@@ -11,7 +11,6 @@ export const loadMarkerConfig = (data: string | Record<string, unknown>) => {
   const result = safeParse(VisualisationSchema, obj);
   if (result.success) {
     visState.config = result.output;
-    visState.loaded = true;
   } else {
     console.error(result.issues);
   }
