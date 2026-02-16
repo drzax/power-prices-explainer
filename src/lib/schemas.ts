@@ -74,6 +74,11 @@ export const SeriesSchema = object({
   series: string()
 });
 
+export const DataSourceSchema = object({
+  label: string(),
+  url: optional(string())
+});
+
 /**
  * Over time, the goal is to move toward following the [Vega schema](https://vega.github.io/vega/docs/). It is a minumum viable
  * interpretation for this specific visualisation with the idea that it might be used as a starting point for expansion
@@ -85,14 +90,9 @@ export const VisualisationSchema = object({
   title: string(),
   subtitle: optional(string()),
   description: optional(string()),
-  source: optional(
-    object({
-      text: string(),
-      href: string()
-    })
-  ),
   annotations: array(intersect([AnnotationSchema, DeletableSchema])),
   arrows: array(intersect([ArrowSchema, DeletableSchema])),
   highlights: array(intersect([HighlightSchema, DeletableSchema])),
-  lines: array(intersect([SeriesSchema, DeletableSchema]))
+  lines: array(intersect([SeriesSchema, DeletableSchema])),
+  sources: array(intersect([DataSourceSchema, DeletableSchema]))
 });

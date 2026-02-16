@@ -91,9 +91,20 @@
         <Arrows {arrows} />
       </Svg>
     </LayerCake>
-    {#if visState.config.description || visState.config.source}
+    {#if visState.config.description || visState.config.sources}
       <footer>
         {#if visState.config.description}<p>{visState.config.description}</p>{/if}
+        {#if visState.config.sources}
+          <p>
+            Sources:
+            {#each visState.config.sources as source, i}
+              {#if i > 0}·
+              {/if}{#if source.url && source.url.length > 0}<a href={source.url}>{source.label}</a>{:else}<span
+                  >{source.label}</span
+                >{/if}
+            {/each}
+          </p>
+        {/if}
       </footer>
     {/if}
   </div>

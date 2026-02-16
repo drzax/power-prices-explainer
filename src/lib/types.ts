@@ -4,6 +4,7 @@ import type {
   ArrowSchema,
   DataRowSchema,
   DataSchema,
+  DataSourceSchema,
   DeletableSchema,
   HighlightSchema,
   SeriesSchema,
@@ -19,6 +20,7 @@ export type AnnotationType = InferInput<typeof AnnotationSchema>;
 export type ArrowType = InferOutput<typeof ArrowSchema>;
 export type HighlightType = InferOutput<typeof HighlightSchema>;
 export type SeriesType = InferOutput<typeof SeriesSchema>;
+export type DataSourceType = InferInput<typeof DataSourceSchema>;
 
 export enum AnnotationAnchorType {
   Top = 'TOP',

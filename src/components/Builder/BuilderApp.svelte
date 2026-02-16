@@ -11,6 +11,7 @@
     AnnotationAnchorType,
     type AnnotationType,
     type ArrowType,
+    type DataSourceType,
     type DeletableType,
     type HighlightType,
     type SeriesType
@@ -22,6 +23,7 @@
   import ArrowEditForm from './edit-forms/ArrowEditForm.svelte';
   import HighlightEditForm from './edit-forms/HighlightEditForm.svelte';
   import ItemCollection from './ItemCollection.svelte';
+  import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
 
   const prefixes = {
     'Scrolly mark': '#markCONFIG',
@@ -56,11 +58,13 @@
   const defaultArrow = { from: { x: '', y: 0 }, to: { x: '', y: 0 } };
   const defaultHighlight = { tl: { x: '2019-01-01', y: 10 }, br: { x: '2020-01-01', y: 100 } };
   const defaultLine = { id: '', series: 'excl' };
+  const defaultDataSource = { label: '', url: '' };
 
   let currentAnnotation: (AnnotationType & DeletableType) | undefined = $state();
   let currentArrow: (ArrowType & DeletableType) | undefined = $state();
   let currentHighlight: (HighlightType & DeletableType) | undefined = $state();
   let currentLine: (SeriesType & DeletableType) | undefined = $state();
+  let currentDataSource: (DataSourceType & DeletableType) | undefined = $state();
 
   let showConstructionMarks: boolean = $state(localStorage.getItem('showConstructionMarks') !== null);
 
@@ -138,6 +142,18 @@
     >
       {#snippet EditForm()}
         <HighlightEditForm bind:highlight={currentHighlight} />
+      {/snippet}
+    </ItemCollection>
+
+    <ItemCollection
+      legend="Credited sources of data"
+      bind:current={currentDataSource}
+      template={defaultDataSource}
+      bind:collection={visState.config.sources}
+      itemLabelGetter={source => source.label}
+    >
+      {#snippet EditForm()}
+        <DataSourceEditForm bind:source={currentDataSource} />
       {/snippet}
     </ItemCollection>
   </fieldset>
