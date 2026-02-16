@@ -36,8 +36,8 @@
 </script>
 
 <g class="line-group">
-  {#each renderedLines as { d, stroke, id } (id)}
-    <path transition:fade class="path-line" {d} {stroke}></path>
+  {#each renderedLines as line (line.id || line)}
+    <path transition:fade class="path-line" d={line.d} stroke={line.stroke}></path>
   {/each}
 </g>
 
