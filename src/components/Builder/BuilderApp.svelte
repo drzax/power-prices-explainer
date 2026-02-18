@@ -1,11 +1,12 @@
 <script lang="ts">
   import { encode } from '@abcnews/base-36-props';
-  import { BuilderStyleRoot, BuilderFrame, ScreenshotTool, MarkerAdmin } from '@abcnews/components-builder';
+  import { BuilderStyleRoot, BuilderFrame, MarkerAdmin, UpdateChecker } from '@abcnews/components-builder';
   import Visualisation from '../Visualisation.svelte';
   import { visState } from '../../lib/state.svelte';
   import { onMount } from 'svelte';
   import { loadMarkerConfig } from '../../lib/data-accessors';
   import { isValiError } from 'valibot';
+  import ScreenshotTool from './ScreenshotTool/ScreenshotTool.svelte';
 
   import {
     AnnotationAnchorType,
@@ -26,7 +27,7 @@
   import DataSourceEditForm from './edit-forms/DataSourceEditForm.svelte';
 
   const prefixes = {
-    'Scrolly mark': '#markCONFIG',
+    'Scrolly mark': SCROLLY_MARK_PREFIX,
     'Scrolly opener': SCROLLY_OPENER_PREFIX
   };
 
@@ -164,8 +165,13 @@
   <fieldset>
     <legend>Fallbacks</legend>
     <ScreenshotTool
+      getGeneratorRequest={({ graphicLocation, width, height }) =>
+        new Request(
+          new URL(
+            `https://fallback-automation.vercel.app/api?url=${encodeURIComponent(graphicLocation.toString())}&width=${width}&height=${height}&delay=1000`
+          )
+        )}
       {prefixes}
-      iframeUrl={window.location.origin + window.location.pathname.replace(/\/$/, '/iframe/')}
     />
   </fieldset>
   <details>
@@ -180,6 +186,7 @@
 
 <BuilderStyleRoot>
   <BuilderFrame {Viz} {Sidebar} />
+  <UpdateChecker />
 </BuilderStyleRoot>
 
 <style>
